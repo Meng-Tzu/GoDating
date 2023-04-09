@@ -150,7 +150,9 @@ $("#btnConnect").click(function (e) {
   // 對特定人顯示的訊息
   socket.on("message", (msg) => {
     console.log(msg);
-    $("ul").append(`<li>${msg.name}: ${msg.message}</li>`);
+    const timestamp = new Date();
+    const msOfTime = Date.now();
+    $("ul").append(`<li>${msg.name}: ${msg.message} --- ${timestamp}</li>`);
   });
 
   // server 回報想傳的對象不在線上
