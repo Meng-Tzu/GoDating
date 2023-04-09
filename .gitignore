@@ -3,3 +3,6 @@ node_modules
 
 # 環境變數
 .env
+
+# 練習用檔案
+upload
