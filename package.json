@@ -23,7 +23,9 @@
   },
   "homepage": "https://github.com/Meng-Tzu/WebSocket-Test#readme",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "mysql2": "^3.2.0",
     "socket.io": "^4.6.1"
   }
 }
