@@ -13,10 +13,13 @@ export const pool = mysql
   })
   .promise();
 
-// FIXME: 取得 DB 裡的所有使用者 id + nick_name
+// TODO: 取得 DB 裡的所有使用者 id + nick_name + coordinate
 const getAllUsers = async () => {
   const queryStr = `
-    SELECT id, nick_name FROM user_main
+  SELECT UM.id, UM.nick_name, UD.coordinate
+  FROM user_main AS UM
+  INNER JOIN user_detail AS UD
+  ON UD.user_id = UM.id
     `;
 
   let [result] = await pool.query(queryStr);
