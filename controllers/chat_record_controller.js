@@ -5,8 +5,6 @@ import {
 } from "../models/chat_record_model.js";
 
 const saveChatRecord = async (req, res) => {
-  console.log("req123", req);
-  console.log("req.body", req.body);
   const userId = +req.body.userId;
   const userName = req.body.userName;
   const message = req.body.message;
@@ -22,12 +20,12 @@ const saveChatRecord = async (req, res) => {
       timestamp,
       time
     );
-    const response = { record };
-    console.log("save into ES successfully", response);
+    const response = { data: record };
+    console.log("save into ES successfully");
     res.status(200).json(response);
     return;
   } catch (error) {
-    const response = { error };
+    const response = { data: error };
     console.error(
       "存入 ES 錯誤, check client.index() or client.indices.refresh() :",
       error

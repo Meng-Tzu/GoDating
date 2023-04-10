@@ -8,7 +8,7 @@ import { saveChatRecord } from "../controllers/chat_record_controller.js";
 chatRouter.use(express.json());
 
 // FIXME: 存聊天紀錄到 ES (驗證 JWT)
-chatRouter.post("/chat/chatRecord", saveChatRecord);
+chatRouter.post("/chat/chatrecord", saveChatRecord);
 
 // 輸出路由
 export { chatRouter };
