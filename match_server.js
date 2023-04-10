@@ -18,9 +18,15 @@ const app = express();
 // 取得 static html file
 app.use("/", express.static("public"));
 
-// API routes
+// 可使用的 request body 格式
+app.use(express.json());
+
+// TODO: API routes (可否共用前面的 path ??)
 import { userRouter } from "./routes/user_route.js";
 app.use("/api/1.0", [userRouter]);
+
+import { chatRouter } from "./routes/chat_record_route.js";
+app.use("/api/1.0", [chatRouter]);
 
 // 當使用者輸入錯的路徑，會直接掉進這個 middle ware
 app.use((req, res) => {
@@ -38,6 +44,8 @@ app.use((err, req, res, next) => {
 let webSrv = app.listen(3000, () =>
   console.log("Server is running on port 3000.")
 );
+
+// ----------------------------- SocketIO 區塊 --------------------------------
 
 //將 express 交給 SocketServer 開啟 SocketIO 的服務
 const io = new Server(webSrv);
@@ -82,7 +90,7 @@ io.on("connection", (socket) => {
     // 告知使用者已成功連線
     socket.emit("userConnect", id);
 
-    // 告知所有人該使用者已上線
+    // TODO: 告知所有人該使用者已上線 (add timestamp)
     io.emit("allMessage", response);
   });
 
@@ -97,14 +105,15 @@ io.on("connection", (socket) => {
 
     if (msg.receiver === "ALL") {
       response.message = msg.content;
-      // 針對所有連線去傳送訊息
+      // TODO: 針對所有連線去傳送訊息  (add timestamp)
       io.emit("allMessage", response);
     } else if (!(msg.receiver in connections)) {
       socket.emit("notExist", `This person is not online.`);
     } else {
       response.message = msg.content;
-      // 針對 receiver 的這條連線去傳送訊息
+      // TODO: 針對 receiver 的這條連線去傳送訊息  (add timestamp)
       connections[msg.receiver].socket.emit("message", response);
+      // TODO: user 可以看到自己傳的訊息是什麼  (add timestamp)
     }
   });
 
@@ -148,6 +157,7 @@ io.on("connection", (socket) => {
             }
           });
 
+          // TODO: 顯示圖片 (add timestamp)
           readStream.on("end", () => {
             console.log("Image loaded");
             response.status = "success";
@@ -168,6 +178,7 @@ io.on("connection", (socket) => {
             }
           });
 
+          // TODO: 顯示圖片 (add timestamp)
           readStream.on("end", () => {
             console.log("Image loaded");
             response.status = "success";
