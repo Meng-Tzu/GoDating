@@ -8,7 +8,7 @@ import {
 // -------------------------- Function 區塊 -------------------------------
 
 // Function1: 篩選其他人的性別是否符合自己的性傾向
-const preSexMatching = async (selfId) => {
+const preSexMatching = async (selfId, allUserIds) => {
   // 排除自己的 id
   let match1_candidate_ids = allUserIds.filter((userId) => userId !== selfId);
   const self = await getUserInfo1(selfId);
@@ -20,7 +20,7 @@ const preSexMatching = async (selfId) => {
     const candidates = [];
     for (let userId of match1_candidate_ids) {
       const candidate = await getUserInfo1(userId);
-      if (candidate.sex_id === self.orientation_id) {
+      if (candidate.sex_id === self.sex_id) {
         candidates.push(userId);
       }
     }
@@ -29,8 +29,7 @@ const preSexMatching = async (selfId) => {
     // FIXME: 異性戀 (有沒有更聰明的篩選?)
     let sex = [1, 2];
     // 剔除自己的性別 id
-    delete sex[self.orientation_id - 1];
-    sex = sex.filter((sexId) => sexId > 0);
+    sex = sex.filter((sexId) => sexId !== self.sex_id);
 
     const candidates = [];
     for (let userId of match1_candidate_ids) {
@@ -72,7 +71,7 @@ const allUserIds = await getAllUserIds(); // [ 1, 2, 3, 4 ];
 // Step1: 篩選候選人符合自己設定的性別/性傾向
 const sex_match_pair = {};
 for (let userId of allUserIds) {
-  sex_match_pair[userId] = await preSexMatching(userId);
+  sex_match_pair[userId] = await preSexMatching(userId, allUserIds);
 }
 // console.log("before: sex_match_pair", sex_match_pair);
 
