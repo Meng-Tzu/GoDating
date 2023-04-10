@@ -101,17 +101,25 @@ io.on("connection", (socket) => {
 
     // console.log("connections", connections);
     let userId = getKeyByValue(socket);
+    response.id = userId;
     response.name = connections[userId].name;
+
+    // 傳送訊息時間
+    const time = new Date();
+    response.timestamp = time.toLocaleString("en-US", {
+      timeZone: "Asia/Taipei",
+    });
+    response.msOfTime = Date.now();
 
     if (msg.receiver === "ALL") {
       response.message = msg.content;
-      // TODO: 針對所有連線去傳送訊息  (add timestamp)
+      // 針對所有連線去傳送訊息
       io.emit("allMessage", response);
     } else if (!(msg.receiver in connections)) {
       socket.emit("notExist", `This person is not online.`);
     } else {
       response.message = msg.content;
-      // TODO: 針對 receiver 的這條連線去傳送訊息  (add timestamp)
+      // 針對 receiver 的這條連線去傳送訊息
       connections[msg.receiver].socket.emit("message", response);
       // TODO: user 可以看到自己傳的訊息是什麼  (add timestamp)
     }
@@ -124,7 +132,15 @@ io.on("connection", (socket) => {
     const response = {};
 
     let userId = getKeyByValue(socket);
+    response.id = userId;
     response.name = connections[userId].name;
+
+    // 傳送訊息時間
+    const time = new Date();
+    response.timestamp = time.toLocaleString("en-US", {
+      timeZone: "Asia/Taipei",
+    });
+    response.msOfTime = Date.now();
 
     // save the content to the disk
     let filename = `${uniqueSuffix()}.jpg`; // 自動編號照片名稱
@@ -157,7 +173,7 @@ io.on("connection", (socket) => {
             }
           });
 
-          // TODO: 顯示圖片 (add timestamp)
+          // 顯示圖片
           readStream.on("end", () => {
             console.log("Image loaded");
             response.status = "success";
@@ -178,7 +194,7 @@ io.on("connection", (socket) => {
             }
           });
 
-          // TODO: 顯示圖片 (add timestamp)
+          // 顯示圖片
           readStream.on("end", () => {
             console.log("Image loaded");
             response.status = "success";
