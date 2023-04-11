@@ -75,8 +75,55 @@ const saveChatRecordToES = async (
   return result;
 };
 
+// TODO: 搜尋所有 chatting 內的對話紀錄
+const searchAllFromChatting = async () => {
+  const indexName = "chatting";
+
+  const searchResponse = await client.search({
+    index: indexName,
+    body: {
+      sort: [{ time: { order: "desc" } }],
+      query: {
+        match_all: {},
+      },
+    },
+  });
+
+  const result = searchResponse.hits.hits;
+  const messages = result.map((message) => message._source);
+  return messages;
+};
+
+// TODO: 搜尋 elasticSearch 的 chatting 特定關鍵字
+const searchKeywordFromChatting = async (keyword) => {
+  const indexName = "chatting";
+
+  const searchResponse = await client.search({
+    index: indexName,
+    body: {
+      sort: [{ time: "desc" }],
+      query: {
+        multi_match: {
+          query: keyword,
+          type: "most_fields",
+          fields: ["message"],
+          operator: "AND",
+          fuzziness: 2,
+          prefix_length: 3,
+        },
+      },
+    },
+  });
+
+  const result = searchResponse.hits.hits;
+  const messages = result.map((message) => message._source);
+  return messages;
+};
+
 export {
   deleteChatRecordFromElasticsearch,
   initElasticsearch,
   saveChatRecordToES,
+  searchAllFromChatting,
+  searchKeywordFromChatting,
 };
