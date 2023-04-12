@@ -1,5 +1,6 @@
 # 模組
 node_modules
+.eslintrc.cjs
 
 # 環境變數
 .env
