@@ -1,0 +1,93 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Noto Sans TC", sans-serif;
+}
+
+// ---------------------- Header Setting --------------------------
+
+header {
+  // padding: 0.5rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: rgb(244, 255, 184);
+  display: flex;
+  flex-wrap: wrap;
+  // justify-content: space-around;
+  align-items: center;
+  margin: 0;
+
+  section.left {
+    flex: 1 1 500px;
+    display: flex;
+    align-items: center;
+
+    a.logo {
+      margin-left: 2rem;
+      img {
+        // flex: 1 1 100px;
+        width: 5vw;
+      }
+    }
+
+    nav {
+      flex: 1 1 100px;
+      align-items: center;
+      ul {
+        display: flex;
+        list-style-type: none;
+        align-items: center;
+        justify-content: space-around;
+
+        li {
+          a {
+            color: #3f3a3a;
+            text-decoration: none;
+            font-size: 1.2rem;
+          }
+        }
+
+        li.line {
+          color: #3f3a3a;
+          font-size: 1rem;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+
+  section.right {
+    flex: 1 1 100px;
+    display: flex;
+    justify-content: space-around;
+
+    a {
+      img {
+        // flex: 1 1 100px;
+        width: 5vw;
+      }
+    }
+  }
+}
+
+// ---------------------- Main Setting --------------------------
+
+main {
+  display: flex;
+  flex-wrap: wrap;
+
+  section#match {
+    flex: 1 1 200px;
+    border: 2px solid red;
+  }
+  section#chatroom {
+    flex: 1 1 500px;
+    border: 2px solid blue;
+  }
+  section#partner {
+    flex: 1 1 200px;
+    border: 2px solid red;
+  }
+}

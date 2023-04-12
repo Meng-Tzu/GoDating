@@ -1,0 +1,73 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Noto Sans TC", sans-serif;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: rgb(244, 255, 184);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+}
+header section.left {
+  flex: 1 1 500px;
+  display: flex;
+  align-items: center;
+}
+header section.left a.logo {
+  margin-left: 2rem;
+}
+header section.left a.logo img {
+  width: 5vw;
+}
+header section.left nav {
+  flex: 1 1 100px;
+  align-items: center;
+}
+header section.left nav ul {
+  display: flex;
+  list-style-type: none;
+  align-items: center;
+  justify-content: space-around;
+}
+header section.left nav ul li a {
+  color: #3f3a3a;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+header section.left nav ul li.line {
+  color: #3f3a3a;
+  font-size: 1rem;
+  font-weight: bold;
+}
+header section.right {
+  flex: 1 1 100px;
+  display: flex;
+  justify-content: space-around;
+}
+header section.right a img {
+  width: 5vw;
+}
+
+main {
+  display: flex;
+  flex-wrap: wrap;
+}
+main section#match {
+  flex: 1 1 200px;
+  border: 2px solid red;
+}
+main section#chatroom {
+  flex: 1 1 500px;
+  border: 2px solid blue;
+}
+main section#partner {
+  flex: 1 1 200px;
+  border: 2px solid red;
+}/*# sourceMappingURL=style.css.map */
