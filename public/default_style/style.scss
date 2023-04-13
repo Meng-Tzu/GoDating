@@ -77,17 +77,32 @@ header {
 main {
   display: flex;
   flex-wrap: wrap;
+  min-height: 85vh;
 
   section#match {
     flex: 1 1 200px;
-    border: 2px solid red;
+    // border: 2px solid red;
+    background-color: rgb(225, 253, 207);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   section#chatroom {
     flex: 1 1 500px;
-    border: 2px solid blue;
+    // border: 1px solid rgb(255, 187, 0);
+
+    div#dialogue {
+      border: gray solid 2px;
+      min-height: 65vh;
+    }
   }
-  section#partner {
+  section#current {
     flex: 1 1 200px;
-    border: 2px solid red;
+    // border: 2px solid red;
+    background-color: antiquewhite;
+    // text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }

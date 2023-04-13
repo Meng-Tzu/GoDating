@@ -58,16 +58,26 @@ header section.right a img {
 main {
   display: flex;
   flex-wrap: wrap;
+  min-height: 85vh;
 }
 main section#match {
   flex: 1 1 200px;
-  border: 2px solid red;
+  background-color: rgb(225, 253, 207);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 main section#chatroom {
   flex: 1 1 500px;
-  border: 2px solid blue;
 }
-main section#partner {
+main section#chatroom div#dialogue {
+  border: gray solid 2px;
+  min-height: 65vh;
+}
+main section#current {
   flex: 1 1 200px;
-  border: 2px solid red;
+  background-color: antiquewhite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }/*# sourceMappingURL=style.css.map */
