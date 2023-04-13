@@ -4,38 +4,66 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WebSocket Client</title>
+    <title>GoDating</title>
     <meta name="author" content="Meng-Tzu Tsai" />
+
+    <!-- google font setting -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./default_style/style.css" />
   </head>
   <body>
-    <h1>WebSocket Test</h1>
-    <form action="" method="post">
-      <label for="name">名字:</label>
-      <input type="text" name="name" id="name" placeholder="你是誰?" />
-      <button type="submit" id="btnConnect">connect</button>
-    </form>
+    <!-- header -->
+    <header>
+      <section class="left">
+        <a href="#" class="logo"><img src="/logo.png" alt="Logo" /></a>
 
-    <div id="dialog" style="border: gray solid 1px; min-height: 40vh">
-      <ul style="list-style-type: none"></ul>
-    </div>
+        <nav>
+          <ul>
+            <li class="chatroom">
+              <a href="/chatroom.html">聊天室</a>
+            </li>
+            <li class="line">|</li>
+            <li class="map"><a href="/map.html">地圖</a></li>
+          </ul>
+        </nav>
+      </section>
 
-    <form action="" method="post">
-      <select name="receiver" id="receiver">
-        <option value="ALL">ALL</option>
-        <option value="Sam">Sam</option>
-        <option value="Orin">Orin</option>
-        <option value="Ed">Ed</option>
-      </select>
-      <input type="text" name="message" id="message" placeholder="訊息" />
-      <button type="submit" id="btnText">Send</button>
-    </form>
+      <section class="right">
+        <a href="/profile.html"><img src="/profile.jpg" alt="profile" /></a>
+      </section>
+    </header>
+    <main>
+      <section id="match">
+        <h3>配對成功</h3>
+        <div class="partner" style="display: none"><a href=""></a></div>
+      </section>
+      <section id="chatroom">
+        <form action="" method="post">
+          <label for="name">名字:</label>
+          <select name="users" id="users">
+            <option value="" class="user" style="display: none"></option>
+          </select>
+          <button type="submit" id="btnConnect">connect</button>
+        </form>
 
-    <form action="" method="post">
-      <input type="file" id="picture" accept="image/*" />
-      <button type="submit" id="btnFile">上傳檔案</button>
-    </form>
-    <!-- <img src="" alt="test fail" id="test" /> -->
-    <!-- <button id="test">test picture</button> -->
+        <form action="" method="post">
+          <label for="name">想跟誰配對:</label>
+          <select name="condidates" id="condidates">
+            <option value="" class="condidate" style="display: none"></option>
+          </select>
+          <button type="submit" id="btnLike">Like!</button>
+        </form>
+      </section>
+      <section id="current">
+        <h3>猜你會喜歡...</h3>
+      </section>
+    </main>
   </body>
   <script
     src="https://code.jquery.com/jquery-3.6.3.min.js"
@@ -43,5 +71,5 @@
     crossorigin="anonymous"
   ></script>
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-  <script src="./client.js"></script>
+  <script src="./index.js"></script>
 </html>
