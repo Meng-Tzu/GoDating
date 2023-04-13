@@ -3,6 +3,12 @@ import express from "express";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 
+// 導入 Cache
+import {
+  getWhoLikeMeOfSelf,
+  saveWhoLikeMeOfOtherSide,
+} from "./controllers/choice_controller.js";
+
 //創建 express 的物件
 const app = express();
 
@@ -63,7 +69,7 @@ io.on("connection", (socket) => {
   count++;
   console.log(`One client has connected. 目前連線數: ${count}`);
 
-  // TODO: 儲存連線者 (需要儲存嗎???)
+  // FIXME: 儲存連線者 (需要儲存嗎???)
   socket.on("online", (user) => {
     const id = user.id;
     const name = user.name;
@@ -75,6 +81,46 @@ io.on("connection", (socket) => {
 
     // 告知使用者已成功連線
     socket.emit("user-connect", id);
+  });
+
+  // TODO: 監聽到使用者喜歡候選人
+  socket.on("desired-candidate", async (msg) => {
+    const { userId, userName, condidateId, condidateName } = msg;
+
+    // 查看 Cache 內使用者的 "who_like_me" 內有沒有存在此候選人
+    const desiredCandidate = await getWhoLikeMeOfSelf(userId, condidateId);
+
+    if (desiredCandidate) {
+      const roomId = uuidv4();
+
+      const responseForSelf = { userId, condidateId, condidateName, roomId };
+
+      const responseForOtherSide = {
+        userId: condidateId,
+        condidateId: userId,
+        condidateName: userName,
+        roomId,
+      };
+
+      // 傳給自己
+      socket.emit("success-match", responseForSelf);
+
+      // 傳給對方
+      connections[condidateId].socket.emit(
+        "success-be-matched",
+        responseForOtherSide
+      );
+
+      console.log(
+        `Successfully match userId#${userId} with userId#${condidateId}`
+      );
+    } else {
+      // 如果對方尚未喜歡自己，儲存對方的 "who_like_me" 到快取
+      await saveWhoLikeMeOfOtherSide(condidateId, userId, userName);
+      console.log(
+        `userId#${userId}(${userName}) like userId#${condidateId}(${condidateName})`
+      );
+    }
   });
 
   // 當有使用者想要建立聊天室
