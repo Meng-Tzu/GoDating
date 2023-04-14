@@ -2,6 +2,12 @@
 import express from "express";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
+import { writeFile, createReadStream } from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 導入 Cache
 import {
@@ -83,7 +89,7 @@ io.on("connection", (socket) => {
     socket.emit("user-connect", id);
   });
 
-  // TODO: 監聽到使用者喜歡候選人
+  // TODO: 監聽到使用者喜歡候選人 (有 bug)
   socket.on("desired-candidate", async (msg) => {
     const { userId, userName, condidateId, condidateName } = msg;
 
@@ -161,11 +167,17 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("room-broadcast", response);
   });
 
-  // TODO: 當有使用者想傳送訊息到聊天室
+  // 當有使用者想傳送訊息到聊天室
   socket.on("message", (msg) => {
-    const roomId = msg.roomId;
-    const userName = msg.userName;
-    const message = msg.message;
+    const { partnerId, roomId, message } = msg;
+
+    // FIXME: 改從前端拿 user id ??
+    const userId = getKeyByValue(socket);
+    const userName = connections[userId].name;
+
+    // 把 user 和 partner 都加到這個 room id
+    socket.join(roomId);
+    connections[partnerId].socket.join(roomId);
 
     // 傳送訊息時間
     const time = new Date();
@@ -176,6 +188,73 @@ io.on("connection", (socket) => {
     const response = { roomId, userName, message, timestamp };
 
     io.to(roomId).emit("room-broadcast", response);
+  });
+
+  // 當使用者想傳照片到聊天室
+  socket.on("upload", (msg) => {
+    const { roomId, partnerId, file } = msg;
+    console.log(file); // <Buffer 25 50 44 ...>
+
+    // FIXME: save the content to the disk (上傳到 S3 ??)
+    let filename = `${uuidv4()}.jpg`; // 自動編號照片名稱
+
+    // 回覆的訊息格式
+    const response = {};
+    // FIXME: 改從前端拿 user id ??
+    const userId = getKeyByValue(socket);
+    const userName = connections[userId].name;
+
+    response.userName = userName;
+    response.userId = userId;
+
+    writeFile(`upload/${filename}`, msg.file, (err) => {
+      if (err) {
+        response.error = `This picture cannot display.`;
+        io.emit("wholeFile", response);
+        console.log("writeFile fail, error:", err);
+      } else {
+        // FIXME: 讀取硬碟中的圖片 (解析度跑掉)
+        const readStream = createReadStream(
+          path.join(__dirname, `/upload/${filename}`),
+          {
+            encoding: "binary",
+          }
+        );
+
+        // 拼湊回照片
+        let chunks = [];
+
+        // 把 user 和 partner 都加到這個 room id
+        socket.join(roomId);
+        connections[partnerId].socket.join(roomId);
+
+        // 對聊天室傳送圖片
+        readStream.on("readable", () => {
+          console.log("Image loading");
+
+          let chunk;
+          while ((chunk = readStream.read()) !== null) {
+            chunks.push(chunk);
+            io.to(roomId).emit("file", chunk);
+          }
+        });
+
+        // 顯示圖片
+        readStream.on("end", () => {
+          console.log("Image loaded");
+          response.status = "success";
+          response.roomId = roomId;
+
+          // 傳送訊息時間
+          const time = new Date();
+          response.timestamp = time.toLocaleString("en-US", {
+            timeZone: "Asia/Taipei",
+          });
+          response.msOfTime = Date.now();
+          io.to(roomId).emit("wholeFile", response);
+        });
+      }
+    });
   });
 
   // FIXME: 監聽 client 是否已經斷開連線 (可做哪個使用者已離開)
