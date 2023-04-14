@@ -51,19 +51,64 @@ const createCandidateOption = (users, group, elementName) => {
 };
 
 // Function4: 動態製造 DOM 物件 (create div for partner)
-const createPartnerDiv = (roomId, name) => {
+const createPartnerDiv = (roomId, candidateId, candidateName) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#match");
 
-  // 新建 div element
-  const $div = $("<div>");
-  $div.addClass("partner");
-  const $a = $("<a>").attr("href", `/chatroom.html?room=${roomId}`).text(name);
+  // 新建 button element
+  const $button = $("<button>");
+  $button
+    .addClass(`partner ${candidateId}`)
+    .attr("id", roomId)
+    .attr("onClick", `openChatroom($(this))`)
+    .text(candidateName);
 
-  $a.appendTo($div);
+  // 把新的 button 加入 parant element
+  $button.appendTo($parent);
+};
 
-  // 把新的 option 加入 parant element
-  $div.appendTo($parent);
+// FIXME: Function5: 點擊特定 partner 開啟聊天室 (如何在不同 partner 間做切換?)
+const openChatroom = function ($this) {
+  const roomId = $this.attr("id");
+  const partnerName = $this.text();
+  const classNames = $this.attr("class");
+  // console.log("classNames", classNames, typeof classNames);
+  const partnerId = classNames.split(" ")[1];
+  // console.log("partnerId", partnerId, typeof partnerId);
+
+  // TODO: 取得目前網址 (如何在不同 partner 間做切換?)
+  const currentUrl = window.location.href;
+  const newUrl = currentUrl + `?room=${roomId}`;
+  // console.log("newUrl", newUrl);
+
+  // 不跳轉網址
+  window.history.pushState({}, "", newUrl);
+
+  // 顯示出聊天室窗
+  // $("#connection").css("display", "none");
+  $("#short-list").css("display", "none");
+  $(".other-side")
+    .text(partnerName)
+    .css("display", "block")
+    .attr("id", partnerId);
+  $("#dialogue").css("display", "block");
+  $("#text-msg").css("display", "block");
+  $("#picture-msg").css("display", "block");
+  $("#current h3").text("目前聊天者資訊");
+};
+
+// Function6: [WebSocket] 使用者上傳照片
+const upload = (roomId, partnerId, obj) => {
+  // console.log("obj:", obj);
+  const files = obj.files;
+  const [file] = files;
+  // console.log("files:", files);
+
+  const msg = { roomId, partnerId, file };
+
+  socket.emit("upload", msg, (status) => {
+    console.log("status:", status);
+  });
 };
 
 // ------------------------------ 前端渲染區塊 --------------------------------
@@ -176,16 +221,44 @@ $("#btnConnect").click(function (e) {
     }
   });
 
+  // 接收圖片
+  let imgChunks = [];
+  socket.on("file", async (chunk) => {
+    // 把照片的 base64 編碼拼湊回來
+    imgChunks.push(chunk);
+  });
+
+  // 呈現圖片
+  socket.on("wholeFile", (msg) => {
+    console.log(msg);
+
+    if (msg.error) {
+      $("ul.message").append(`<li>${msg.userName}: ${msg.error}</li>`);
+    } else {
+      const $img = $("<img>");
+      $img
+        .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
+        .height(200);
+
+      $("ul.message")
+        .append(`<li>${msg.userName}:</li>`)
+        .append($img)
+        .append(`<span>----- ${msg.timestamp}</span>`);
+
+      imgChunks = [];
+    }
+  });
+
   // 主動配對成功
   socket.on("success-match", (msg) => {
     const { userId, condidateId, condidateName, roomId } = msg;
-    createPartnerDiv(roomId, condidateName);
+    createPartnerDiv(roomId, condidateId, condidateName);
   });
 
   // 被動配對成功
   socket.on("success-be-matched", (msg) => {
     const { userId, condidateId, condidateName, roomId } = msg;
-    createPartnerDiv(roomId, condidateName);
+    createPartnerDiv(roomId, condidateId, condidateName);
   });
 });
 
@@ -226,9 +299,35 @@ $("#btnText").click(function (e) {
     return;
   }
 
-  const userName = $("#users option:selected").text();
+  // const userName = $("#users option:selected").text();
+  const partnerId = +$(".other-side").attr("id");
   const message = $("#message").val();
-  const messages = { roomId, userName, message };
+  const messages = { partnerId, roomId, message };
 
   socket.emit("message", messages);
+});
+
+// TODO: 上傳圖片 (改成上傳到 S3)
+const $picture = $("#picture");
+
+$("#btnFile").click(function (e) {
+  e.preventDefault();
+
+  if (socket === null) {
+    alert("Please connect first");
+    return;
+  }
+
+  // 取得網址的 params
+  const params = new URLSearchParams(window.location.search);
+  const roomId = params.get("room");
+
+  if (!roomId) {
+    alert("You have to get a chatroom id");
+    return;
+  }
+
+  const partnerId = +$(".other-side").attr("id");
+
+  upload(roomId, partnerId, $picture[0]);
 });
