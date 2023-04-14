@@ -67,7 +67,7 @@ const createPartnerDiv = (roomId, candidateId, candidateName) => {
   $button.appendTo($parent);
 };
 
-// FIXME: Function5: 點擊特定 partner 開啟聊天室 (如何在不同 partner 間做切換?)
+// Function5: 點擊特定 partner 開啟聊天室
 const openChatroom = function ($this) {
   const roomId = $this.attr("id");
   const partnerName = $this.text();
@@ -76,10 +76,18 @@ const openChatroom = function ($this) {
   const partnerId = classNames.split(" ")[1];
   // console.log("partnerId", partnerId, typeof partnerId);
 
-  // TODO: 取得目前網址 (如何在不同 partner 間做切換?)
+  // FIXME: 取得目前網址 (在不同 partner 間做 room id 切換)
   const currentUrl = window.location.href;
-  const newUrl = currentUrl + `?room=${roomId}`;
-  // console.log("newUrl", newUrl);
+  let indexUrl;
+  let newUrl;
+  if (currentUrl.includes("?room=")) {
+    // 如果原本在別的聊天室，就要替換掉 room id
+    indexUrl = currentUrl.split("?room=")[0];
+    newUrl = indexUrl + `?room=${roomId}`;
+  } else {
+    // 如果在首頁，直接加 room id
+    newUrl = currentUrl + `?room=${roomId}`;
+  }
 
   // 不跳轉網址
   window.history.pushState({}, "", newUrl);
@@ -125,8 +133,34 @@ const userIdNicknamePair = {}; // {id: nickname}
   });
 
   // 動態產生下拉式選單的選項
-  await createUserOption(userIdNicknamePair, "user");
+  createUserOption(userIdNicknamePair, "user");
 })();
+
+// 點擊 logo 渲染出首頁的配對
+$(".logo").click(function (e) {
+  e.preventDefault();
+
+  // 取得目前網址
+  const currentUrl = window.location.href;
+  let indexUrl;
+  if (currentUrl.includes("?room=")) {
+    // 如果原本在聊天室，就要刪掉 room id
+    indexUrl = currentUrl.split("?room=")[0];
+  } else {
+    indexUrl = currentUrl;
+  }
+  // 不跳轉網址
+  window.history.pushState({}, "", indexUrl);
+
+  // 顯示出聊天室窗
+  // $("#connection").css("display", "none");
+  $("#short-list").css("display", "block");
+  $(".other-side").css("display", "none");
+  $("#dialogue").css("display", "none");
+  $("#text-msg").css("display", "none");
+  $("#picture-msg").css("display", "none");
+  $("#current h3").text("猜你會喜歡...");
+});
 
 // --------------------------- WebSocket 區塊 --------------------------------
 
