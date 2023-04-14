@@ -23,7 +23,7 @@ const upload = (receiver, obj) => {
 };
 
 // Function3: 動態製造 DOM 物件 (create option for user) 整合
-const createUserOption = async (users, elementName) => {
+const createUserOption = (users, elementName) => {
   // 選擇要當模板的 element tag
   const $userTemplete = $(`.${elementName}`);
 
@@ -44,7 +44,7 @@ const createUserOption = async (users, elementName) => {
 };
 
 // Function4: 動態製造 DOM 物件 (create option for candidate)
-const createCandidateOption = async (users, group, elementName) => {
+const createCandidateOption = (users, group, elementName) => {
   // 選擇要當模板的 element tag
   const $userTemplete = $(`.${elementName}`);
 
@@ -62,6 +62,22 @@ const createCandidateOption = async (users, group, elementName) => {
     // 把新的 option 加入 parant element
     $newDom.appendTo($parent);
   });
+};
+
+// Function5: 動態製造 DOM 物件 (create div for partner)
+const createPartnerDiv = (roomId, name) => {
+  // 選取要被插入 child 的 parant element
+  const $parent = $("#match");
+
+  // 新建 div element
+  const $div = $("<div>");
+  $div.addClass("partner");
+  const $a = $("<a>").attr("href", `/chatroom.html?room=${roomId}`).text(name);
+
+  $a.appendTo($div);
+
+  // 把新的 option 加入 parant element
+  $div.appendTo($parent);
 };
 
 // ------------------------------ 前端渲染區塊 --------------------------------
@@ -162,13 +178,13 @@ $("#btnConnect").click(function (e) {
     console.log(`You've join ${roomId} room`);
   });
 
-  // TODO: 房間的廣播
+  // 房間的廣播
   socket.on("room-broadcast", (msg) => {
     console.log(msg);
     if (msg.system) {
-      $("ul").append(`<li>${msg.system}: ${msg.message}</li>`);
+      $("ul.message").append(`<li>${msg.system}: ${msg.message}</li>`);
     } else {
-      $("ul").append(
+      $("ul.message").append(
         `<li>${msg.userName}: ${msg.message} ----- ${msg.timestamp}</li>`
       );
     }
@@ -188,10 +204,13 @@ $("#btnBuild").click(function (e) {
   const params = new URLSearchParams(window.location.search);
   const roomId = params.get("room");
 
-  // 檢查網址上是否有帶 roomId
+  // TODO: 檢查網址上是否有帶 roomId (如何抓和不同的使用者的 room id)
   if (roomId) {
     // 可以直接傳送加入聊天室訊息
     socket.emit("join-room", roomId);
+
+    const userName = $("#condidates option:selected").text();
+    createPartnerDiv(roomId, userName);
   } else {
     // 告訴 server 我想要建立聊天室
     socket.emit("create-room");
