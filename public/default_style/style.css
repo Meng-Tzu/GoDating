@@ -69,6 +69,8 @@ main section#match {
 }
 main section#chatroom {
   flex: 1 1 500px;
+  display: flex;
+  flex-direction: column;
 }
 main section#chatroom div#dialogue {
   border: gray solid 2px;

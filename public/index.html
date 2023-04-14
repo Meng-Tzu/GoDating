@@ -41,10 +41,9 @@
     <main>
       <section id="match">
         <h3>配對成功</h3>
-        <div class="partner" style="display: none"><a href=""></a></div>
       </section>
       <section id="chatroom">
-        <form action="" method="post">
+        <form id="connection" action="" method="post">
           <label for="name">名字:</label>
           <select name="users" id="users">
             <option value="" class="user" style="display: none"></option>
@@ -52,12 +51,27 @@
           <button type="submit" id="btnConnect">connect</button>
         </form>
 
-        <form action="" method="post">
+        <form id="short-list" action="" method="post">
           <label for="name">想跟誰配對:</label>
           <select name="condidates" id="condidates">
             <option value="" class="condidate" style="display: none"></option>
           </select>
           <button type="submit" id="btnLike">Like!</button>
+        </form>
+
+        <h2 class="other-side" style="display: none"></h2>
+        <div id="dialogue" style="display: none">
+          <ul class="message" style="list-style-type: none"></ul>
+        </div>
+
+        <form id="text-msg" action="" method="post" style="display: none">
+          <input type="text" name="message" id="message" placeholder="訊息" />
+          <button type="submit" id="btnText">Send</button>
+        </form>
+
+        <form id="picture-msg" action="" method="post" style="display: none">
+          <input type="file" id="picture" accept="image/*" />
+          <button type="submit" id="btnFile">上傳檔案</button>
         </form>
       </section>
       <section id="current">

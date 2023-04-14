@@ -87,8 +87,11 @@ main {
     flex-direction: column;
     align-items: center;
   }
+
   section#chatroom {
     flex: 1 1 500px;
+    display: flex;
+    flex-direction: column;
     // border: 1px solid rgb(255, 187, 0);
 
     div#dialogue {
