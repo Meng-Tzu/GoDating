@@ -82,10 +82,10 @@ const searchAllFromChatting = async () => {
   const searchResponse = await client.search({
     index: indexName,
     body: {
-      sort: [{ time: { order: "desc" } }],
       query: {
         match_all: {},
       },
+      sort: [{ time: { order: "desc" } }],
     },
   });
 
@@ -101,7 +101,6 @@ const searchKeywordFromChatting = async (keyword) => {
   const searchResponse = await client.search({
     index: indexName,
     body: {
-      sort: [{ time: "desc" }],
       query: {
         multi_match: {
           query: keyword,
@@ -111,6 +110,7 @@ const searchKeywordFromChatting = async (keyword) => {
           fuzziness: 2,
           prefix_length: 3,
         },
+        sort: [{ time: { order: "desc" } }],
       },
     },
   });
