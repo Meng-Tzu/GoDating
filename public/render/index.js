@@ -30,7 +30,7 @@ const createUserOption = (users, elementName) => {
 };
 
 // Function3: 動態製造 DOM 物件 (create option for candidate)
-const createCandidateOption = (users, group, elementName) => {
+const createCandidateOption = (candidates, elementName) => {
   // 選擇要當模板的 element tag
   const $userTemplete = $(`.${elementName}`);
 
@@ -38,16 +38,19 @@ const createCandidateOption = (users, group, elementName) => {
   const $parent = $(`#${elementName}s`);
 
   // 依據 group array 的長度，產生多少個選項
-  group.forEach((id) => {
+  for (const candidateId in candidates) {
     // 複製出一個下拉式選單的 option element tag
     const $newDom = $userTemplete.clone();
 
     // 把新的 option 的 value 和 text 改掉
-    $newDom.attr("value", id).text(users[id]).css("display", "inline");
+    $newDom
+      .attr("value", candidateId)
+      .text(candidates[candidateId])
+      .css("display", "inline");
 
     // 把新的 option 加入 parant element
     $newDom.appendTo($parent);
-  });
+  }
 };
 
 // Function4: 動態製造 DOM 物件 (create div for partner)
@@ -188,59 +191,25 @@ $("#btnConnect").click(function (e) {
   socket.on("user-connect", async (id) => {
     console.log("open connection to server");
 
-    // 取得所有連線者的候選人名單
-    const candidatesUrl = `/api/1.0/user/matchcandidate`;
-    const userCandidateList = await getApi(candidatesUrl);
-    const userIdCandidateIdPair = {}; // {id: candidateList}
-    userCandidateList.forEach((userObj) => {
-      userIdCandidateIdPair[userObj.id] = userObj.candidateIdList;
-    });
-    // console.log("userIdCandidateIdPair", userIdCandidateIdPair);
+    // 取得特定使用者的候選人名單
+    const candidatesUrl = `/api/1.0/user/candidate`;
+    let fetchOption = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "",
+    };
+    fetchOption.body = JSON.stringify({ userid: id });
+
+    const userCandidateList = await getApi(candidatesUrl, fetchOption);
 
     // 動態產生下拉式選單的選項
-    (async () => {
+    (() => {
       // 取得該連線者的候選人名單
-      const certainCandidateList = userIdCandidateIdPair[id];
+      const certainCandidateList = userCandidateList[0][id];
 
       // 產生想跟誰建立聊天室的下拉選單
-      await createCandidateOption(
-        userIdNicknamePair,
-        certainCandidateList,
-        "condidate"
-      );
-
-      // 產生傳送文字訊息的下拉選單
-      await createCandidateOption(
-        userIdNicknamePair,
-        certainCandidateList,
-        "msgreceiver"
-      );
-
-      // 產生傳送檔案的下拉選單
-      await createCandidateOption(
-        userIdNicknamePair,
-        certainCandidateList,
-        "filereceiver"
-      );
+      createCandidateOption(certainCandidateList, "condidate");
     })();
-  });
-
-  // FIXME: 告訴使用者已經創建該聊天室 (需要這樣避免跳轉頁面嗎?)
-  socket.on("create-room-message", (roomId) => {
-    // 取得當前網址
-    const currentUrl = window.location.href;
-
-    // 新增 query parameters
-    const newUrl = currentUrl + `?room=${roomId}`;
-
-    // 修改網址而不跳轉頁面
-    window.history.pushState({}, "", newUrl);
-    console.log(`You've create ${roomId} room`);
-  });
-
-  // 告訴使用者已經加入聊天室
-  socket.on("join-room-message", (roomId) => {
-    console.log(`You've join ${roomId} room`);
   });
 
   // 房間的廣播
