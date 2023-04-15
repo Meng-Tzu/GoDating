@@ -53,7 +53,34 @@ const createCandidateOption = (candidates, elementName) => {
   }
 };
 
-// Function4: 動態製造 DOM 物件 (create div for partner)
+// Function4: 動態製造 DOM 物件 (create option for suitor)
+const createSuitorOption = (suitorId, suitorName) => {
+  // 選擇要當模板的 element tag
+  const $userTemplete = $(`.suitor`);
+
+  // 選取要被插入 child 的 parant element
+  const $parent = $("#suitors");
+
+  // 新建 option element
+  const $option = $("<option>");
+
+  // 把新的 option 的 value 和 text 改掉
+  $option
+    .addClass("suitor")
+    .attr("value", suitorId)
+    .text(suitorName)
+    .css("display", "inline");
+
+  // 把新的 button 加入 parant element
+  $option.appendTo($parent);
+};
+
+// TODO: Function5: 動態刪除 DOM 物件 (delete option for candidate)
+const deleteCandidateOption = (candidateId) => {
+  $(`.condidate[value="${candidateId}"]`).remove();
+};
+
+// Function6: 動態製造 DOM 物件 (create div for partner)
 const createPartnerDiv = (roomId, candidateId, candidateName) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#match");
@@ -70,7 +97,7 @@ const createPartnerDiv = (roomId, candidateId, candidateName) => {
   $button.appendTo($parent);
 };
 
-// Function5: 點擊特定 partner 開啟聊天室
+// Function7: 點擊特定 partner 開啟聊天室
 const openChatroom = function ($this) {
   const roomId = $this.attr("id");
   const partnerName = $this.text();
@@ -108,7 +135,7 @@ const openChatroom = function ($this) {
   $("#current h3").text("目前聊天者資訊");
 };
 
-// Function6: [WebSocket] 使用者上傳照片
+// Function8: [WebSocket] 使用者上傳照片
 const upload = (roomId, partnerId, obj) => {
   // console.log("obj:", obj);
   const files = obj.files;
@@ -262,6 +289,19 @@ $("#btnConnect").click(function (e) {
   socket.on("success-be-matched", (msg) => {
     const { userId, condidateId, condidateName, roomId } = msg;
     createPartnerDiv(roomId, condidateId, condidateName);
+  });
+
+  // 新增誰喜歡我的下拉選單
+  socket.on("who-like-me", (msg) => {
+    const { userId, suitorId, suitorName } = msg;
+    createSuitorOption(suitorId, suitorName);
+    deleteCandidateOption(suitorId);
+  });
+
+  // 刪除已選擇過的候選人
+  socket.on("success-send-like-signal", (msg) => {
+    const { userId, condidateId, condidateName } = msg;
+    deleteCandidateOption(condidateId);
   });
 });
 

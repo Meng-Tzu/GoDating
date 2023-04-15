@@ -44,7 +44,7 @@
       </section>
       <section id="chatroom">
         <form id="connection" action="" method="post">
-          <label for="name">名字:</label>
+          <label for="users">名字:</label>
           <select name="users" id="users">
             <option value="" class="user" style="display: none"></option>
           </select>
@@ -52,11 +52,19 @@
         </form>
 
         <form id="short-list" action="" method="post">
-          <label for="name">想跟誰配對:</label>
+          <label for="condidates">想跟誰配對:</label>
           <select name="condidates" id="condidates">
             <option value="" class="condidate" style="display: none"></option>
           </select>
           <button type="submit" id="btnLike">Like!</button>
+        </form>
+
+        <form id="who-like-me" action="" method="post">
+          <label for="suitors">有人喜歡你...</label>
+          <select name="suitors" id="suitors">
+            <option value="" class="suitor" style="display: none"></option>
+          </select>
+          <button type="submit" id="btnLikeToo">Like!</button>
         </form>
 
         <h2 class="other-side" style="display: none"></h2>

@@ -125,7 +125,6 @@ io.on("connection", (socket) => {
     } else {
       // 如果對方尚未喜歡自己，儲存對方的 "who_like_me" 到快取
       await saveWhoLikeMeOfOtherSide(condidateId, userId, userName);
-      // TODO: 把 對方的 "who_like_me" 送回前端
 
       // 從快取把雙方的 "candidate" 刪除彼此
       await deleteCandidateOfUser(userId, condidateId);
@@ -134,6 +133,18 @@ io.on("connection", (socket) => {
       // 存進雙方的 "never_match" 到快取
       await saveNeverMatchOfUser(userId, condidateId);
       await saveNeverMatchOfUser(condidateId, userId);
+
+      // 把自己的資訊送回對方的前端
+      const responseForOtherSide = {
+        userId: condidateId,
+        suitorId: userId,
+        suitorName: userName,
+      };
+      connections[condidateId].socket.emit("who-like-me", responseForOtherSide);
+
+      // 把對方的資訊再次送回給自己的前端
+      const responseForSelf = { userId, condidateId, condidateName };
+      socket.emit("success-send-like-signal", responseForSelf);
 
       console.log(
         `userId#${userId}(${userName}) like userId#${condidateId}(${condidateName})`
