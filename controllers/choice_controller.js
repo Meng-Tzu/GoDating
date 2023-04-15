@@ -40,4 +40,31 @@ const saveWhoLikeMeOfOtherSide = async (
   }
 };
 
-export { getWhoLikeMeOfSelf, saveWhoLikeMeOfOtherSide };
+// 從 cache 刪除 candidate
+const deleteCandidateOfUser = async (userId, candidateId) => {
+  try {
+    if (Cache.ready) {
+      await Cache.hdel(`candidates_of_userid#${userId}`, candidateId);
+    }
+  } catch (error) {
+    console.error(`cannot delete candidates from cache:`, error);
+  }
+};
+
+// 儲存使用者的 "never_match"
+const saveNeverMatchOfUser = async (userId, candidateId) => {
+  try {
+    if (Cache.ready) {
+      await Cache.sadd(`never_match_of_userid#${userId}`, candidateId);
+    }
+  } catch (error) {
+    console.error(`cannot save never_match into cache:`, error);
+  }
+};
+
+export {
+  getWhoLikeMeOfSelf,
+  saveWhoLikeMeOfOtherSide,
+  deleteCandidateOfUser,
+  saveNeverMatchOfUser,
+};

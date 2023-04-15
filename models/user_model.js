@@ -3,6 +3,9 @@ import mysql from "mysql2";
 import dotenv from "dotenv";
 dotenv.config();
 
+// 快取
+import Cache from "../util/cache.js";
+
 // 資料庫的資訊
 export const pool = mysql
   .createPool({
@@ -89,10 +92,60 @@ const getMatchTag1 = async (id) => {
   return result;
 };
 
+// FIXME: candidate 存進 cache (放在 model ??)
+const saveCandidateOfUser = async (match_pair) => {
+  for (const userId in match_pair) {
+    // 要幫每一個候選人加上 nickname
+    for (const candidateId of match_pair[userId]) {
+      // 取得 candidate 的基本資訊
+      const candidateInfo = await getUserInfo1(candidateId);
+
+      try {
+        if (Cache.ready) {
+          await Cache.hset(
+            `candidates_of_userid#${userId}`,
+            candidateId,
+            candidateInfo.nick_name
+          );
+        }
+      } catch (error) {
+        console.error(`cannot save candidates into cache:`, error);
+      }
+    }
+  }
+};
+
+// TODO: candidate 存進 DB
+
+// FIXME: 輸出特定使用者的 candidate (先 cache 後 DB 取出) (應該放在 model ?)
+const getCandidateOfSelf = async (userId) => {
+  try {
+    if (Cache.ready) {
+      const candidateIds = await Cache.hkeys(`candidates_of_userid#${userId}`);
+      const candidateNames = await Cache.hvals(
+        `candidates_of_userid#${userId}`
+      );
+
+      const candidateList = {};
+
+      candidateIds.forEach((id, index) => {
+        candidateList[id] = candidateNames[index];
+      });
+      return candidateList;
+    }
+  } catch (error) {
+    console.error(`cannot get candidates from cache:`, error);
+  }
+};
+
+// TODO: 從 DB 刪除 candidate
+
 export {
   getAllUsers,
   getAllUserIds,
   getUserInfo1,
   getUserDesireAgeRange,
   getMatchTag1,
+  saveCandidateOfUser,
+  getCandidateOfSelf,
 };

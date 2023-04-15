@@ -9,10 +9,12 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 導入 Cache
+// 導入 Cache function
 import {
   getWhoLikeMeOfSelf,
   saveWhoLikeMeOfOtherSide,
+  deleteCandidateOfUser,
+  saveNeverMatchOfUser,
 } from "./controllers/choice_controller.js";
 
 //創建 express 的物件
@@ -89,7 +91,7 @@ io.on("connection", (socket) => {
     socket.emit("user-connect", id);
   });
 
-  // TODO: 監聽到使用者喜歡候選人 (有 bug)
+  // 監聽到使用者喜歡候選人
   socket.on("desired-candidate", async (msg) => {
     const { userId, userName, condidateId, condidateName } = msg;
 
@@ -123,48 +125,20 @@ io.on("connection", (socket) => {
     } else {
       // 如果對方尚未喜歡自己，儲存對方的 "who_like_me" 到快取
       await saveWhoLikeMeOfOtherSide(condidateId, userId, userName);
+      // TODO: 把 對方的 "who_like_me" 送回前端
+
+      // 從快取把雙方的 "candidate" 刪除彼此
+      await deleteCandidateOfUser(userId, condidateId);
+      await deleteCandidateOfUser(condidateId, userId);
+
+      // 存進雙方的 "never_match" 到快取
+      await saveNeverMatchOfUser(userId, condidateId);
+      await saveNeverMatchOfUser(condidateId, userId);
+
       console.log(
         `userId#${userId}(${userName}) like userId#${condidateId}(${condidateName})`
       );
     }
-  });
-
-  // 當有使用者想要建立聊天室
-  socket.on("create-room", () => {
-    const roomId = uuidv4();
-    socket.join(roomId);
-
-    socket.emit("create-room-message", roomId);
-
-    // 取得該 socket 的 id
-    let userId = getKeyByValue(socket);
-    const userName = connections[userId].name;
-    const response = {
-      system: "System Broadcast",
-      userId,
-      userName,
-      message: `${userName} has join this room.`,
-    };
-
-    io.to(roomId).emit("room-broadcast", response);
-  });
-
-  // 當有使用者已經知道聊天室 id 並想加入
-  socket.on("join-room", (roomId) => {
-    socket.join(roomId);
-    socket.emit("join-room-message", roomId);
-
-    // 取得該 socket 的 id
-    let userId = getKeyByValue(socket);
-    const userName = connections[userId].name;
-    const response = {
-      system: "System Broadcast",
-      userId,
-      userName,
-      message: `${userName} has join this room.`,
-    };
-
-    io.to(roomId).emit("room-broadcast", response);
   });
 
   // 當有使用者想傳送訊息到聊天室
