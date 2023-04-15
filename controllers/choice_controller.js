@@ -1,6 +1,6 @@
 import Cache from "../util/cache.js";
 
-// 取得使用者的 who_like_me
+// 取得使用者的 "who_like_me"
 const getWhoLikeMeOfSelf = async (userId, potentialCondidateId) => {
   try {
     if (Cache.ready) {
@@ -18,7 +18,7 @@ const getWhoLikeMeOfSelf = async (userId, potentialCondidateId) => {
   }
 };
 
-// 儲存使用者的 who_like_me
+// 儲存使用者的 "who_like_me"
 const saveWhoLikeMeOfOtherSide = async (
   userId,
   potentialCondidateId,
@@ -40,7 +40,7 @@ const saveWhoLikeMeOfOtherSide = async (
   }
 };
 
-// 從 cache 刪除 candidate
+// 從 cache 刪除 "candidate"
 const deleteCandidateOfUser = async (userId, candidateId) => {
   try {
     if (Cache.ready) {
@@ -62,9 +62,27 @@ const saveNeverMatchOfUser = async (userId, candidateId) => {
   }
 };
 
+// 儲存使用者的 "partners"
+const savePartnerOfUser = async (userId, partnerId, roomId) => {
+  try {
+    if (Cache.ready) {
+      const result = await Cache.hset(
+        `partners_of_userid#${userId}`,
+        partnerId,
+        `${roomId}`
+      );
+      console.log(`successfully save partners of userId#${userId} into cache`);
+      return result;
+    }
+  } catch (error) {
+    console.error(`cannot save partners into cache:`, error);
+  }
+};
+
 export {
   getWhoLikeMeOfSelf,
   saveWhoLikeMeOfOtherSide,
   deleteCandidateOfUser,
   saveNeverMatchOfUser,
+  savePartnerOfUser,
 };

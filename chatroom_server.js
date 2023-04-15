@@ -15,6 +15,7 @@ import {
   saveWhoLikeMeOfOtherSide,
   deleteCandidateOfUser,
   saveNeverMatchOfUser,
+  savePartnerOfUser,
 } from "./controllers/choice_controller.js";
 
 //創建 express 的物件
@@ -91,7 +92,7 @@ io.on("connection", (socket) => {
     socket.emit("user-connect", id);
   });
 
-  // 監聽到使用者喜歡候選人
+  // FIXME: 監聽到使用者喜歡候選人 (對方的 who_like_me 一定不會有自己)
   socket.on("desired-candidate", async (msg) => {
     const { userId, userName, condidateId, condidateName } = msg;
 
@@ -150,6 +151,46 @@ io.on("connection", (socket) => {
         `userId#${userId}(${userName}) like userId#${condidateId}(${condidateName})`
       );
     }
+  });
+
+  // TODO: 監聽到使用者喜歡追求者
+  socket.on("like-suitor", async (msg) => {
+    const { userId, userName, suitorId, suitorName } = msg;
+
+    const roomId = uuidv4();
+
+    // 加入 partners 到 cache
+    await savePartnerOfUser(userId, suitorId, roomId);
+    await savePartnerOfUser(suitorId, userId, roomId);
+
+    // TODO: 從 cache 把自己從對方的 "who_like_me" 刪除
+
+    // TODO: 在 ElasticSearch 建立對話紀錄 index
+
+    const responseForSelf = {
+      userId,
+      partnerId: suitorId,
+      partnerName: suitorName,
+      roomId,
+    };
+
+    const responseForOtherSide = {
+      userId: suitorId,
+      partnerId: userId,
+      partnerName: userName,
+      roomId,
+    };
+
+    // 傳給自己
+    socket.emit("success-match", responseForSelf);
+
+    // 傳給對方
+    connections[suitorId].socket.emit(
+      "success-be-matched",
+      responseForOtherSide
+    );
+
+    console.log(`Successfully match userId#${userId} with userId#${suitorId}`);
   });
 
   // 當有使用者想傳送訊息到聊天室

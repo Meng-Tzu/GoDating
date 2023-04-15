@@ -75,7 +75,7 @@ const createSuitorOption = (suitorId, suitorName) => {
   $option.appendTo($parent);
 };
 
-// TODO: Function5: 動態刪除 DOM 物件 (delete option for candidate)
+// Function5: 動態刪除 DOM 物件 (delete option for candidate)
 const deleteCandidateOption = (candidateId) => {
   $(`.condidate[value="${candidateId}"]`).remove();
 };
@@ -196,7 +196,7 @@ $(".logo").click(function (e) {
 
 let socket = null;
 
-$("#btnConnect").click(function (e) {
+$("#btn-connect").click(function (e) {
   e.preventDefault();
 
   if (socket !== null) {
@@ -281,14 +281,14 @@ $("#btnConnect").click(function (e) {
 
   // 主動配對成功
   socket.on("success-match", (msg) => {
-    const { userId, condidateId, condidateName, roomId } = msg;
-    createPartnerDiv(roomId, condidateId, condidateName);
+    const { userId, partnerId, partnerName, roomId } = msg;
+    createPartnerDiv(roomId, partnerId, partnerName);
   });
 
   // 被動配對成功
   socket.on("success-be-matched", (msg) => {
-    const { userId, condidateId, condidateName, roomId } = msg;
-    createPartnerDiv(roomId, condidateId, condidateName);
+    const { userId, partnerId, partnerName, roomId } = msg;
+    createPartnerDiv(roomId, partnerId, partnerName);
   });
 
   // 新增誰喜歡我的下拉選單
@@ -306,7 +306,7 @@ $("#btnConnect").click(function (e) {
 });
 
 // 把想配對的 candidate 資訊送給 server 儲存
-$("#btnLike").click(function (e) {
+$("#btn-like").click(function (e) {
   e.preventDefault();
 
   if (socket === null) {
@@ -324,8 +324,27 @@ $("#btnLike").click(function (e) {
   socket.emit("desired-candidate", messages);
 });
 
+// 也喜歡對方
+$("#btn-like-too").click(function (e) {
+  e.preventDefault();
+
+  if (socket === null) {
+    alert("Please connect first");
+    return;
+  }
+
+  const userId = $("#users option:selected").val();
+  const userName = $("#users option:selected").text();
+  const suitorId = $("#suitors option:selected").val();
+  const suitorName = $("#suitors option:selected").text();
+
+  const messages = { userId, userName, suitorId, suitorName };
+
+  socket.emit("like-suitor", messages);
+});
+
 // 傳送文字
-$("#btnText").click(function (e) {
+$("#btn-text").click(function (e) {
   e.preventDefault();
 
   if (socket === null) {
@@ -350,10 +369,10 @@ $("#btnText").click(function (e) {
   socket.emit("message", messages);
 });
 
-// TODO: 上傳圖片 (改成上傳到 S3)
+// FIXME: 上傳圖片 (改成上傳到 S3)
 const $picture = $("#picture");
 
-$("#btnFile").click(function (e) {
+$("#btn-file").click(function (e) {
   e.preventDefault();
 
   if (socket === null) {
