@@ -8,7 +8,7 @@ const getApi = async (url, option) => {
   return response.data;
 };
 
-// Function2: 動態製造 DOM 物件 (create option for user) 整合
+// FIXME: Function2: 動態製造 DOM 物件 (create option for user) (整合)
 const createUserOption = (users, elementName) => {
   // 選擇要當模板的 element tag
   const $userTemplete = $(`.${elementName}`);
@@ -29,21 +29,22 @@ const createUserOption = (users, elementName) => {
   }
 };
 
-// Function3: 動態製造 DOM 物件 (create option for candidate)
+// Function3: 動態製造 DOM 物件 (create options for candidate)
 const createCandidateOption = (candidates, elementName) => {
   // 選擇要當模板的 element tag
-  const $userTemplete = $(`.${elementName}`);
+  const $userTemplete = $(`.templete-${elementName}`);
 
   // 選取要被插入 child 的 parant element
   const $parent = $(`#${elementName}s`);
 
-  // 依據 group array 的長度，產生多少個選項
+  // 依據 candidates array 的長度，產生多少個選項
   for (const candidateId in candidates) {
     // 複製出一個下拉式選單的 option element tag
     const $newDom = $userTemplete.clone();
 
     // 把新的 option 的 value 和 text 改掉
     $newDom
+      .addClass(`${elementName}`)
       .attr("value", candidateId)
       .text(candidates[candidateId])
       .css("display", "inline");
@@ -55,9 +56,6 @@ const createCandidateOption = (candidates, elementName) => {
 
 // Function4: 動態製造 DOM 物件 (create option for suitor)
 const createSuitorOption = (suitorId, suitorName) => {
-  // 選擇要當模板的 element tag
-  const $userTemplete = $(`.suitor`);
-
   // 選取要被插入 child 的 parant element
   const $parent = $("#suitors");
 
@@ -220,6 +218,7 @@ $("#btn-connect").click(function (e) {
 
     // 取得特定使用者的候選人名單
     const candidatesUrl = `/api/1.0/user/candidate`;
+    const suitorsUrl = `/api/1.0/user/suitor`;
     let fetchOption = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -228,14 +227,19 @@ $("#btn-connect").click(function (e) {
     fetchOption.body = JSON.stringify({ userid: id });
 
     const userCandidateList = await getApi(candidatesUrl, fetchOption);
+    const userSuitorList = await getApi(suitorsUrl, fetchOption);
 
     // 動態產生下拉式選單的選項
     (() => {
       // 取得該連線者的候選人名單
       const certainCandidateList = userCandidateList[0][id];
+      const certainSuitorList = userSuitorList[0][id];
 
-      // 產生想跟誰建立聊天室的下拉選單
+      // 產生想跟誰配對的下拉選單
       createCandidateOption(certainCandidateList, "condidate");
+
+      // 產生有人喜歡你的下拉選單
+      createCandidateOption(certainSuitorList, "suitor");
     })();
   });
 
@@ -280,9 +284,29 @@ $("#btn-connect").click(function (e) {
   });
 
   // 主動配對成功
-  socket.on("success-match", (msg) => {
+  socket.on("success-match", async (msg) => {
     const { userId, partnerId, partnerName, roomId } = msg;
     createPartnerDiv(roomId, partnerId, partnerName);
+
+    // 重新產生有人喜歡你的下拉選單
+    const suitorsUrl = `/api/1.0/user/suitor`;
+    let fetchOption = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "",
+    };
+    fetchOption.body = JSON.stringify({ userid: userId });
+
+    const userSuitorList = await getApi(suitorsUrl, fetchOption);
+    const certainSuitorList = userSuitorList[0][id];
+    if (!certainSuitorList) {
+      // 如果使用者目前沒有追求者，清空下拉選單
+      $(".suitor").remove();
+    } else {
+      // 如果使用者目前還有追求者，更新下拉選單
+      $(".suitor").remove();
+      createCandidateOption(certainSuitorList, "suitor");
+    }
   });
 
   // 被動配對成功
