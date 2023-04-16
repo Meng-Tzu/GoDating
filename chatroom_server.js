@@ -13,10 +13,14 @@ const __dirname = path.dirname(__filename);
 import {
   getWhoLikeMeOfSelf,
   saveWhoLikeMeOfOtherSide,
+  deleteSuitorOfUser,
   deleteCandidateOfUser,
   saveNeverMatchOfUser,
   savePartnerOfUser,
 } from "./controllers/choice_controller.js";
+
+// 導入 ElasticSearch function
+import { initChatIndexOfES } from "./models/chat_record_model.js";
 
 //創建 express 的物件
 const app = express();
@@ -29,7 +33,7 @@ app.use("/", express.static("public/images"));
 // 可使用的 request body 格式
 app.use(express.json());
 
-// TODO: API routes (可否共用前面的 path ??)
+// FIXME: API routes (可否共用前面的 path ??)
 import { userRouter } from "./routes/user_route.js";
 app.use("/api/1.0", [userRouter]);
 
@@ -92,80 +96,54 @@ io.on("connection", (socket) => {
     socket.emit("user-connect", id);
   });
 
-  // FIXME: 監聽到使用者喜歡候選人 (對方的 who_like_me 一定不會有自己)
+  // 監聽到使用者喜歡候選人
   socket.on("desired-candidate", async (msg) => {
     const { userId, userName, condidateId, condidateName } = msg;
 
-    // 查看 Cache 內使用者的 "who_like_me" 內有沒有存在此候選人
-    const desiredCandidate = await getWhoLikeMeOfSelf(userId, condidateId);
+    // 對方尚未喜歡自己，把自己儲存到對方的 "who_like_me" 快取
+    await saveWhoLikeMeOfOtherSide(condidateId, userId, userName);
 
-    if (desiredCandidate) {
-      const roomId = uuidv4();
+    // 從快取把雙方的 "candidate" 刪除彼此
+    await deleteCandidateOfUser(userId, condidateId);
+    await deleteCandidateOfUser(condidateId, userId);
 
-      const responseForSelf = { userId, condidateId, condidateName, roomId };
+    // 存進雙方的 "never_match" 到快取
+    await saveNeverMatchOfUser(userId, condidateId);
+    await saveNeverMatchOfUser(condidateId, userId);
 
-      const responseForOtherSide = {
-        userId: condidateId,
-        condidateId: userId,
-        condidateName: userName,
-        roomId,
-      };
+    // 把自己的資訊送回對方的前端
+    const responseForOtherSide = {
+      userId: condidateId,
+      suitorId: userId,
+      suitorName: userName,
+    };
+    connections[condidateId].socket.emit("who-like-me", responseForOtherSide);
 
-      // 傳給自己
-      socket.emit("success-match", responseForSelf);
+    // 把對方的資訊再次送回給自己的前端
+    const responseForSelf = { userId, condidateId, condidateName };
+    socket.emit("success-send-like-signal", responseForSelf);
 
-      // 傳給對方
-      connections[condidateId].socket.emit(
-        "success-be-matched",
-        responseForOtherSide
-      );
-
-      console.log(
-        `Successfully match userId#${userId} with userId#${condidateId}`
-      );
-    } else {
-      // 如果對方尚未喜歡自己，儲存對方的 "who_like_me" 到快取
-      await saveWhoLikeMeOfOtherSide(condidateId, userId, userName);
-
-      // 從快取把雙方的 "candidate" 刪除彼此
-      await deleteCandidateOfUser(userId, condidateId);
-      await deleteCandidateOfUser(condidateId, userId);
-
-      // 存進雙方的 "never_match" 到快取
-      await saveNeverMatchOfUser(userId, condidateId);
-      await saveNeverMatchOfUser(condidateId, userId);
-
-      // 把自己的資訊送回對方的前端
-      const responseForOtherSide = {
-        userId: condidateId,
-        suitorId: userId,
-        suitorName: userName,
-      };
-      connections[condidateId].socket.emit("who-like-me", responseForOtherSide);
-
-      // 把對方的資訊再次送回給自己的前端
-      const responseForSelf = { userId, condidateId, condidateName };
-      socket.emit("success-send-like-signal", responseForSelf);
-
-      console.log(
-        `userId#${userId}(${userName}) like userId#${condidateId}(${condidateName})`
-      );
-    }
+    console.log(
+      `userId#${userId}(${userName}) like userId#${condidateId}(${condidateName})`
+    );
   });
 
-  // TODO: 監聽到使用者喜歡追求者
+  // 監聽到使用者喜歡追求者
   socket.on("like-suitor", async (msg) => {
     const { userId, userName, suitorId, suitorName } = msg;
 
     const roomId = uuidv4();
 
-    // 加入 partners 到 cache
-    await savePartnerOfUser(userId, suitorId, roomId);
-    await savePartnerOfUser(suitorId, userId, roomId);
+    // 從 cache 把對方從自己的 "who_like_me" 刪除
+    await deleteSuitorOfUser(userId, suitorId);
 
-    // TODO: 從 cache 把自己從對方的 "who_like_me" 刪除
+    // 在 ElasticSearch 建立對話紀錄 index
+    const indexId = `chatrecord-${userId}-${suitorId}`;
+    await initChatIndexOfES(indexId);
 
-    // TODO: 在 ElasticSearch 建立對話紀錄 index
+    // 加入 roomId, indexId 到 cache 的 "partners"
+    await savePartnerOfUser(userId, suitorId, roomId, indexId);
+    await savePartnerOfUser(suitorId, userId, roomId, indexId);
 
     const responseForSelf = {
       userId,
