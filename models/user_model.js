@@ -16,7 +16,7 @@ export const pool = mysql
   })
   .promise();
 
-// TODO: 取得 DB 裡的所有使用者 id + nick_name + coordinate
+// FIXME: 取得 DB 裡的所有使用者 id + nick_name + coordinate
 const getAllUsers = async () => {
   const queryStr = `
   SELECT UM.id, UM.nick_name, UD.coordinate
@@ -117,7 +117,7 @@ const saveCandidateOfUser = async (match_pair) => {
 
 // TODO: candidate 存進 DB
 
-// FIXME: 輸出特定使用者的 candidate (先 cache 後 DB 取出) (應該放在 model ?)
+// FIXME: 輸出特定使用者的 "candidate" (先 cache 後 DB 取出) (應該放在 model ?)
 const getCandidateOfSelf = async (userId) => {
   try {
     if (Cache.ready) {
@@ -138,6 +138,27 @@ const getCandidateOfSelf = async (userId) => {
   }
 };
 
+// FIXME: 輸出特定使用者的 "who_like_me" (先 cache 後 DB 取出) (應該放在 model ?)
+const getSuitorOfSelf = async (userId) => {
+  try {
+    if (Cache.ready) {
+      const suitorIds = await Cache.hkeys(`who_like_me_of_userid#${userId}`);
+      const suitorNames = await Cache.hvals(`who_like_me_of_userid#${userId}`);
+
+      const suitorList = {};
+
+      suitorIds.forEach((id, index) => {
+        suitorList[id] = suitorNames[index];
+      });
+      return suitorList;
+    }
+  } catch (error) {
+    // cache 裡沒有這個使用者的 "who_like_me"
+    console.error(`cannot get suitors from cache:`, error);
+    return {};
+  }
+};
+
 // TODO: 從 DB 刪除 candidate
 
 export {
@@ -148,4 +169,5 @@ export {
   getMatchTag1,
   saveCandidateOfUser,
   getCandidateOfSelf,
+  getSuitorOfSelf,
 };
