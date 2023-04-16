@@ -1,16 +1,16 @@
 import { client } from "../util/util.js";
 
-// FIXME: 清除 chatting index 內的所有資料 (針對不同聊天室處理)
-const deleteChatRecordFromElasticsearch = async () => {
-  const indexName = `chatting`;
+// FIXME: 清除 chatting index 內的所有資料
+const deleteChatIndexFromES = async (indexId) => {
+  const indexName = `chat#${indexId}`;
 
   await client.indices.delete({ index: indexName, ignore_unavailable: true });
   console.log(`delete index "${indexName}" successfully`);
 };
 
-// FIXME: 在 elasticsearch 創建 index 並設定規則 (針對不同聊天室處理)
-const initElasticsearch = async () => {
-  const indexName = `chatting`;
+// FIXME: 在 elasticsearch 創建 index 並設定規則
+const initChatIndexOfES = async (indexId) => {
+  const indexName = `chat#${indexId}`;
 
   await client.indices.create({
     index: indexName,
@@ -48,19 +48,16 @@ const initElasticsearch = async () => {
   console.log(`init index "${indexName}" successfully`);
 };
 
-// (async () => {
-//   await initElasticsearch();
-// })();
-
-// TODO: 將聊天紀錄存入 Elasticsearch 中 (針對不同聊天室處理)
+// FIXME: 將聊天紀錄存入 ES 中
 const saveChatRecordToES = async (
+  indexId,
   userId,
   userName,
   message,
   timestamp,
   time
 ) => {
-  const indexName = `chatting`;
+  const indexName = `chat#${indexId}`;
 
   // TODO: 儲存格式
   const result = await client.index({
@@ -80,9 +77,9 @@ const saveChatRecordToES = async (
   return result;
 };
 
-// TODO: 搜尋所有 chatting 內的對話紀錄
-const searchAllFromChatting = async () => {
-  const indexName = `chatting`;
+// FIXME: 搜尋所有 chatting 內的對話紀錄
+const searchAllChatFromES = async (indexId) => {
+  const indexName = `chat#${indexId}`;
 
   const searchResponse = await client.search({
     index: indexName,
@@ -99,9 +96,9 @@ const searchAllFromChatting = async () => {
   return messages;
 };
 
-// TODO: 搜尋 elasticSearch 的 chatting 特定關鍵字
-const searchKeywordFromChatting = async (keyword) => {
-  const indexName = `chatting`;
+// FIXME: 搜尋 elasticSearch 的 chatting 特定關鍵字
+const searchKeywordFromES = async (indexId, keyword) => {
+  const indexName = `chat#${indexId}`;
 
   const searchResponse = await client.search({
     index: indexName,
@@ -125,10 +122,14 @@ const searchKeywordFromChatting = async (keyword) => {
   return messages;
 };
 
+// (async () => {
+//   await deleteChatIndexFromES();
+// })();
+
 export {
-  deleteChatRecordFromElasticsearch,
-  initElasticsearch,
+  deleteChatIndexFromES,
+  initChatIndexOfES,
   saveChatRecordToES,
-  searchAllFromChatting,
-  searchKeywordFromChatting,
+  searchAllChatFromES,
+  searchKeywordFromES,
 };
