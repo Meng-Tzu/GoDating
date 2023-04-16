@@ -2,7 +2,7 @@ import { client } from "../util/util.js";
 
 // FIXME: 清除 chatting index 內的所有資料 (針對不同聊天室處理)
 const deleteChatRecordFromElasticsearch = async () => {
-  const indexName = "test1";
+  const indexName = `chatting`;
 
   await client.indices.delete({ index: indexName, ignore_unavailable: true });
   console.log(`delete index "${indexName}" successfully`);
@@ -10,7 +10,7 @@ const deleteChatRecordFromElasticsearch = async () => {
 
 // FIXME: 在 elasticsearch 創建 index 並設定規則 (針對不同聊天室處理)
 const initElasticsearch = async () => {
-  const indexName = "test1";
+  const indexName = `chatting`;
 
   await client.indices.create({
     index: indexName,
@@ -60,7 +60,7 @@ const saveChatRecordToES = async (
   timestamp,
   time
 ) => {
-  const indexName = "test1";
+  const indexName = `chatting`;
 
   // TODO: 儲存格式
   const result = await client.index({
@@ -82,7 +82,7 @@ const saveChatRecordToES = async (
 
 // TODO: 搜尋所有 chatting 內的對話紀錄
 const searchAllFromChatting = async () => {
-  const indexName = "test1";
+  const indexName = `chatting`;
 
   const searchResponse = await client.search({
     index: indexName,
@@ -90,7 +90,7 @@ const searchAllFromChatting = async () => {
       query: {
         match_all: {},
       },
-      sort: [{ time: { order: "desc" } }],
+      sort: [{ time: { order: "asc" } }],
     },
   });
 
@@ -101,7 +101,7 @@ const searchAllFromChatting = async () => {
 
 // TODO: 搜尋 elasticSearch 的 chatting 特定關鍵字
 const searchKeywordFromChatting = async (keyword) => {
-  const indexName = "test1";
+  const indexName = `chatting`;
 
   const searchResponse = await client.search({
     index: indexName,
@@ -111,7 +111,7 @@ const searchKeywordFromChatting = async (keyword) => {
           query: keyword,
           type: "most_fields",
           fields: ["message"],
-          operator: "AND",
+          operator: "OR",
           fuzziness: 2,
           prefix_length: 3,
         },
