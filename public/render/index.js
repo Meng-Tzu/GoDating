@@ -95,7 +95,34 @@ const createPartnerDiv = (roomId, candidateId, candidateName) => {
   $button.appendTo($parent);
 };
 
-// Function7: 點擊特定 partner 開啟聊天室
+// TODO: Function7: 動態製造 DOM 物件 (create div for all partners) (如何取得 partner name ??)
+const createAllPartnerDiv = (partners, userIdNicknamePair) => {
+  // 選取要被插入 child 的 parant element
+  const $parent = $("#match");
+
+  for (const partnerId in partners) {
+    let chatroomInfo = partners[partnerId];
+    chatroomInfo = JSON.parse(chatroomInfo);
+
+    const roomId = chatroomInfo[0];
+    const chatIndexId = chatroomInfo[1];
+    const partnerName = userIdNicknamePair[partnerId];
+
+    // 新建 button element
+    const $button = $("<button>");
+
+    $button
+      .addClass(`partner ${partnerId}`)
+      .attr("id", roomId)
+      .attr("onClick", `openChatroom($(this))`)
+      .text(partnerName);
+
+    // 把新的 button 加入 parant element
+    $button.appendTo($parent);
+  }
+};
+
+// TODO: Function8: 點擊特定 partner 開啟聊天室
 const openChatroom = function ($this) {
   const roomId = $this.attr("id");
   const partnerName = $this.text();
@@ -133,7 +160,7 @@ const openChatroom = function ($this) {
   $("#current h3").text("目前聊天者資訊");
 };
 
-// Function8: [WebSocket] 使用者上傳照片
+// Function9: [WebSocket] 使用者上傳照片
 const upload = (roomId, partnerId, obj) => {
   // console.log("obj:", obj);
   const files = obj.files;
@@ -240,6 +267,8 @@ $("#btn-connect").click(function (e) {
 
       // 產生有人喜歡你的下拉選單
       createCandidateOption(certainSuitorList, "suitor");
+
+      // TODO: 產生已配對成功的 partner 有誰
     })();
   });
 
