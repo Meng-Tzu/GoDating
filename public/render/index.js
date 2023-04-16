@@ -111,7 +111,7 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
     const $button = $("<button>");
 
     $button
-      .addClass(`partner ${partnerId}`)
+      .addClass(`partner ${partnerId} ${chatIndexId}`)
       .attr("id", roomId)
       .attr("onClick", `openChatroom($(this))`)
       .text(partnerName);
@@ -122,7 +122,7 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
 };
 
 // TODO: Function8: 點擊特定 partner 開啟聊天室
-const openChatroom = function ($this) {
+const openChatroom = async function ($this) {
   const roomId = $this.attr("id");
   const partnerName = $this.text();
   const classNames = $this.attr("class");
@@ -130,7 +130,7 @@ const openChatroom = function ($this) {
   const partnerId = classNames.split(" ")[1];
   // console.log("partnerId", partnerId, typeof partnerId);
 
-  // FIXME: 取得目前網址 (在不同 partner 間做 room id 切換)
+  // FIXME: 取得目前網址 (每次都要先清空對話框內容???)
   const currentUrl = window.location.href;
   let indexUrl;
   let newUrl;
@@ -138,9 +138,11 @@ const openChatroom = function ($this) {
     // 如果原本在別的聊天室，就要替換掉 room id
     indexUrl = currentUrl.split("?room=")[0];
     newUrl = indexUrl + `?room=${roomId}`;
+    $("ul.message").children().remove();
   } else {
     // 如果在首頁，直接加 room id
     newUrl = currentUrl + `?room=${roomId}`;
+    $("ul.message").children().remove();
   }
 
   // 不跳轉網址
@@ -157,6 +159,28 @@ const openChatroom = function ($this) {
   $("#text-msg").css("display", "block");
   $("#picture-msg").css("display", "block");
   $("#current h3").text("目前聊天者資訊");
+
+  // FIXME: 取得先前的對話紀錄 (改用 socketIO 取得??)
+  const chatIndexId = classNames.split(" ")[2];
+
+  const partnersUrl = `/api/1.0/chat/allrecord`;
+  let fetchOption = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: "",
+  };
+  fetchOption.body = JSON.stringify({ indexId: chatIndexId });
+
+  const chatRecord = await getApi(partnersUrl, fetchOption);
+
+  if (chatRecord) {
+    chatRecord.forEach((record) => {
+      const { userName, message, timestamp } = record;
+      $("ul.message").append(
+        `<li>${userName}: ${message} ----- ${timestamp}</li>`
+      );
+    });
+  }
 };
 
 // Function9: [WebSocket] 使用者上傳照片
@@ -263,7 +287,6 @@ $("#btn-connect").click(function (e) {
       const certainCandidateList = userCandidateList[0][id];
       const certainSuitorList = userSuitorList[0][id];
       const certainPartnerList = userPartnerList[0];
-      console.log("certainPartnerList", certainPartnerList);
 
       // 產生想跟誰配對的下拉選單
       createCandidateOption(certainCandidateList, "condidate");
