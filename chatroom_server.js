@@ -17,10 +17,14 @@ import {
   deleteCandidateOfUser,
   saveNeverMatchOfUser,
   savePartnerOfUser,
+  getPartnerOfUser,
 } from "./controllers/choice_controller.js";
 
 // 導入 ElasticSearch function
-import { initChatIndexOfES } from "./models/chat_record_model.js";
+import {
+  initChatIndexOfES,
+  saveChatRecordToES,
+} from "./models/chat_record_model.js";
 
 //創建 express 的物件
 const app = express();
@@ -172,7 +176,7 @@ io.on("connection", (socket) => {
   });
 
   // 當有使用者想傳送訊息到聊天室
-  socket.on("message", (msg) => {
+  socket.on("message", async (msg) => {
     const { partnerId, roomId, message } = msg;
 
     // FIXME: 改從前端拿 user id ??
@@ -184,10 +188,25 @@ io.on("connection", (socket) => {
     connections[partnerId].socket.join(roomId);
 
     // 傳送訊息時間
+    const msOfTime = Date.now();
     const time = new Date();
     const timestamp = time.toLocaleString("en-US", {
       timeZone: "Asia/Taipei",
     });
+
+    // 從快取的 "partner" 拿到 chat index
+    const chatroomInfo = await getPartnerOfUser(userId, partnerId);
+    const chatIndexId = chatroomInfo[1];
+
+    // 把訊息存入 ES
+    await saveChatRecordToES(
+      chatIndexId,
+      userId,
+      userName,
+      message,
+      timestamp,
+      msOfTime
+    );
 
     const response = { roomId, userName, message, timestamp };
 

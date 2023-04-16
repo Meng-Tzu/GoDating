@@ -83,6 +83,23 @@ const savePartnerOfUser = async (userId, partnerId, roomId, indexId) => {
   }
 };
 
+// 取得使用者的 "partners"
+const getPartnerOfUser = async (userId, partnerId) => {
+  try {
+    if (Cache.ready) {
+      let result = await Cache.hget(`partners_of_userid#${userId}`, partnerId);
+
+      console.log(`successfully get partners of userId#${userId} from cache`);
+
+      result = JSON.parse(result);
+
+      return result;
+    }
+  } catch (error) {
+    console.error(`cannot get partners from cache:`, error);
+  }
+};
+
 export {
   getWhoLikeMeOfSelf,
   saveWhoLikeMeOfOtherSide,
@@ -90,4 +107,5 @@ export {
   deleteCandidateOfUser,
   saveNeverMatchOfUser,
   savePartnerOfUser,
+  getPartnerOfUser,
 };
