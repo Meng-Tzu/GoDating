@@ -2,7 +2,7 @@ import { client } from "../util/util.js";
 
 // FIXME: 清除 chatting index 內的所有資料
 const deleteChatIndexFromES = async (indexId) => {
-  const indexName = `chat#${indexId}`;
+  const indexName = indexId;
 
   await client.indices.delete({ index: indexName, ignore_unavailable: true });
   console.log(`delete index "${indexName}" successfully`);
@@ -10,7 +10,7 @@ const deleteChatIndexFromES = async (indexId) => {
 
 // FIXME: 在 elasticsearch 創建 index 並設定規則
 const initChatIndexOfES = async (indexId) => {
-  const indexName = `chat#${indexId}`;
+  const indexName = indexId;
 
   await client.indices.create({
     index: indexName,
@@ -57,9 +57,9 @@ const saveChatRecordToES = async (
   timestamp,
   time
 ) => {
-  const indexName = `chat#${indexId}`;
+  const indexName = indexId;
 
-  // TODO: 儲存格式
+  // 儲存格式
   const result = await client.index({
     index: indexName,
     body: {
@@ -79,7 +79,7 @@ const saveChatRecordToES = async (
 
 // FIXME: 搜尋所有 chatting 內的對話紀錄
 const searchAllChatFromES = async (indexId) => {
-  const indexName = `chat#${indexId}`;
+  const indexName = indexId;
 
   const searchResponse = await client.search({
     index: indexName,
@@ -98,7 +98,7 @@ const searchAllChatFromES = async (indexId) => {
 
 // FIXME: 搜尋 elasticSearch 的 chatting 特定關鍵字
 const searchKeywordFromES = async (indexId, keyword) => {
-  const indexName = `chat#${indexId}`;
+  const indexName = indexId;
 
   const searchResponse = await client.search({
     index: indexName,
