@@ -159,6 +159,27 @@ const getSuitorOfSelf = async (userId) => {
   }
 };
 
+// FIXME: 取得使用者所有的 "partners" (先 cache 後 DB 取出) (應該放在 model ?)
+const getAllPartnerOfUser = async (userId) => {
+  try {
+    if (Cache.ready) {
+      const partnerIds = await Cache.hkeys(`partners_of_userid#${userId}`);
+      const chatroomInfo = await Cache.hvals(`partners_of_userid#${userId}`);
+
+      const result = {};
+
+      partnerIds.forEach((partnerId, index) => {
+        result[partnerId] = JSON.parse(chatroomInfo[index]);
+      });
+
+      return result;
+    }
+  } catch (error) {
+    console.error(`cannot get all partners from cache:`, error);
+    return {};
+  }
+};
+
 // TODO: 從 DB 刪除 candidate
 
 export {
@@ -170,4 +191,5 @@ export {
   saveCandidateOfUser,
   getCandidateOfSelf,
   getSuitorOfSelf,
+  getAllPartnerOfUser,
 };
