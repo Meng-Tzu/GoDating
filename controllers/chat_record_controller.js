@@ -2,6 +2,8 @@ import {
   deleteChatRecordFromElasticsearch,
   initElasticsearch,
   saveChatRecordToES,
+  searchAllFromChatting,
+  searchKeywordFromChatting,
 } from "../models/chat_record_model.js";
 
 const saveChatRecord = async (req, res) => {
@@ -36,4 +38,24 @@ const saveChatRecord = async (req, res) => {
   }
 };
 
-export { saveChatRecord };
+// TODO: 在 elasticsearch 搜尋 products
+const searchChatRecord = async (req, res) => {
+  let keyword = req.query.keyword;
+
+  try {
+    if (keyword) {
+      let messages = await searchKeywordFromChatting(keyword);
+      messages = { data: messages };
+      res.json(messages);
+    } else {
+      let messages = await searchAllFromChatting();
+      messages = { data: messages };
+      res.json(messages);
+    }
+  } catch (error) {
+    console.error("error", error);
+    res.status(500).json({ error: "ElasticSearch cannot work normally." });
+  }
+};
+
+export { saveChatRecord, searchChatRecord };
