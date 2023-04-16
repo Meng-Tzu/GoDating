@@ -6,7 +6,7 @@ import {
   searchKeywordFromES,
 } from "../models/chat_record_model.js";
 
-// FIXME: 刪除聊天記錄的 index
+// FIXME: 刪除聊天記錄的 index (不能由前端去處理資料，前端僅供查詢)
 const deleteChatIndex = async (req, res) => {
   const { indexId } = req.body;
 
@@ -20,7 +20,7 @@ const deleteChatIndex = async (req, res) => {
   }
 };
 
-// FIXME: 創建聊天記錄的 index
+// FIXME: 創建聊天記錄的 index (不能由前端去處理資料，前端僅供查詢)
 const creatChatIndex = async (req, res) => {
   const { indexId } = req.body;
 
@@ -34,7 +34,7 @@ const creatChatIndex = async (req, res) => {
   }
 };
 
-// FIXME: 存入聊天記錄
+// FIXME: 存入聊天記錄 (不能由前端去處理資料，前端僅供查詢)
 const saveChatRecord = async (req, res) => {
   const { indexId, userId, userName, message, timestamp, time } = req.body;
 
