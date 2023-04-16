@@ -95,14 +95,13 @@ const createPartnerDiv = (roomId, candidateId, candidateName) => {
   $button.appendTo($parent);
 };
 
-// TODO: Function7: 動態製造 DOM 物件 (create div for all partners) (如何取得 partner name ??)
+// FIXME: Function7: 動態製造 DOM 物件 (create div for all partners) (chatIndexId 沒有用??)
 const createAllPartnerDiv = (partners, userIdNicknamePair) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#match");
 
   for (const partnerId in partners) {
-    let chatroomInfo = partners[partnerId];
-    chatroomInfo = JSON.parse(chatroomInfo);
+    const chatroomInfo = partners[partnerId];
 
     const roomId = chatroomInfo[0];
     const chatIndexId = chatroomInfo[1];
@@ -246,6 +245,7 @@ $("#btn-connect").click(function (e) {
     // 取得特定使用者的候選人名單
     const candidatesUrl = `/api/1.0/user/candidate`;
     const suitorsUrl = `/api/1.0/user/suitor`;
+    const partnersUrl = `/api/1.0/user/partner`;
     let fetchOption = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -255,12 +255,15 @@ $("#btn-connect").click(function (e) {
 
     const userCandidateList = await getApi(candidatesUrl, fetchOption);
     const userSuitorList = await getApi(suitorsUrl, fetchOption);
+    const userPartnerList = await getApi(partnersUrl, fetchOption);
 
-    // 動態產生下拉式選單的選項
+    // FIXME: 動態產生下拉式選單的選項 (改用 socketIO 取得資料)
     (() => {
       // 取得該連線者的候選人名單
       const certainCandidateList = userCandidateList[0][id];
       const certainSuitorList = userSuitorList[0][id];
+      const certainPartnerList = userPartnerList[0];
+      console.log("certainPartnerList", certainPartnerList);
 
       // 產生想跟誰配對的下拉選單
       createCandidateOption(certainCandidateList, "condidate");
@@ -268,7 +271,8 @@ $("#btn-connect").click(function (e) {
       // 產生有人喜歡你的下拉選單
       createCandidateOption(certainSuitorList, "suitor");
 
-      // TODO: 產生已配對成功的 partner 有誰
+      // 產生已配對成功的 partner 有誰
+      createAllPartnerDiv(certainPartnerList, userIdNicknamePair);
     })();
   });
 
