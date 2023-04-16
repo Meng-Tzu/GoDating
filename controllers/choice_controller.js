@@ -19,24 +19,27 @@ const getWhoLikeMeOfSelf = async (userId, potentialCondidateId) => {
 };
 
 // 儲存使用者的 "who_like_me"
-const saveWhoLikeMeOfOtherSide = async (
-  userId,
-  potentialCondidateId,
-  potentialCondidateName
-) => {
+const saveWhoLikeMeOfOtherSide = async (userId, suitorId, suitorName) => {
   try {
     if (Cache.ready) {
-      await Cache.hset(
-        `who_like_me_of_userid#${userId}`,
-        potentialCondidateId,
-        potentialCondidateName
-      );
+      await Cache.hset(`who_like_me_of_userid#${userId}`, suitorId, suitorName);
       console.log(
-        `successfully save who_like_me of userId#${userId} into cache`
+        `successfully save suitorId#${suitorId} into who_like_me of userId#${userId} into cache`
       );
     }
   } catch (error) {
     console.error(`cannot save who_like_me into cache:`, error);
+  }
+};
+
+// 刪除使用者的 "who_like_me"
+const deleteSuitorOfUser = async (userId, suitorId) => {
+  try {
+    if (Cache.ready) {
+      await Cache.hdel(`who_like_me_of_userid#${userId}`, suitorId);
+    }
+  } catch (error) {
+    console.error(`cannot delete suitors from cache:`, error);
   }
 };
 
@@ -63,13 +66,14 @@ const saveNeverMatchOfUser = async (userId, candidateId) => {
 };
 
 // 儲存使用者的 "partners"
-const savePartnerOfUser = async (userId, partnerId, roomId) => {
+const savePartnerOfUser = async (userId, partnerId, roomId, indexId) => {
   try {
     if (Cache.ready) {
+      const chatroomInfo = JSON.stringify([roomId, indexId]);
       const result = await Cache.hset(
         `partners_of_userid#${userId}`,
         partnerId,
-        `${roomId}`
+        chatroomInfo
       );
       console.log(`successfully save partners of userId#${userId} into cache`);
       return result;
@@ -82,6 +86,7 @@ const savePartnerOfUser = async (userId, partnerId, roomId) => {
 export {
   getWhoLikeMeOfSelf,
   saveWhoLikeMeOfOtherSide,
+  deleteSuitorOfUser,
   deleteCandidateOfUser,
   saveNeverMatchOfUser,
   savePartnerOfUser,
