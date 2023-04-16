@@ -22,10 +22,10 @@ chatRouter.use(express.json());
 // chatRouter.post("/chat/saverecord", saveChatRecord);
 
 // FIXME: 載入全部聊天紀律 (驗證 JWT)
-chatRouter.get("/chat/allrecord", loadAllChatRecord);
+chatRouter.post("/chat/allrecord", loadAllChatRecord);
 
 // FIXME: 模糊搜尋聊天紀錄 (驗證 JWT)
-chatRouter.get("/chat/fuzzysearch", searchChatRecord);
+chatRouter.post("/chat/fuzzysearch", searchChatRecord);
 
 // 輸出路由
 export { chatRouter };
