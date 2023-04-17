@@ -75,9 +75,15 @@
           <button type="submit" id="btn-like-too">Like!</button>
         </form>
 
-        <h2 class="other-side" style="display: none"></h2>
+        <div id="title" style="display: none">
+          <h2 class="other-side"></h2>
+          <form action="" id="search-box">
+            <input type="text" id="keyword" />
+            <button id="btn-search" type="submit"></button>
+          </form>
+        </div>
         <div id="dialogue" style="display: none">
-          <ul class="message" style="list-style-type: none"></ul>
+          <ul class="message"></ul>
         </div>
 
         <form id="text-msg" action="" method="post" style="display: none">
@@ -91,7 +97,10 @@
         </form>
       </section>
       <section id="current">
-        <h3>猜你會喜歡...</h3>
+        <div id="more-info">
+          <h3>猜你會喜歡...</h3>
+          <div id="cross" style="display: none"></div>
+        </div>
       </section>
     </main>
   </body>
