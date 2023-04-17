@@ -134,15 +134,21 @@ const createSearchResultDiv = (result) => {
   // 顯示取消圖示
   $("#cross").css("display", "inline");
 
-  result.forEach((message) => {
-    // 新建 li element
+  if (!result.length) {
     const $li = $("<li>");
-    $li.text(
-      `${message.userName}: ${message.message} ----- ${message.timestamp}`
-    );
-
+    $li.text("沒有搜尋結果");
     $li.appendTo($ul);
-  });
+  } else {
+    result.forEach((message) => {
+      // 新建 li element
+      const $li = $("<li>");
+      $li.text(
+        `${message.userName}: ${message.message} ----- ${message.timestamp}`
+      );
+
+      $li.appendTo($ul);
+    });
+  }
 
   $ul.appendTo($parent);
 };
@@ -422,6 +428,7 @@ $("#btn-connect").click(function (e) {
 
   // 顯示搜尋對話紀錄的結果
   socket.on("search-result", (result) => {
+    console.log("result", result);
     createSearchResultDiv(result);
   });
 });
@@ -523,6 +530,9 @@ $("#btn-search").click(function (e) {
     alert("Please connect first");
     return;
   }
+
+  // 移除先前搜尋結果
+  $(".search-message").remove();
 
   const userId = +$("#users").val();
   const partnerId = +$(".other-side").attr("id");
