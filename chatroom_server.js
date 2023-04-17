@@ -24,6 +24,7 @@ import {
 import {
   initChatIndexOfES,
   saveChatRecordToES,
+  searchKeywordFromES,
 } from "./models/chat_record_model.js";
 
 //創建 express 的物件
@@ -278,6 +279,18 @@ io.on("connection", (socket) => {
         });
       }
     });
+  });
+
+  // 當使用者想要搜尋對話關鍵字
+  socket.on("search", async (msg) => {
+    const { userId, partnerId, keyword } = msg;
+
+    // 從快取的 "partner" 拿到 chat index
+    const chatroomInfo = await getPartnerOfUser(userId, partnerId);
+    const chatIndexId = chatroomInfo[1];
+
+    const result = await searchKeywordFromES(chatIndexId, keyword);
+    socket.emit("search-result", result);
   });
 
   // FIXME: 監聽 client 是否已經斷開連線 (可做哪個使用者已離開)

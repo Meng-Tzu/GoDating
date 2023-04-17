@@ -121,7 +121,32 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
   }
 };
 
-// TODO: Function8: 點擊特定 partner 開啟聊天室
+// Function8: 動態製造 DOM 物件 (create div for search result)
+const createSearchResultDiv = (result) => {
+  // 選取要被插入 child 的 parant element
+  const $parent = $("#current");
+  const $ul = $("<ul>");
+  $ul.addClass("search-message");
+
+  // 更換標題
+  $("#current #more-info h3").text("搜尋結果");
+
+  // 顯示取消圖示
+  $("#cross").css("display", "inline");
+
+  result.forEach((message) => {
+    // 新建 li element
+    const $li = $("<li>");
+    $li.text(
+      `${message.userName}: ${message.message} ----- ${message.timestamp}`
+    );
+
+    $li.appendTo($ul);
+  });
+
+  $ul.appendTo($parent);
+};
+// Function9: 點擊特定 partner 開啟聊天室
 const openChatroom = async function ($this) {
   const roomId = $this.attr("id");
   const partnerName = $this.text();
@@ -151,14 +176,19 @@ const openChatroom = async function ($this) {
   // 顯示出聊天室窗
   // $("#connection").css("display", "none");
   $("#short-list").css("display", "none");
-  $(".other-side")
-    .text(partnerName)
-    .css("display", "block")
-    .attr("id", partnerId);
+  $("#who-like-me").css("display", "none");
+  $("#title").css("display", "flex");
+  $(".other-side").text(partnerName).attr("id", partnerId);
   $("#dialogue").css("display", "block");
   $("#text-msg").css("display", "block");
   $("#picture-msg").css("display", "block");
-  $("#current h3").text("目前聊天者資訊");
+  $("#current #more-info h3").text("目前聊天者資訊");
+
+  // 移除搜尋結果
+  $(".search-message").remove();
+
+  // 隱藏取消圖示
+  $("#cross").css("display", "none");
 
   // FIXME: 取得先前的對話紀錄 (改用 socketIO 取得??)
   const chatIndexId = classNames.split(" ")[2];
@@ -183,7 +213,7 @@ const openChatroom = async function ($this) {
   }
 };
 
-// Function9: [WebSocket] 使用者上傳照片
+// Function10: [WebSocket] 使用者上傳照片
 const upload = (roomId, partnerId, obj) => {
   // console.log("obj:", obj);
   const files = obj.files;
@@ -230,14 +260,20 @@ $(".logo").click(function (e) {
   // 不跳轉網址
   window.history.pushState({}, "", indexUrl);
 
-  // 顯示出聊天室窗
+  // 隱藏聊天室窗
   // $("#connection").css("display", "none");
   $("#short-list").css("display", "block");
-  $(".other-side").css("display", "none");
+  $("#title").css("display", "none");
   $("#dialogue").css("display", "none");
   $("#text-msg").css("display", "none");
   $("#picture-msg").css("display", "none");
   $("#current h3").text("猜你會喜歡...");
+
+  // 移除搜尋結果
+  $(".search-message").remove();
+
+  // 隱藏取消圖示
+  $("#cross").css("display", "none");
 });
 
 // --------------------------- WebSocket 區塊 --------------------------------
@@ -383,6 +419,11 @@ $("#btn-connect").click(function (e) {
     const { userId, condidateId, condidateName } = msg;
     deleteCandidateOption(condidateId);
   });
+
+  // 顯示搜尋對話紀錄的結果
+  socket.on("search-result", (result) => {
+    createSearchResultDiv(result);
+  });
 });
 
 // 把想配對的 candidate 資訊送給 server 儲存
@@ -472,4 +513,34 @@ $("#btn-file").click(function (e) {
   const partnerId = +$(".other-side").attr("id");
 
   upload(roomId, partnerId, $picture[0]);
+});
+
+// 搜尋對話的關鍵字 (使用 socketIO 直接下 ES 指令??)
+$("#btn-search").click(function (e) {
+  e.preventDefault();
+
+  if (socket === null) {
+    alert("Please connect first");
+    return;
+  }
+
+  const userId = +$("#users").val();
+  const partnerId = +$(".other-side").attr("id");
+  const keyword = $("#keyword").val();
+  const messages = { userId, partnerId, keyword };
+  console.log("messages", messages);
+
+  socket.emit("search", messages);
+});
+
+// 當關閉搜尋結果，會返回目前聊天者資訊
+$("#cross").click(function () {
+  // 更換標題
+  $("#current #more-info h3").text("目前聊天者資訊");
+
+  // 移除搜尋結果
+  $(".search-message").remove();
+
+  // 隱藏取消圖示
+  $("#cross").css("display", "none");
 });
