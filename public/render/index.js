@@ -44,7 +44,7 @@ const createCandidateOption = (candidates, elementName) => {
 
     // 把新的 option 的 value 和 text 改掉
     $newDom
-      .addClass(`${elementName}`)
+      .attr("class", `${elementName}`)
       .attr("value", candidateId)
       .text(candidates[candidateId])
       .css("display", "inline");
