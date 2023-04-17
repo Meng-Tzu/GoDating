@@ -308,6 +308,12 @@ $("#btn-connect").click(function (e) {
   socket.on("user-connect", async (id) => {
     console.log("open connection to server");
 
+    $("#connection").css("display", "none");
+    $("#profile-picture").css("display", "inline");
+    $("#short-list").css("display", "inline");
+    $("#who-like-me").css("display", "inline");
+    $(".right h2").text(`${name}`);
+
     // 取得特定使用者的候選人名單
     const candidatesUrl = `/api/1.0/user/candidate`;
     const suitorsUrl = `/api/1.0/user/suitor`;
