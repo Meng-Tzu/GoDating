@@ -133,6 +133,7 @@ const createSearchResultDiv = (result) => {
 
   // 顯示取消圖示
   $("#cross").css("display", "inline");
+  $("#partner-info").css("display", "none");
 
   if (!result.length) {
     const $li = $("<li>");
@@ -184,10 +185,13 @@ const openChatroom = async function ($this) {
   $("#short-list").css("display", "none");
   $("#who-like-me").css("display", "none");
   $("#title").css("display", "flex");
+  $("#partner-info").css("display", "block");
+  $("#partner-name").text(partnerName);
   $(".other-side").text(partnerName).attr("id", partnerId);
   $("#dialogue").css("display", "block");
   $("#text-msg").css("display", "block");
   $("#picture-msg").css("display", "block");
+  $("#current").css("display", "block");
   $("#current #more-info h3").text("目前聊天者資訊");
 
   // 移除搜尋結果
@@ -269,11 +273,13 @@ $(".logo").click(function (e) {
   // 隱藏聊天室窗
   // $("#connection").css("display", "none");
   $("#short-list").css("display", "block");
+  $("#who-like-me").css("display", "block");
   $("#title").css("display", "none");
   $("#dialogue").css("display", "none");
   $("#text-msg").css("display", "none");
   $("#picture-msg").css("display", "none");
   $("#current h3").text("猜你會喜歡...");
+  $("#partner-info").css("display", "none");
 
   // 移除搜尋結果
   $(".search-message").remove();
@@ -309,6 +315,7 @@ $("#btn-connect").click(function (e) {
     console.log("open connection to server");
 
     $("#connection").css("display", "none");
+    $("#potentials").css("display", "none");
     $("#profile-picture").css("display", "inline");
     $("#short-list").css("display", "inline");
     $("#who-like-me").css("display", "inline");
@@ -551,8 +558,9 @@ $("#btn-search").click(function (e) {
 
 // 當關閉搜尋結果，會返回目前聊天者資訊
 $("#cross").click(function () {
-  // 更換標題
+  // 更換內容
   $("#current #more-info h3").text("目前聊天者資訊");
+  $("#partner-info").css("display", "block");
 
   // 移除搜尋結果
   $(".search-message").remove();
