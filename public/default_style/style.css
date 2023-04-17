@@ -53,8 +53,12 @@ header section.left nav ul li.line {
 header section.right {
   flex: 1 1 100px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: right;
   align-items: center;
+  margin-right: 20px;
+}
+header section.right a {
+  margin: 0 0.5rem;
 }
 header section.right a img {
   width: 5vw;
@@ -165,13 +169,12 @@ main section#chatroom div#dialogue ul.message {
 main section#current {
   flex: 1 1 200px;
   background-color: rgb(250, 235, 215);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
+  text-align: center;
+  display: block;
 }
 main section#current div#more-info {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   margin: 0.5rem 0;
 }
@@ -180,14 +183,59 @@ main section#current div#more-info h3 {
 }
 main section#current div#more-info div#cross {
   flex: 1 1 10px;
+  cursor: pointer;
+}
+main section#current div#more-info div#cross img {
   height: 10px;
   width: 10px;
-  background-color: transparent;
-  background-image: url(../images/cross.png);
-  background-size: cover;
-  background-position: center;
-  border: none;
-  cursor: pointer;
+}
+main section#current div#potentials {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+main section#current div#potentials div.potential {
+  flex: 1 1 100px;
+}
+main section#current div#potentials div.potential img {
+  width: 80px;
+  border-radius: 50%;
+  margin: 0.3rem 0;
+}
+main section#current div#potentials div.potential div.potential-name {
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 0.3rem 0;
+}
+main section#current div#partner-info {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+main section#current div#partner-info img {
+  width: 150px;
+  border-radius: 50%;
+  margin: 0.3rem 0;
+}
+main section#current div#partner-info div#partner-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.3rem 0;
+}
+main section#current div#partner-info div#tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0.3rem 0;
+}
+main section#current div#partner-info div#tags a.tag {
+  flex: 1 1 20px;
+  font-weight: bold;
+  text-decoration: none;
+}
+main section#current div#partner-info div#intro {
+  margin: 0.5rem 0;
 }
 main section#current ul.search-message {
   list-style-type: none;

@@ -45,7 +45,7 @@
         <a href="/profile.html" id="profile-picture" style="display: none"
           ><img src="/profile.jpg" alt="profile"
         /></a>
-        <h2 id="user-name">等待連線中...</h2>
+        <h2 id="user-name">等待登入中...</h2>
       </section>
     </header>
     <main>
@@ -58,7 +58,19 @@
           <select name="users" id="users">
             <option value="" class="user" style="display: none"></option>
           </select>
-          <button type="submit" id="btn-connect">connect</button>
+          <button type="submit" id="btn-connect">Log in !</button>
+        </form>
+
+        <form id="who-like-me" action="" method="post" style="display: none">
+          <label for="suitors">有人喜歡你...</label>
+          <select name="suitors" id="suitors">
+            <option
+              value=""
+              class="templete-suitor"
+              style="display: none"
+            ></option>
+          </select>
+          <button type="submit" id="btn-like-too">Like!</button>
         </form>
 
         <div id="title" style="display: none">
@@ -79,13 +91,47 @@
 
         <form id="picture-msg" action="" method="post" style="display: none">
           <input type="file" id="picture" accept="image/*" />
-          <button type="submit" id="btn-file">上傳檔案</button>
+          <button type="submit" id="btn-file">上傳圖片</button>
         </form>
       </section>
       <section id="current">
         <div id="more-info">
           <h3>猜你會喜歡...</h3>
-          <div id="cross" style="display: none"></div>
+          <div id="cross" style="display: none">
+            <img src="../images/cross.png" alt="cross" />
+          </div>
+        </div>
+
+        <div id="potentials">
+          <div class="potential">
+            <img src="./images/potential.png" alt="potential" />
+            <div class="potential-name">猜猜我是誰</div>
+          </div>
+
+          <div class="potential">
+            <img src="./images/potential.png" alt="potential" />
+            <div class="potential-name">猜猜我是誰</div>
+          </div>
+
+          <div class="potential">
+            <img src="./images/potential.png" alt="potential" />
+            <div class="potential-name">猜猜我是誰</div>
+          </div>
+        </div>
+
+        <div id="partner-info" style="display: none">
+          <img src="./images/hwasa_2.jpg" alt="Hwasa" />
+
+          <div id="partner-name"></div>
+          <div id="tags">
+            <a href="" class="tag">#MAMAMOO</a>
+            <a href="" class="tag">#黑金妮</a>
+            <a href="" class="tag">#KPOP</a>
+          </div>
+          <div id="intro">
+            韓國女子團體 MAMAMOO 成員，隊內定位為 Vocal 和
+            Rap。綜藝節目《我獨自生活》的固定成員。
+          </div>
         </div>
 
         <form id="short-list" action="" method="post" style="display: none">
