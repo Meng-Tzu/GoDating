@@ -15,13 +15,20 @@
       rel="stylesheet"
     />
 
+    <!-- Bootstrap -->
+    <!-- <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+    /> -->
+
     <link rel="stylesheet" href="./default_style/style.css" />
+    <!-- <link rel="stylesheet" href="./gpt_test_style/style.css" /> -->
   </head>
   <body>
     <!-- header -->
     <header>
       <section class="left">
-        <a href="#" class="logo"><img src="/logo.png" alt="Logo" /></a>
+        <a href="#" class="logo"><img src="/logo2.png" alt="Logo" /></a>
 
         <nav>
           <ul>
@@ -35,7 +42,10 @@
       </section>
 
       <section class="right">
-        <a href="/profile.html"><img src="/profile.jpg" alt="profile" /></a>
+        <a href="/profile.html" id="profile-picture" style="display: none"
+          ><img src="/profile.jpg" alt="profile"
+        /></a>
+        <h2 id="user-name">等待連線中...</h2>
       </section>
     </header>
     <main>
@@ -49,30 +59,6 @@
             <option value="" class="user" style="display: none"></option>
           </select>
           <button type="submit" id="btn-connect">connect</button>
-        </form>
-
-        <form id="short-list" action="" method="post">
-          <label for="condidates">想跟誰配對:</label>
-          <select name="condidates" id="condidates">
-            <option
-              value=""
-              class="templete-condidate"
-              style="display: none"
-            ></option>
-          </select>
-          <button type="submit" id="btn-like">Like!</button>
-        </form>
-
-        <form id="who-like-me" action="" method="post">
-          <label for="suitors">有人喜歡你...</label>
-          <select name="suitors" id="suitors">
-            <option
-              value=""
-              class="templete-suitor"
-              style="display: none"
-            ></option>
-          </select>
-          <button type="submit" id="btn-like-too">Like!</button>
         </form>
 
         <div id="title" style="display: none">
@@ -101,9 +87,38 @@
           <h3>猜你會喜歡...</h3>
           <div id="cross" style="display: none"></div>
         </div>
+
+        <form id="short-list" action="" method="post" style="display: none">
+          <label for="condidates">想跟誰配對:</label>
+          <select name="condidates" id="condidates">
+            <option
+              value=""
+              class="templete-condidate"
+              style="display: none"
+            ></option>
+          </select>
+          <button type="submit" id="btn-like">Like!</button>
+        </form>
+
+        <form id="who-like-me" action="" method="post" style="display: none">
+          <label for="suitors">有人喜歡你...</label>
+          <select name="suitors" id="suitors">
+            <option
+              value=""
+              class="templete-suitor"
+              style="display: none"
+            ></option>
+          </select>
+          <button type="submit" id="btn-like-too">Like!</button>
+        </form>
       </section>
     </main>
   </body>
+  <!-- <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+    crossorigin="anonymous"
+  ></script> -->
   <script
     src="https://code.jquery.com/jquery-3.6.3.min.js"
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="

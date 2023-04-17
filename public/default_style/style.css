@@ -5,6 +5,10 @@
   font-family: "Noto Sans TC", sans-serif;
 }
 
+.col {
+  border: 1px solid blue;
+}
+
 header {
   position: sticky;
   top: 0;
@@ -24,7 +28,7 @@ header section.left a.logo {
   margin-left: 2rem;
 }
 header section.left a.logo img {
-  width: 5vw;
+  width: 12vw;
 }
 header section.left nav {
   flex: 1 1 100px;
@@ -49,10 +53,12 @@ header section.left nav ul li.line {
 header section.right {
   flex: 1 1 100px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
+  align-items: center;
 }
 header section.right a img {
   width: 5vw;
+  border-radius: 20px;
 }
 
 main {
@@ -60,12 +66,51 @@ main {
   flex-wrap: wrap;
   min-height: 85vh;
 }
+main #match,
+main #chatroom,
+main #current {
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+main form select,
+main form input[type=text],
+main form input[type=file],
+main form button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+main form button[type=submit] {
+  margin-top: 10px;
+  background-color: rgb(244, 255, 184);
+  color: #313538;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 main section#match {
   flex: 1 1 200px;
   background-color: rgb(225, 253, 207);
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+main section#match button {
+  margin-top: 10px;
+  background-color: #ffbbd0;
+  color: #313538;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 main section#chatroom {
   flex: 1 1 500px;
@@ -89,6 +134,11 @@ main section#chatroom div#title form#search-box {
   border-radius: 20px;
 }
 main section#chatroom div#title form#search-box input#keyword {
+  display: block;
+  width: 200px;
+  padding: 0;
+  margin-top: 0;
+  border-radius: 0;
   border: none;
 }
 main section#chatroom div#title form#search-box input#keyword:focus {
@@ -102,6 +152,7 @@ main section#chatroom div#title form#search-box button#btn-search {
   background-size: cover;
   background-position: center;
   border: none;
+  margin: 0;
   cursor: pointer;
 }
 main section#chatroom div#dialogue {
@@ -116,12 +167,13 @@ main section#current {
   background-color: rgb(250, 235, 215);
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   align-items: center;
 }
 main section#current div#more-info {
   display: flex;
-  justify-content: space-evenly;
   align-items: center;
+  margin: 0.5rem 0;
 }
 main section#current div#more-info h3 {
   flex: 1 1 80px;
