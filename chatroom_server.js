@@ -58,8 +58,8 @@ app.use((err, req, res, next) => {
 });
 
 // webserver 聽 3000 port
-const webSrv = app.listen(3030, () =>
-  console.log("Server is running on port 3030.")
+const webSrv = app.listen(3000, () =>
+  console.log("Server is running on port 3000.")
 );
 
 // ----------------------------- SocketIO 區塊 --------------------------------
