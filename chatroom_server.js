@@ -47,7 +47,8 @@ app.use("/api/1.0", [chatRouter]);
 
 // 當使用者輸入錯的路徑，會直接掉進這個 middle ware
 app.use((req, res) => {
-  console.log("error request path", req.originalUrl);
+  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  console.log("error request path:", req.originalUrl, ", ip:", ip);
   res.status(404).send("The page is not found.");
 });
 
