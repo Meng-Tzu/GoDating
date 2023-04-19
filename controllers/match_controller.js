@@ -3,9 +3,10 @@ import {
   getUserInfo1,
   getUserDesireAgeRange,
   getMatchTag1,
+  saveCandidatesToDB,
   getCandidateOfSelf,
   getSuitorOfSelf,
-  saveCandidateOfUser,
+  saveCandidatesToCache,
 } from "../models/user_model.js";
 
 // -------------------------- Function 區塊 -------------------------------
@@ -248,9 +249,12 @@ for (const userId in sex_match_pair) {
 
 // console.log("sex_match_pair 最終版排序後:", sex_match_pair);
 
-// FIXME: 何時存入 candidate 到 cache ??
+// ------------------------- 篩選結束 -------------------------
+
+// FIXME: 存入 candidate 到 cache & DB (何時觸發?)
 // (async () => {
-//   await saveCandidateOfUser(sex_match_pair);
+//   await saveCandidatesToCache(sex_match_pair);
+//   await saveCandidatesToDB(sex_match_pair);
 // })();
 
 // FIXME: 輸出特定使用者的候選人 API ( cache miss 時改撈 DB)

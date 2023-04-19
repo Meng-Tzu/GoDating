@@ -82,8 +82,29 @@ const getMatchTag1 = async (id) => {
   return result;
 };
 
+// 存入 candidates 到 DB
+const saveCandidatesToDB = async (match_pair) => {
+  const queryStr = `
+  INSERT INTO user_candidate
+  (user_id, candidate_id)
+  VALUES ?
+  `;
+
+  const values = [];
+
+  for (const userId in match_pair) {
+    match_pair[userId].forEach((candidateId) => {
+      values.push([+userId, candidateId]);
+    });
+  }
+
+  const [result] = await pool.query(queryStr, [values]);
+
+  return result;
+};
+
 // FIXME: candidate 存進 cache (放在 model ??)
-const saveCandidateOfUser = async (match_pair) => {
+const saveCandidatesToCache = async (match_pair) => {
   for (const userId in match_pair) {
     // 要幫每一個候選人加上 nickname
     for (const candidateId of match_pair[userId]) {
@@ -104,8 +125,6 @@ const saveCandidateOfUser = async (match_pair) => {
     }
   }
 };
-
-// TODO: candidate 存進 DB
 
 // FIXME: 輸出特定使用者的 "candidate" (先 cache 後 DB 取出) (應該放在 model ?)
 const getCandidateOfSelf = async (userId) => {
@@ -178,7 +197,8 @@ export {
   getUserInfo1,
   getUserDesireAgeRange,
   getMatchTag1,
-  saveCandidateOfUser,
+  saveCandidatesToDB,
+  saveCandidatesToCache,
   getCandidateOfSelf,
   getSuitorOfSelf,
   getAllPartnerOfUser,
