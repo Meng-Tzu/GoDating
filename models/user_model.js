@@ -19,10 +19,7 @@ export const pool = mysql
 // FIXME: 取得 DB 裡的所有使用者 id + nick_name + coordinate
 const getAllUsers = async () => {
   const queryStr = `
-  SELECT UM.id, UM.nick_name, UD.coordinate
-  FROM user_main AS UM
-  INNER JOIN user_detail AS UD
-  ON UD.user_id = UM.id
+    SELECT id, nick_name FROM user
     `;
 
   let [result] = await pool.query(queryStr);
@@ -33,7 +30,7 @@ const getAllUsers = async () => {
 // FIXME: 取得 DB 裡的所有使用者 id (優化：遍歷 array，效能差)
 const getAllUserIds = async () => {
   const queryStr = `
-  SELECT id FROM user_main
+  SELECT id FROM user
   `;
 
   let [result] = await pool.query(queryStr);
@@ -45,16 +42,11 @@ const getAllUserIds = async () => {
 // FIXME: 取得使用者基本資料 (以 id number 表示)
 const getUserInfo1 = async (id) => {
   const queryStr = `
-    SELECT UM.id, UM.nick_name,
-    UD.birth_year, UD.birth_month, UD.birth_date, 
-    UD.sex_id, UD.sexual_orientation_id AS orientation_id,
-    UD.region_id,
-    UD.self_intro
-    FROM user_main AS UM
-    INNER JOIN user_detail AS UD
-    ON UD.user_id = UM.id
-    WHERE 
-    UM.id = ?
+    SELECT id, nick_name,
+    birth_year, birth_month, birth_date, 
+    sex_id, sexual_orientation_id AS orientation_id
+    FROM user
+    WHERE id = ?
     `;
 
   const [[result]] = await pool.query(queryStr, [id]);
@@ -65,10 +57,9 @@ const getUserInfo1 = async (id) => {
 // FIXME: 取得使用者想要的年齡區間 (以 id number 表示)
 const getUserDesireAgeRange = async (id) => {
   const queryStr = `
-    SELECT UD.user_id, UD.seek_age_min, UD.seek_age_max
-    FROM user_detail AS UD
-    WHERE 
-    UD.user_id = ?
+    SELECT id, seek_age_min, seek_age_max
+    FROM user
+    WHERE id = ?
     `;
 
   const [[result]] = await pool.query(queryStr, [id]);
@@ -79,12 +70,11 @@ const getUserDesireAgeRange = async (id) => {
 // FIXME: 取得配對資料 (以 tag_id number 表示)
 const getMatchTag1 = async (id) => {
   const queryStr = `
-    SELECT UD.user_id, UT.tag_id
-    FROM user_detail AS UD
+    SELECT U.id, UT.tag_id
+    FROM user AS U
     INNER JOIN user_tag AS UT
-    ON UD.user_id = UT.user_id
-    WHERE 
-    UD.user_id = ?
+    ON U.id = UT.user_id
+    WHERE U.id = ?
     `;
 
   const [result] = await pool.query(queryStr, [id]);
