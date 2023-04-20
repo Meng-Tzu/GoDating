@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Client</title>
+    <meta name="author" content="Meng-Tzu Tsai" />
+  </head>
+  <body>
+    <h1>WebSocket Test</h1>
+    <form action="" method="post">
+      <label for="name">名字:</label>
+      <input type="text" name="name" id="name" placeholder="你是誰?" />
+      <button type="submit" id="btnConnect">connect</button>
+    </form>
+
+    <div id="dialog" style="border: gray solid 1px; min-height: 40vh">
+      <ul style="list-style-type: none"></ul>
+    </div>
+
+    <form action="" method="post">
+      <select name="receiver" id="receiver">
+        <option value="ALL">ALL</option>
+        <option value="Sam">Sam</option>
+        <option value="Orin">Orin</option>
+        <option value="Ed">Ed</option>
+      </select>
+      <input type="text" name="message" id="message" placeholder="訊息" />
+      <button type="submit" id="btnText">Send</button>
+    </form>
+
+    <form action="" method="post">
+      <input type="file" id="picture" />
+      <button type="submit" id="btnFile">上傳檔案</button>
+    </form>
+  </body>
+  <script
+    src="https://code.jquery.com/jquery-3.6.3.min.js"
+    integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="./client.js"></script>
+</html>
