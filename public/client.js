@@ -4,8 +4,9 @@ let socket = null;
 function upload(obj) {
   // console.log("obj:", obj);
   const files = obj.files;
+  const [file] = files;
   // console.log("files:", files);
-  socket.emit("upload", files[0], (status) => {
+  socket.emit("upload", file, (status) => {
     console.log("status:", status);
   });
 }
@@ -42,6 +43,25 @@ $("#btnConnect").click(function (e) {
   // server 回報想傳的對象不在線上
   socket.on("notExist", (msg) => console.log(msg));
 
+  // 監聽上傳照片的動作
+  let imgChunks = [];
+  socket.on("file", async (chunk) => {
+    // 把照片的 base64 編碼拼湊回來
+    imgChunks.push(chunk);
+  });
+
+  // FIXME: Receive picture (改從 S3 拿圖片網址(presign url ???))
+  socket.on("wholeFile", (msg) => {
+    console.log(msg);
+    const $img = $("<img>");
+    $img
+      .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
+      .height(100);
+
+    $("ul").append(`<li>${msg.name}:</li>`).append($img);
+    imgChunks = [];
+  });
+
   socket.on("disconnect", () => console.log("close connection to server"));
 });
 
@@ -61,11 +81,28 @@ $("#btnText").click(function (e) {
   socket.emit("message", JSON.stringify(messages));
 });
 
+// FIXME: test whole picture display
+// $("#test").click(function (e) {
+//   e.preventDefault();
+
+//   if (socket === null) {
+//     alert("Please connect first");
+//     return;
+//   }
+
+//   socket.emit("test", "test123");
+// });
+
 // 上傳圖片
 const $picture = $("#picture");
 
 $("#btnFile").click(function (e) {
   e.preventDefault();
+
+  if (socket === null) {
+    alert("Please connect first");
+    return;
+  }
 
   upload($picture[0]);
 });
