@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GoDating</title>
+    <title>WebSocket Client</title>
     <meta name="author" content="Meng-Tzu Tsai" />
 
     <!-- google font setting -->
@@ -43,64 +43,38 @@
         <h3>配對成功</h3>
       </section>
       <section id="chatroom">
-        <form id="connection" action="" method="post">
-          <label for="users">名字:</label>
+        <form action="" method="post">
+          <label for="name">名字:</label>
           <select name="users" id="users">
             <option value="" class="user" style="display: none"></option>
           </select>
-          <button type="submit" id="btn-connect">connect</button>
+          <button type="submit" id="btnConnect">connect</button>
         </form>
 
-        <form id="short-list" action="" method="post">
-          <label for="condidates">想跟誰配對:</label>
+        <form action="" method="post">
+          <label for="name">想跟誰建立聊天室:</label>
           <select name="condidates" id="condidates">
-            <option
-              value=""
-              class="templete-condidate"
-              style="display: none"
-            ></option>
+            <option value="" class="condidate" style="display: none"></option>
           </select>
-          <button type="submit" id="btn-like">Like!</button>
+          <button type="submit" id="btnBuild">Build</button>
         </form>
 
-        <form id="who-like-me" action="" method="post">
-          <label for="suitors">有人喜歡你...</label>
-          <select name="suitors" id="suitors">
-            <option
-              value=""
-              class="templete-suitor"
-              style="display: none"
-            ></option>
-          </select>
-          <button type="submit" id="btn-like-too">Like!</button>
-        </form>
-
-        <div id="title" style="display: none">
-          <h2 class="other-side"></h2>
-          <form action="" id="search-box">
-            <input type="text" id="keyword" />
-            <button id="btn-search" type="submit"></button>
-          </form>
-        </div>
-        <div id="dialogue" style="display: none">
-          <ul class="message"></ul>
+        <div id="dialogue">
+          <ul class="message" style="list-style-type: none"></ul>
         </div>
 
-        <form id="text-msg" action="" method="post" style="display: none">
+        <form action="" method="post">
           <input type="text" name="message" id="message" placeholder="訊息" />
-          <button type="submit" id="btn-text">Send</button>
+          <button type="submit" id="btnText">Send</button>
         </form>
 
-        <form id="picture-msg" action="" method="post" style="display: none">
+        <form action="" method="post">
           <input type="file" id="picture" accept="image/*" />
-          <button type="submit" id="btn-file">上傳檔案</button>
+          <button type="submit" id="btnFile">上傳檔案</button>
         </form>
       </section>
       <section id="current">
-        <div id="more-info">
-          <h3>猜你會喜歡...</h3>
-          <div id="cross" style="display: none"></div>
-        </div>
+        <h3>目前聊天者資訊</h3>
       </section>
     </main>
   </body>
@@ -110,5 +84,5 @@
     crossorigin="anonymous"
   ></script>
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-  <script src="./index.js"></script>
+  <script src="./chatroom_client.js"></script>
 </html>

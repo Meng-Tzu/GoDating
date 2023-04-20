@@ -1,4 +1,4 @@
-import { getAllUsers } from "../models/user_model.js";
+import { getAllUsers, getAllPartnerOfUser } from "../models/user_model.js";
 
 const getUserIdName = async (req, res) => {
   const data = await getAllUsers();
@@ -7,4 +7,18 @@ const getUserIdName = async (req, res) => {
   return;
 };
 
-export { getUserIdName };
+// FIXME: 輸出特定使用者的 partner API ( cache miss 時改撈 DB)
+const certainUserPartnerList = async (req, res) => {
+  // FIXME: 改從 authentication 拿 user id
+  const { userid } = req.body;
+  const partnerList = await getAllPartnerOfUser(userid);
+
+  const response = { data: [] };
+
+  response.data.push(partnerList);
+
+  res.status(200).json(response);
+  return;
+};
+
+export { getUserIdName, certainUserPartnerList };

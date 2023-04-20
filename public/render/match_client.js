@@ -1,8 +1,8 @@
 // ----------------------- Function 區塊 --------------------------
 
 // Function1: 取得 API 資料
-const getApi = async (url) => {
-  let response = await fetch(url);
+const getApi = async (url, option) => {
+  let response = await fetch(url, option);
   response = await response.json();
 
   return response.data;
@@ -137,20 +137,46 @@ $("#btnConnect").click(function (e) {
     })();
   });
 
-  // 對所有人顯示的訊息
+  // TODO: 對所有人顯示的訊息 (儲存聊天紀錄到 ES ???)
   socket.on("allMessage", (msg) => {
     console.log(msg);
     if (msg.system) {
       $("ul").append(`<li>${msg.system}: ${msg.message}</li>`);
     } else {
-      $("ul").append(`<li>${msg.name}: ${msg.message}</li>`);
+      $("ul").append(
+        `<li>${msg.name}: ${msg.message} ----- ${msg.timestamp}</li>`
+      );
     }
   });
 
-  // 對特定人顯示的訊息
-  socket.on("message", (msg) => {
+  // 對特定人顯示的訊息 (儲存聊天紀錄到 ES)
+  socket.on("message", async (msg) => {
     console.log(msg);
-    $("ul").append(`<li>${msg.name}: ${msg.message}</li>`);
+
+    $("ul").append(
+      `<li>${msg.name}: ${msg.message} ----- ${msg.timestamp}</li>`
+    );
+
+    // 打 chatRecord route
+    let chatRecordApi = "/api/1.0/chat/chatrecord";
+
+    let fetchOption = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "",
+    };
+
+    let data = {};
+    data.userId = msg.id;
+    data.userName = msg.name;
+    data.message = msg.message;
+    data.timestamp = msg.timestamp;
+    data.time = msg.msOfTime;
+
+    fetchOption.body = JSON.stringify(data);
+
+    const chatRecord = await getApi(chatRecordApi, fetchOption);
+    console.log("chatRecord", chatRecord);
   });
 
   // server 回報想傳的對象不在線上
@@ -163,15 +189,18 @@ $("#btnConnect").click(function (e) {
     imgChunks.push(chunk);
   });
 
-  // FIXME: Receive picture (改從 S3 拿圖片網址(presign url ???))
+  // TODO: Receive picture (改從 S3 拿圖片網址(presign url ???)) (儲存聊天紀錄到 ES)
   socket.on("wholeFile", (msg) => {
     console.log(msg);
     const $img = $("<img>");
     $img
       .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
-      .height(100);
+      .height(200);
 
-    $("ul").append(`<li>${msg.name}:</li>`).append($img);
+    $("ul")
+      .append(`<li>${msg.name}</li>`)
+      .append($img)
+      .append(`<span>----- ${msg.timestamp}</span>`);
     imgChunks = [];
   });
 

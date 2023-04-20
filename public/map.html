@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Map</title>
+    <meta name="author" content="Meng-Tzu Tsai" />
+
+    <!-- Leaflet official css style -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+      crossorigin=""
+    />
+  </head>
+  <body>
+    <h1>Search Candidates on Map</h1>
+
+    <form action="" method="post">
+      <label for="users">名字:</label>
+      <select name="users" id="users">
+        <option value="" class="user" style="display: none"></option>
+      </select>
+      <button type="submit" id="btnSearch">Search</button>
+    </form>
+    <br />
+    <div id="map" style="height: 70vh"></div>
+  </body>
+  <script
+    src="https://code.jquery.com/jquery-3.6.3.min.js"
+    integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+    integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+    crossorigin=""
+  ></script>
+  <script src="./map.js"></script>
+</html>
