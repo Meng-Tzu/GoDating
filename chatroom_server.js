@@ -11,6 +11,11 @@ const __dirname = path.dirname(__filename);
 
 // 導入 Cache function
 import {
+  getCandidateFromCache,
+  getCandidateInfoFromCache,
+} from "./models/user_model.js";
+
+import {
   getWhoLikeMeOfSelf,
   saveWhoLikeMeOfOtherSide,
   deleteSuitorOfUser,
@@ -88,7 +93,7 @@ io.on("connection", (socket) => {
   console.log(`One client has connected. 目前連線數: ${count}`);
 
   // FIXME: 儲存連線者 (需要儲存嗎???)
-  socket.on("online", (user) => {
+  socket.on("online", async (user) => {
     const id = user.id;
     const name = user.name;
 
@@ -97,8 +102,26 @@ io.on("connection", (socket) => {
 
     console.log(`user id #${id} successfully connect.`);
 
+    // TODO: 傳送候選人的詳細資訊給使用者 (串接 sursuer & candidate list)
+    const candidateList = await getCandidateFromCache(id);
+    const candidateIdList = Object.keys(candidateList);
+
+    const testCandidateInfo = await getCandidateInfoFromCache(
+      candidateIdList[0]
+    );
+
+    const candidateInfoList = [];
+    for (const candidateId of candidateIdList) {
+      const candidateInfo = await getCandidateInfoFromCache(candidateId);
+
+      candidateInfoList.push(candidateInfo);
+    }
+
+    // const response = { id, testCandidateInfo };
+    const response = { id, candidateInfoList };
+
     // 告知使用者已成功連線
-    socket.emit("user-connect", id);
+    socket.emit("user-connect", response);
   });
 
   // 監聽到使用者喜歡候選人

@@ -121,7 +121,31 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
   }
 };
 
-// Function8: 動態製造 DOM 物件 (create div for search result)
+// Function8: 動態製造 DOM 物件 (create div for next-recommend)
+const createNextRecommendDiv = (candidateInfoList) => {
+  // 選取要被插入 child 的 parant element
+  const $parent = $("#current");
+
+  const $templete = $(".templete-next-recommend");
+  candidateInfoList.forEach((candidateInfo, index) => {
+    // 創新的 element
+    const $div = $("<div>");
+    const $img = $("<img>");
+    const $h2 = $("<h2>");
+
+    $div.addClass("next-recommend");
+    $img.addClass("next-picture").attr("src", candidateInfo.main_image);
+    $h2.addClass(".next-name").text(candidateInfo.nick_name);
+
+    $img.appendTo($div);
+    $h2.appendTo($div);
+
+    // 把複製出來的 div 加入 parant element
+    $div.appendTo($parent);
+  });
+};
+
+// Function9: 動態製造 DOM 物件 (create div for search result)
 const createSearchResultDiv = (result) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#current");
@@ -152,7 +176,7 @@ const createSearchResultDiv = (result) => {
 
   $ul.appendTo($parent);
 };
-// Function9: 點擊特定 partner 開啟聊天室
+// Function10: 點擊特定 partner 開啟聊天室
 const openChatroom = async function ($this) {
   const roomId = $this.attr("id");
   const partnerName = $this.text();
@@ -219,7 +243,7 @@ const openChatroom = async function ($this) {
   }
 };
 
-// Function10: [WebSocket] 使用者上傳照片
+// Function11: [WebSocket] 使用者上傳照片
 const upload = (roomId, partnerId, obj) => {
   // console.log("obj:", obj);
   const files = obj.files;
@@ -304,9 +328,23 @@ $("#btn-connect").click(function (e) {
   const user = { id, name };
   socket.emit("online", user);
 
-  // 連線建立後
-  socket.on("user-connect", async (id) => {
+  // 連線建立後 (加上候選人的詳細資訊)
+  socket.on("user-connect", async (msg) => {
     console.log("open connection to server");
+
+    console.log("candidateInfoList", msg.candidateInfoList);
+    const currentRecommend = msg.candidateInfoList[0];
+
+    $("#current-recommend").css("display", "block");
+    $("#candidate-picture").attr("src", currentRecommend.main_image);
+    $("#candidate-name").text(currentRecommend.nick_name);
+    $("#candidate-sex").text(currentRecommend.sex);
+    $("#candidate-age").text(`${currentRecommend.age} 歲`);
+    $("#candidate-intro").text(currentRecommend.self_intro);
+
+    // 動態產生後續的推薦人選
+    const nextRecommend = msg.candidateInfoList.slice(1);
+    createNextRecommendDiv(nextRecommend);
 
     // 取得特定使用者的候選人名單
     const candidatesUrl = `/api/1.0/user/candidate`;
@@ -317,7 +355,7 @@ $("#btn-connect").click(function (e) {
       headers: { "Content-Type": "application/json" },
       body: "",
     };
-    fetchOption.body = JSON.stringify({ userid: id });
+    fetchOption.body = JSON.stringify({ userid: msg.id });
 
     const userCandidateList = await getApi(candidatesUrl, fetchOption);
     const userSuitorList = await getApi(suitorsUrl, fetchOption);
@@ -326,8 +364,8 @@ $("#btn-connect").click(function (e) {
     // FIXME: 動態產生下拉式選單的選項 (改用 socketIO 取得資料)
     (() => {
       // 取得該連線者的候選人名單
-      const certainCandidateList = userCandidateList[0][id];
-      const certainSuitorList = userSuitorList[0][id];
+      const certainCandidateList = userCandidateList[0][msg.id];
+      const certainSuitorList = userSuitorList[0][msg.id];
       const certainPartnerList = userPartnerList[0];
 
       // 產生想跟誰配對的下拉選單

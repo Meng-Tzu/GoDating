@@ -16,7 +16,7 @@ export const pool = mysql
   })
   .promise();
 
-// FIXME: 取得 DB 裡的所有使用者 id + nick_name + coordinate
+// FIXME: 取得 DB 裡的所有使用者 id + nick_name
 const getAllUsers = async () => {
   const queryStr = `
     SELECT id, nick_name FROM user
@@ -39,8 +39,8 @@ const getAllUserIds = async () => {
   return result;
 };
 
-// FIXME: 取得使用者基本資料 (以 id number 表示)
-const getUserInfo1 = async (id) => {
+// FIXME: 取得使用者配對資料 (需要 nick_name 嗎?)
+const getUserMatchInfo = async (id) => {
   const queryStr = `
     SELECT id, nick_name,
     birth_year, birth_month, birth_date, 
@@ -54,7 +54,35 @@ const getUserInfo1 = async (id) => {
   return result;
 };
 
-// FIXME: 取得使用者想要的年齡區間 (以 id number 表示)
+// 取得特定使用者的詳細資料
+const getUserDetailInfo = async (id) => {
+  const queryStr = `
+  SELECT id, nick_name, 
+  birth_year, birth_month, birth_date,
+  sex_id, main_image, self_intro
+  FROM user
+  WHERE id = ?
+  `;
+
+  const [[result]] = await pool.query(queryStr, [id]);
+  return result;
+};
+
+// 取得多個候選人的詳細資料
+const getMultiCandidatesDetailInfo = async (candidateIds) => {
+  const queryStr = `
+  SELECT id, nick_name, 
+  birth_year, birth_month, birth_date,
+  sex_id, main_image, self_intro
+  FROM user
+  WHERE id in (?)
+  `;
+
+  const [result] = await pool.query(queryStr, [candidateIds]);
+  return result;
+};
+
+// 取得使用者想要的年齡區間
 const getUserDesireAgeRange = async (id) => {
   const queryStr = `
     SELECT id, seek_age_min, seek_age_max
@@ -67,7 +95,7 @@ const getUserDesireAgeRange = async (id) => {
   return result;
 };
 
-// FIXME: 取得配對資料 (以 tag_id number 表示)
+// FIXME: 取得配對標籤 (以 tag_id number 表示)
 const getMatchTag1 = async (id) => {
   const queryStr = `
     SELECT U.id, UT.tag_id
@@ -169,7 +197,7 @@ const saveCandidatesToCache = async (match_pair) => {
     // 要幫每一個候選人加上 nickname
     for (const candidateId of match_pair[userId]) {
       // 取得 candidate 的基本資訊
-      const candidateInfo = await getUserInfo1(candidateId);
+      const candidateInfo = await getUserMatchInfo(candidateId);
 
       try {
         if (Cache.ready) {
@@ -186,7 +214,7 @@ const saveCandidatesToCache = async (match_pair) => {
   }
 };
 
-// FIXME: 從 cache 取出特定使用者的 "candidate" (應該放在 model ?)
+// FIXME: 從 cache 取出特定使用者的 "candidate" (改成取 sorted set) (放在 model ?)
 const getCandidateFromCache = async (userId) => {
   if (Cache.ready) {
     const candidateIds = await Cache.hkeys(`candidates_of_userid#${userId}`);
@@ -256,10 +284,25 @@ const getPursuersOfAllUsersFromCache = async (allUserIds) => {
   return userPursuerPairs;
 };
 
+// FIXME: 從 cache 取得特定候選人的詳細資料 (應該放在 model ?)
+const getCandidateInfoFromCache = async (candidateId) => {
+  const InfoType = await Cache.hkeys(`candidate_info_id#${candidateId}`);
+  const InfoValue = await Cache.hvals(`candidate_info_id#${candidateId}`);
+
+  const candidateInfo = {};
+  InfoType.forEach((type, index) => {
+    candidateInfo[type] = InfoValue[index];
+  });
+
+  return candidateInfo;
+};
+
 export {
   getAllUsers,
   getAllUserIds,
-  getUserInfo1,
+  getUserMatchInfo,
+  getUserDetailInfo,
+  getMultiCandidatesDetailInfo,
   getUserDesireAgeRange,
   getMatchTag1,
   saveCandidatesToDB,
@@ -271,4 +314,5 @@ export {
   getPursuerFromCache,
   getPartnerFromCache,
   getPursuersOfAllUsersFromCache,
+  getCandidateInfoFromCache,
 };

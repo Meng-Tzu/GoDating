@@ -71,6 +71,18 @@ main section#chatroom {
   flex: 1 1 500px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+main section#chatroom div#current-recommend {
+  border: 1px solid gray;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+main section#chatroom div#current-recommend img#candidate-picture {
+  height: 200px;
+  border-radius: 50%;
 }
 main section#chatroom div#title {
   justify-content: space-between;
@@ -136,6 +148,13 @@ main section#current div#more-info div#cross {
   background-position: center;
   border: none;
   cursor: pointer;
+}
+main section#current div.next-recommend {
+  width: 100px;
+}
+main section#current div.next-recommend img.next-picture {
+  width: 100px;
+  border-radius: 50%;
 }
 main section#current ul.search-message {
   list-style-type: none;
