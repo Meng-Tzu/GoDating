@@ -92,7 +92,21 @@ main {
     flex: 1 1 500px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     // border: 1px solid rgb(255, 187, 0);
+
+    div#current-recommend {
+      border: 1px solid gray;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      img#candidate-picture {
+        height: 200px;
+        border-radius: 50%;
+      }
+    }
 
     div#title {
       justify-content: space-between;
@@ -168,6 +182,15 @@ main {
         background-position: center;
         border: none;
         cursor: pointer;
+      }
+    }
+
+    div.next-recommend {
+      width: 100px;
+
+      img.next-picture {
+        width: 100px;
+        border-radius: 50%;
       }
     }
 
