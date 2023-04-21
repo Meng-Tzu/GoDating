@@ -310,7 +310,7 @@ $("#btn-connect").click(function (e) {
 
     // 取得特定使用者的候選人名單
     const candidatesUrl = `/api/1.0/user/candidate`;
-    const suitorsUrl = `/api/1.0/user/suitor`;
+    const suitorsUrl = `/api/1.0/user/pursuer`;
     const partnersUrl = `/api/1.0/user/partner`;
     let fetchOption = {
       method: "POST",
