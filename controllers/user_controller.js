@@ -1,4 +1,4 @@
-import { getAllUsers, getAllPartnerOfUser } from "../models/user_model.js";
+import { getAllUsers, getPartnerFromCache } from "../models/user_model.js";
 
 const getUserIdName = async (req, res) => {
   const data = await getAllUsers();
@@ -11,7 +11,7 @@ const getUserIdName = async (req, res) => {
 const certainUserPartnerList = async (req, res) => {
   // FIXME: 改從 authentication 拿 user id
   const { userid } = req.body;
-  const partnerList = await getAllPartnerOfUser(userid);
+  const partnerList = await getPartnerFromCache(userid);
 
   const response = { data: [] };
 

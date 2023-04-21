@@ -4,8 +4,10 @@ import {
   getUserDesireAgeRange,
   getMatchTag1,
   saveCandidatesToDB,
-  getCandidateOfSelf,
-  getSuitorOfSelf,
+  getCandidatesFromDB,
+  getPursuersFromDB,
+  getCandidateFromCache,
+  getPursuerFromCache,
   saveCandidatesToCache,
 } from "../models/user_model.js";
 
@@ -257,11 +259,20 @@ for (const userId in sex_match_pair) {
 //   await saveCandidatesToDB(sex_match_pair);
 // })();
 
-// FIXME: 輸出特定使用者的候選人 API ( cache miss 時改撈 DB)
-const certainUserMatchList = async (req, res) => {
+// 輸出特定使用者的候選人 API ( cache miss 時改撈 DB)
+const certainUserCandidateList = async (req, res) => {
   // FIXME: 改從 authentication 拿 user id
   const { userid } = req.body;
-  const candidateList = await getCandidateOfSelf(userid);
+  let candidateList;
+  try {
+    candidateList = await getCandidateFromCache(userid);
+  } catch (error) {
+    console.error("Cannot get candidate list from cache. Error:", error);
+
+    console.log("Get candidate list from DB");
+    candidateList = await getCandidatesFromDB(userid);
+  }
+
   const userCandidatePair = {};
   userCandidatePair[userid] = candidateList;
 
@@ -273,24 +284,35 @@ const certainUserMatchList = async (req, res) => {
   return;
 };
 
-// FIXME: 輸出特定使用者的追求者 API ( cache miss 時改撈 DB)
-const certainUserSuitorList = async (req, res) => {
+// 輸出特定使用者的追求者 API ( cache miss 時改撈 DB)
+const certainUserPursuerList = async (req, res) => {
   // FIXME: 改從 authentication 拿 user id
   const { userid } = req.body;
-  const suitorList = await getSuitorOfSelf(userid);
-  const userSuitortePair = {};
-  userSuitortePair[userid] = suitorList;
+
+  let pursuerList;
+
+  try {
+    pursuerList = await getPursuerFromCache(userid);
+  } catch (error) {
+    console.error("Cannot get pursuer list from cache. Error:", error);
+
+    console.log("Get pursuer list from DB");
+    pursuerList = await getPursuersFromDB(userid);
+  }
+
+  const userPursuertePair = {};
+  userPursuertePair[userid] = pursuerList;
 
   const response = { data: [] };
 
-  response.data.push(userSuitortePair);
+  response.data.push(userPursuertePair);
 
   res.status(200).json(response);
   return;
 };
 
 //  FIXME: 輸出成 API 格式 (要改成輸入進去 DB 和 cache，而非直接餵給 API)
-const AllUserMatchList = async (req, res) => {
+const AllUserCandidateList = async (req, res) => {
   const response = { data: [] };
 
   for (const userId in sex_match_pair) {
@@ -305,4 +327,8 @@ const AllUserMatchList = async (req, res) => {
   return;
 };
 
-export { certainUserMatchList, certainUserSuitorList, AllUserMatchList };
+export {
+  certainUserCandidateList,
+  certainUserPursuerList,
+  AllUserCandidateList,
+};
