@@ -1,6 +1,6 @@
 import {
   getAllUserIds,
-  getUserInfo1,
+  getUserMatchInfo,
   getUserDesireAgeRange,
   getMatchTag1,
   saveCandidatesToDB,
@@ -11,13 +11,15 @@ import {
   saveCandidatesToCache,
 } from "../models/user_model.js";
 
+import { getAge } from "../util/util.js";
+
 // -------------------------- Function 區塊 -------------------------------
 
 // Function1: 篩選其他人的性別是否符合自己的性傾向
 const preSexMatching = async (selfId, allUserIds) => {
   // 排除自己的 id
   let match1_candidate_ids = allUserIds.filter((userId) => userId !== selfId);
-  const self = await getUserInfo1(selfId);
+  const self = await getUserMatchInfo(selfId);
 
   if (self.orientation_id === 3 || self.orientation_id === 6) {
     // 雙性戀, 摸索中 -> 全選
@@ -25,7 +27,7 @@ const preSexMatching = async (selfId, allUserIds) => {
     // 同性戀
     const candidates = [];
     for (let userId of match1_candidate_ids) {
-      const candidate = await getUserInfo1(userId);
+      const candidate = await getUserMatchInfo(userId);
       if (candidate.sex_id === self.sex_id) {
         candidates.push(userId);
       }
@@ -39,7 +41,7 @@ const preSexMatching = async (selfId, allUserIds) => {
 
     const candidates = [];
     for (let userId of match1_candidate_ids) {
-      const candidate = await getUserInfo1(userId);
+      const candidate = await getUserMatchInfo(userId);
       if (candidate.sex_id === sex[0]) {
         candidates.push(userId);
       }
@@ -50,20 +52,7 @@ const preSexMatching = async (selfId, allUserIds) => {
   return match1_candidate_ids;
 };
 
-// Function2: 計算每一個人的年齡
-const getAge = (dateString) => {
-  const today = new Date();
-  const birthDate = new Date(dateString);
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  // 如果今天還沒到自己的生日月份，或還沒到自己生日當天，age 要減一歲
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  return age;
-};
-
-// Function3: 排序規則
+// Function2: 排序規則
 const compareNumbers = (a, b) => {
   return b.tagCount - a.tagCount;
 };
@@ -111,7 +100,7 @@ for (const userId in sex_match_pair) {
     const candidateId = candidateList[i];
 
     // 取得每一個候選人的詳細資訊
-    const candidateInfo = await getUserInfo1(candidateId);
+    const candidateInfo = await getUserMatchInfo(candidateId);
 
     // 取得候選人的年齡
     const candidateBirthday = `${candidateInfo.birth_year}/${candidateInfo.birth_month}/${candidateInfo.birth_date}`;

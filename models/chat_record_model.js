@@ -1,4 +1,4 @@
-import { client } from "../util/util.js";
+import { client } from "../util/search_engine.js";
 
 // 清除 chatting index 內的所有資料
 const deleteChatIndexFromES = async (indexName) => {
