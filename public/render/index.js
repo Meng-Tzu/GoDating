@@ -54,19 +54,19 @@ const createCandidateOption = (candidates, elementName) => {
   }
 };
 
-// Function4: 動態製造 DOM 物件 (create option for suitor)
-const createSuitorOption = (suitorId, suitorName) => {
+// Function4: 動態製造 DOM 物件 (create option for pursuer)
+const createPursuerOption = (pursuerId, pursuerName) => {
   // 選取要被插入 child 的 parant element
-  const $parent = $("#suitors");
+  const $parent = $("#pursuers");
 
   // 新建 option element
   const $option = $("<option>");
 
   // 把新的 option 的 value 和 text 改掉
   $option
-    .addClass("suitor")
-    .attr("value", suitorId)
-    .text(suitorName)
+    .addClass("pursuer")
+    .attr("value", pursuerId)
+    .text(pursuerName)
     .css("display", "inline");
 
   // 把新的 button 加入 parant element
@@ -310,6 +310,179 @@ $(".logo").click(function (e) {
 
 let socket = null;
 
+// 從 JWT token 取得使用者 id 去做 socketIO 連線
+const token = localStorage.getItem("token");
+
+const userApi = "/api/1.0/user/verify";
+let fetchOption = {
+  method: "POST",
+  headers: { Authorization: `Bearer ${token}` },
+};
+
+// 立即執行函式
+(async () => {
+  const userData = await getApi(userApi, fetchOption);
+
+  if (!userData) {
+    // token 錯誤
+    alert("Sorry, you need to sign up / sign in again.");
+    localStorage.removeItem("token");
+    window.location.href = "/login.html";
+  } else {
+    const { id, name, email } = userData;
+    $(".user-name").text(name).attr("id", id);
+
+    // 建立一個 io 物件(?)，並連上 SocketIO server
+    socket = io();
+
+    // 傳送連線者資訊給 server
+    const user = { id, name };
+    socket.emit("online", user);
+
+    // 連線建立後 (加上候選人的詳細資訊)
+    socket.on("user-connect", async (msg) => {
+      console.log("open connection to server");
+
+      console.log("candidateInfoList", msg.candidateInfoList);
+      const currentRecommend = msg.candidateInfoList[0];
+
+      $("#current-recommend").css("display", "block");
+      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#candidate-name").text(currentRecommend.nick_name);
+      $("#candidate-sex").text(currentRecommend.sex);
+      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      $("#candidate-intro").text(currentRecommend.self_intro);
+
+      // 動態產生後續的推薦人選
+      const nextRecommend = msg.candidateInfoList.slice(1);
+      createNextRecommendDiv(nextRecommend);
+
+      // 取得特定使用者的候選人名單
+      const candidatesUrl = `/api/1.0/user/candidate`;
+      const pursuersUrl = `/api/1.0/user/pursuer`;
+      const partnersUrl = `/api/1.0/user/partner`;
+      let fetchOption = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "",
+      };
+      fetchOption.body = JSON.stringify({ userid: msg.id });
+
+      const userCandidateList = await getApi(candidatesUrl, fetchOption);
+      const userPursuerList = await getApi(pursuersUrl, fetchOption);
+      const userPartnerList = await getApi(partnersUrl, fetchOption);
+
+      // FIXME: 動態產生下拉式選單的選項 (改用 socketIO 取得資料)
+      (() => {
+        // 取得該連線者的候選人名單
+        const certainCandidateList = userCandidateList[0][msg.id];
+        const certainPursuerList = userPursuerList[0][msg.id];
+        const certainPartnerList = userPartnerList[0];
+
+        // 產生想跟誰配對的下拉選單
+        createCandidateOption(certainCandidateList, "condidate");
+
+        // 產生有人喜歡你的下拉選單
+        createCandidateOption(certainPursuerList, "pursuer");
+
+        // 產生已配對成功的 partner 有誰
+        createAllPartnerDiv(certainPartnerList, userIdNicknamePair);
+      })();
+    });
+
+    // 房間的廣播
+    socket.on("room-broadcast", (msg) => {
+      console.log(msg);
+      if (msg.system) {
+        $("ul.message").append(`<li>${msg.system}: ${msg.message}</li>`);
+      } else {
+        $("ul.message").append(
+          `<li>${msg.userName}: ${msg.message} ----- ${msg.timestamp}</li>`
+        );
+      }
+    });
+
+    // 接收圖片
+    let imgChunks = [];
+    socket.on("file", async (chunk) => {
+      // 把照片的 base64 編碼拼湊回來
+      imgChunks.push(chunk);
+    });
+
+    // 呈現圖片
+    socket.on("wholeFile", (msg) => {
+      console.log(msg);
+
+      if (msg.error) {
+        $("ul.message").append(`<li>${msg.userName}: ${msg.error}</li>`);
+      } else {
+        const $img = $("<img>");
+        $img
+          .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
+          .height(200);
+
+        $("ul.message")
+          .append(`<li>${msg.userName}:</li>`)
+          .append($img)
+          .append(`<span>----- ${msg.timestamp}</span>`);
+
+        imgChunks = [];
+      }
+    });
+
+    // 主動配對成功
+    socket.on("success-match", async (msg) => {
+      const { userId, partnerId, partnerName, roomId } = msg;
+      createPartnerDiv(roomId, partnerId, partnerName);
+
+      // 重新產生有人喜歡你的下拉選單
+      const pursuersUrl = `/api/1.0/user/pursuer`;
+      let fetchOption = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "",
+      };
+      fetchOption.body = JSON.stringify({ userid: userId });
+
+      const userPursuerList = await getApi(pursuersUrl, fetchOption);
+      const certainPursuerList = userPursuerList[0][id];
+      if (!certainPursuerList) {
+        // 如果使用者目前沒有追求者，清空下拉選單
+        $(".pursuer").remove();
+      } else {
+        // 如果使用者目前還有追求者，更新下拉選單
+        $(".pursuer").remove();
+        createCandidateOption(certainPursuerList, "pursuer");
+      }
+    });
+
+    // 被動配對成功
+    socket.on("success-be-matched", (msg) => {
+      const { userId, partnerId, partnerName, roomId } = msg;
+      createPartnerDiv(roomId, partnerId, partnerName);
+    });
+
+    // 新增誰喜歡我的下拉選單
+    socket.on("who-like-me", (msg) => {
+      const { userId, pursuerId, pursuerName } = msg;
+      createPursuerOption(pursuerId, pursuerName);
+      deleteCandidateOption(pursuerId);
+    });
+
+    // 刪除已選擇過的候選人
+    socket.on("success-send-like-signal", (msg) => {
+      const { userId, condidateId, condidateName } = msg;
+      deleteCandidateOption(condidateId);
+    });
+
+    // 顯示搜尋對話紀錄的結果
+    socket.on("search-result", (result) => {
+      console.log("result", result);
+      createSearchResultDiv(result);
+    });
+  }
+})();
+
 $("#btn-connect").click(function (e) {
   e.preventDefault();
 
@@ -348,7 +521,7 @@ $("#btn-connect").click(function (e) {
 
     // 取得特定使用者的候選人名單
     const candidatesUrl = `/api/1.0/user/candidate`;
-    const suitorsUrl = `/api/1.0/user/pursuer`;
+    const pursuersUrl = `/api/1.0/user/pursuer`;
     const partnersUrl = `/api/1.0/user/partner`;
     let fetchOption = {
       method: "POST",
@@ -358,21 +531,21 @@ $("#btn-connect").click(function (e) {
     fetchOption.body = JSON.stringify({ userid: msg.id });
 
     const userCandidateList = await getApi(candidatesUrl, fetchOption);
-    const userSuitorList = await getApi(suitorsUrl, fetchOption);
+    const userPursuerList = await getApi(pursuersUrl, fetchOption);
     const userPartnerList = await getApi(partnersUrl, fetchOption);
 
     // FIXME: 動態產生下拉式選單的選項 (改用 socketIO 取得資料)
     (() => {
       // 取得該連線者的候選人名單
       const certainCandidateList = userCandidateList[0][msg.id];
-      const certainSuitorList = userSuitorList[0][msg.id];
+      const certainPursuerList = userPursuerList[0][msg.id];
       const certainPartnerList = userPartnerList[0];
 
       // 產生想跟誰配對的下拉選單
       createCandidateOption(certainCandidateList, "condidate");
 
       // 產生有人喜歡你的下拉選單
-      createCandidateOption(certainSuitorList, "suitor");
+      createCandidateOption(certainPursuerList, "pursuer");
 
       // 產生已配對成功的 partner 有誰
       createAllPartnerDiv(certainPartnerList, userIdNicknamePair);
@@ -425,7 +598,7 @@ $("#btn-connect").click(function (e) {
     createPartnerDiv(roomId, partnerId, partnerName);
 
     // 重新產生有人喜歡你的下拉選單
-    const suitorsUrl = `/api/1.0/user/suitor`;
+    const pursuersUrl = `/api/1.0/user/pursuer`;
     let fetchOption = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -433,15 +606,15 @@ $("#btn-connect").click(function (e) {
     };
     fetchOption.body = JSON.stringify({ userid: userId });
 
-    const userSuitorList = await getApi(suitorsUrl, fetchOption);
-    const certainSuitorList = userSuitorList[0][id];
-    if (!certainSuitorList) {
+    const userPursuerList = await getApi(pursuersUrl, fetchOption);
+    const certainPursuerList = userPursuerList[0][id];
+    if (!certainPursuerList) {
       // 如果使用者目前沒有追求者，清空下拉選單
-      $(".suitor").remove();
+      $(".pursuer").remove();
     } else {
       // 如果使用者目前還有追求者，更新下拉選單
-      $(".suitor").remove();
-      createCandidateOption(certainSuitorList, "suitor");
+      $(".pursuer").remove();
+      createCandidateOption(certainPursuerList, "pursuer");
     }
   });
 
@@ -453,9 +626,9 @@ $("#btn-connect").click(function (e) {
 
   // 新增誰喜歡我的下拉選單
   socket.on("who-like-me", (msg) => {
-    const { userId, suitorId, suitorName } = msg;
-    createSuitorOption(suitorId, suitorName);
-    deleteCandidateOption(suitorId);
+    const { userId, pursuerId, pursuerName } = msg;
+    createPursuerOption(pursuerId, pursuerName);
+    deleteCandidateOption(pursuerId);
   });
 
   // 刪除已選擇過的候選人
@@ -499,14 +672,14 @@ $("#btn-like-too").click(function (e) {
     return;
   }
 
-  const userId = $("#users option:selected").val();
-  const userName = $("#users option:selected").text();
-  const suitorId = $("#suitors option:selected").val();
-  const suitorName = $("#suitors option:selected").text();
+  const userId = $(".user-name").attr("id");
+  const userName = $(".user-name").text();
+  const pursuerId = $("#pursuers option:selected").val();
+  const pursuerName = $("#pursuers option:selected").text();
 
-  const messages = { userId, userName, suitorId, suitorName };
+  const messages = { userId, userName, pursuerId, pursuerName };
 
-  socket.emit("like-suitor", messages);
+  socket.emit("like-pursuer", messages);
 });
 
 // 傳送文字

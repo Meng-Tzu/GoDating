@@ -1,11 +1,13 @@
 import dotenv from "dotenv";
 dotenv.config();
+import jwt from "jsonwebtoken";
 
 // 快取
 import Cache from "../util/cache.js";
 
 import {
   getAllUsers,
+  getUserBasicInfo,
   getMultiCandidatesDetailInfo,
   getPartnerFromCache,
 } from "../models/user_model.js";
@@ -69,4 +71,74 @@ const saveCandidateInfoFromDBtoCache = async (candidateIds) => {
 //   console.error(`cannot save candidate detail info into cache:`, error);
 // }
 
-export { getUserIdName, certainUserPartnerList };
+// 登入驗證
+const signIn = async (req, res) => {
+  const { inputEmail, inputPassword } = req.body;
+
+  const { id, password, nick_name } = await getUserBasicInfo(inputEmail);
+
+  if (!id) {
+    // id 為空, 表示 email 不存在
+    res.status(403).json({ error: "Sorry, your input is not correct." });
+    return;
+  }
+
+  // TODO: 使用 argon2 解密碼
+  if (inputPassword != password) {
+    res.status(403).json({ error: "Sorry, your input is not correct." });
+    return;
+  }
+
+  const token = jwt.sign({ id, email: inputEmail }, process.env.TOKEN_SECRET, {
+    expiresIn: process.env.TOKEN_EXPIRE,
+  });
+
+  const response = {
+    data: {
+      access_token: token,
+      access_expired: process.env.TOKEN_EXPIRE,
+      user: {
+        id,
+        name: nick_name,
+      },
+    },
+  };
+
+  res.json(response);
+  return;
+};
+
+// TODO: 註冊
+
+// JWT token 驗證
+const verify = async (req, res) => {
+  // 從來自客戶端請求的 header 取得和擷取 JWT
+  const token = req.header("Authorization").replace("Bearer ", "");
+
+  if (!token) {
+    // 使用者沒有輸入token
+    res.status(401).send({ error: "No token provided." });
+    return;
+  }
+
+  try {
+    // 解開 token
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
+    // 拿token去DB撈profile
+    const { id, email, nick_name } = await getUserBasicInfo(decoded.email);
+
+    // response JSON
+    const response = {
+      data: { id, name: nick_name, email },
+    };
+
+    res.json(response);
+    return;
+  } catch (err) {
+    res.status(403).send({ error: "Wrong token." });
+    return;
+  }
+};
+
+export { getUserIdName, certainUserPartnerList, signIn, verify };

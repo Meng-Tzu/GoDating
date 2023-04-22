@@ -6,6 +6,8 @@ import {
   getUserIdName,
   certainUserPartnerList,
 } from "../controllers/user_controller.js";
+import { signIn, verify } from "../controllers/user_controller.js";
+
 import {
   AllUserCandidateList,
   certainUserCandidateList,
@@ -14,6 +16,14 @@ import {
 
 // 可使用的 request body 格式
 userRouter.use(express.json());
+
+// 登入
+userRouter.post("/user/signin", signIn);
+
+// TODO: 註冊
+
+// 使用者資料驗證
+userRouter.post("/user/verify", verify);
 
 // FIXME: 所有使用者名單(需要增加權限管理)
 userRouter.get("/user/userslist", getUserIdName);
