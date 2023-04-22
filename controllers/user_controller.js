@@ -1,11 +1,13 @@
 import dotenv from "dotenv";
 dotenv.config();
 import jwt from "jsonwebtoken";
+import * as argon2 from "argon2";
 
 // 快取
 import Cache from "../util/cache.js";
 
 import {
+  saveUserBasicInfo,
   getAllUsers,
   getUserBasicInfo,
   getMultiCandidatesDetailInfo,
@@ -83,13 +85,65 @@ const signIn = async (req, res) => {
     return;
   }
 
-  // TODO: 使用 argon2 解密碼
-  if (inputPassword != password) {
-    res.status(403).json({ error: "Sorry, your input is not correct." });
+  // 使用 argon2 解密碼
+  try {
+    if (await argon2.verify(password, inputPassword)) {
+      const token = jwt.sign(
+        { id, email: inputEmail },
+        process.env.TOKEN_SECRET,
+        {
+          expiresIn: process.env.TOKEN_EXPIRE,
+        }
+      );
+
+      const response = {
+        data: {
+          access_token: token,
+          access_expired: process.env.TOKEN_EXPIRE,
+          user: {
+            id,
+            name: nick_name,
+          },
+        },
+      };
+
+      res.json(response);
+      return;
+    } else {
+      // password did not match
+      res.status(403).json({ error: "Sorry, your input is not correct." });
+      return;
+    }
+  } catch (error) {
+    console.error("cannot analyze password, error:", error);
+    res.status(500).json({ error: "Something went wrong with server." });
+    return;
+  }
+};
+
+// FIXME: 註冊 (必須有 middleware 去驗證 input 格式是正確的)
+const signUp = async (req, res) => {
+  // 取得使用者輸入的data
+  const { inputEmail, inputPassword, inputName } = req.body;
+
+  // check email exist (撈DB)
+  const DBuserInfo = await getUserBasicInfo(inputEmail);
+  if (DBuserInfo) {
+    // 當DBuserInfo 有值, 表示email已存在
+    res.status(403).json({ error: "Email Already Exists." });
     return;
   }
 
-  const token = jwt.sign({ id, email: inputEmail }, process.env.TOKEN_SECRET, {
+  // generate hash password
+  const hashPassword = await argon2.hash(inputPassword);
+
+  // 存入新註冊者的帳密和暱稱到 DB
+  await saveUserBasicInfo(inputEmail, hashPassword, inputName);
+
+  // 再次取得新註冊者的在 DB 的 id, email, nick_name
+  const { id, email, nick_name } = await getUserBasicInfo(inputEmail);
+
+  const token = jwt.sign({ id, email }, process.env.TOKEN_SECRET, {
     expiresIn: process.env.TOKEN_EXPIRE,
   });
 
@@ -107,8 +161,6 @@ const signIn = async (req, res) => {
   res.json(response);
   return;
 };
-
-// TODO: 註冊
 
 // JWT token 驗證
 const verify = async (req, res) => {
@@ -141,4 +193,4 @@ const verify = async (req, res) => {
   }
 };
 
-export { getUserIdName, certainUserPartnerList, signIn, verify };
+export { getUserIdName, certainUserPartnerList, signIn, signUp, verify };
