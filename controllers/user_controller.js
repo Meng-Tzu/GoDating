@@ -110,4 +110,35 @@ const signIn = async (req, res) => {
 
 // TODO: 註冊
 
-export { getUserIdName, certainUserPartnerList, signIn };
+// JWT token 驗證
+const verify = async (req, res) => {
+  // 從來自客戶端請求的 header 取得和擷取 JWT
+  const token = req.header("Authorization").replace("Bearer ", "");
+
+  if (!token) {
+    // 使用者沒有輸入token
+    res.status(401).send({ error: "No token provided." });
+    return;
+  }
+
+  try {
+    // 解開 token
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
+    // 拿token去DB撈profile
+    const { id, email, nick_name } = await getUserBasicInfo(decoded.email);
+
+    // response JSON
+    const response = {
+      data: { id, name: nick_name, email },
+    };
+
+    res.json(response);
+    return;
+  } catch (err) {
+    res.status(403).send({ error: "Wrong token." });
+    return;
+  }
+};
+
+export { getUserIdName, certainUserPartnerList, signIn, verify };
