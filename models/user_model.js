@@ -16,6 +16,17 @@ export const pool = mysql
   })
   .promise();
 
+// 存入新註冊者的帳密和暱稱到 DB
+const saveUserBasicInfo = async (email, password, nickname) => {
+  const queryStr = `
+  INSERT INTO user
+  (email, password, nick_name)
+  VALUES (?, ?, ?)
+  `;
+
+  await pool.query(queryStr, [email, password, nickname]);
+};
+
 // FIXME: 取得 DB 裡的所有使用者 id + nick_name
 const getAllUsers = async () => {
   const queryStr = `
@@ -39,7 +50,7 @@ const getAllUserIds = async () => {
   return result;
 };
 
-// 取得使用者 id, password
+// 取得使用者 id, email, password, nick_name
 const getUserBasicInfo = async (email) => {
   const queryStr = `
   SELECT id, email, password, nick_name
@@ -311,6 +322,7 @@ const getCandidateInfoFromCache = async (candidateId) => {
 };
 
 export {
+  saveUserBasicInfo,
   getAllUsers,
   getAllUserIds,
   getUserBasicInfo,
