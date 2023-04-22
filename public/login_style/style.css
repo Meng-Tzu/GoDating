@@ -1,0 +1,21 @@
+main {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+main form#signUp,
+main form#signIn {
+  flex: 1 1 100px;
+  margin: 0 5rem;
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+main form#signUp {
+  background-color: #d3ffbb;
+}
+main form#signIn {
+  background-color: #bbbbbb;
+}/*# sourceMappingURL=style.css.map */

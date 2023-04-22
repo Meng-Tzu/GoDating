@@ -24,9 +24,12 @@
   "homepage": "https://github.com/Meng-Tzu/WebSocket-Test#readme",
   "dependencies": {
     "@elastic/elasticsearch": "^8.6.0",
+    "argon2": "^0.30.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-validator": "^7.0.1",
     "ioredis": "^5.3.1",
+    "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.2.0",
     "socket.io": "^4.6.1",
     "uuid": "^9.0.0"

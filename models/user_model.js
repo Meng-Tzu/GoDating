@@ -39,6 +39,19 @@ const getAllUserIds = async () => {
   return result;
 };
 
+// 取得使用者 id, password
+const getUserBasicInfo = async (email) => {
+  const queryStr = `
+  SELECT id, email, password, nick_name
+  FROM user
+  WHERE email = ?
+  `;
+
+  const [[result]] = await pool.query(queryStr, [email]);
+
+  return result;
+};
+
 // FIXME: 取得使用者配對資料 (需要 nick_name 嗎?)
 const getUserMatchInfo = async (id) => {
   const queryStr = `
@@ -300,6 +313,7 @@ const getCandidateInfoFromCache = async (candidateId) => {
 export {
   getAllUsers,
   getAllUserIds,
+  getUserBasicInfo,
   getUserMatchInfo,
   getUserDetailInfo,
   getMultiCandidatesDetailInfo,
