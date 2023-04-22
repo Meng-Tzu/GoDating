@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GoDating</title>
+    <meta name="author" content="Meng-Tzu Tsai" />
+
+    <!-- google font setting -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./default_style/style.css" />
+  </head>
+  <body>
+    <!-- header -->
+    <header>
+      <section class="left">
+        <a href="#" class="logo"><img src="/logo.png" alt="Logo" /></a>
+
+        <nav>
+          <ul>
+            <li class="chatroom">
+              <a href="/chatroom.html">聊天室</a>
+            </li>
+            <li class="line">|</li>
+            <li class="map"><a href="/map.html">地圖</a></li>
+          </ul>
+        </nav>
+      </section>
+
+      <section class="right">
+        <a href="/profile.html"><img src="/profile.jpg" alt="profile" /></a>
+        <h1 class="user-name"></h1>
+      </section>
+    </header>
+    <main>
+      <section id="survey">填寫個人問卷</section>
+    </main>
+  </body>
+  <script
+    src="https://code.jquery.com/jquery-3.6.3.min.js"
+    integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+    crossorigin="anonymous"
+  ></script>
+  <script src="./render/profile.js"></script>
+</html>
