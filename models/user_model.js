@@ -27,6 +27,48 @@ const saveUserBasicInfo = async (email, password, nickname) => {
   await pool.query(queryStr, [email, password, nickname]);
 };
 
+// 存入新註冊者的詳細資料到 DB
+const saveUserDetailInfo = async (
+  userId,
+  birthYear,
+  birthMonth,
+  birthDate,
+  sexId,
+  orientationId,
+  ageMin,
+  ageMax,
+  selfIntro,
+  pictureName
+) => {
+  const queryStr = `
+  UPDATE user
+  SET
+  birth_year = ?, 
+  birth_month = ?,  
+  birth_date = ?, 
+  sex_id = ?, 
+  sexual_orientation_id = ?, 
+  seek_age_min = ?, 
+  seek_age_max = ?, 
+  self_intro = ?, 
+  main_image = ?
+  WHERE id = ?
+  `;
+
+  await pool.query(queryStr, [
+    birthYear,
+    birthMonth,
+    birthDate,
+    sexId,
+    orientationId,
+    ageMin,
+    ageMax,
+    selfIntro,
+    pictureName,
+    userId,
+  ]);
+};
+
 // FIXME: 取得 DB 裡的所有使用者 id + nick_name
 const getAllUsers = async () => {
   const queryStr = `
@@ -323,6 +365,7 @@ const getCandidateInfoFromCache = async (candidateId) => {
 
 export {
   saveUserBasicInfo,
+  saveUserDetailInfo,
   getAllUsers,
   getAllUserIds,
   getUserBasicInfo,
