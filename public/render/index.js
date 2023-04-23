@@ -339,11 +339,11 @@ let fetchOption = {
     const user = { id, name };
     socket.emit("online", user);
 
-    // 連線建立後 (加上候選人的詳細資訊)
+    // FIXME: 連線建立後 (加上追求者的詳細資訊) (從 socketIO 拿完整 candidate & pursuer list)
     socket.on("user-connect", async (msg) => {
       console.log("open connection to server");
 
-      console.log("candidateInfoList", msg.candidateInfoList);
+      // console.log("candidateInfoList", msg.candidateInfoList);
       const currentRecommend = msg.candidateInfoList[0];
 
       $("#current-recommend").css("display", "block");
@@ -467,12 +467,40 @@ let fetchOption = {
       const { userId, pursuerId, pursuerName } = msg;
       createPursuerOption(pursuerId, pursuerName);
       deleteCandidateOption(pursuerId);
+
+      // 更新目前推薦人選
+      const currentRecommend = msg.candidateInfoList[0];
+      $("#current-recommend").css("display", "block");
+      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#candidate-name").text(currentRecommend.nick_name);
+      $("#candidate-sex").text(currentRecommend.sex);
+      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      $("#candidate-intro").text(currentRecommend.self_intro);
+
+      // 更新後續的推薦人選
+      const nextRecommend = msg.candidateInfoList.slice(1);
+      $(".next-recommend").remove();
+      createNextRecommendDiv(nextRecommend);
     });
 
     // 刪除已選擇過的候選人
     socket.on("success-send-like-signal", (msg) => {
       const { userId, condidateId, condidateName } = msg;
       deleteCandidateOption(condidateId);
+
+      // 更新目前推薦人選
+      const currentRecommend = msg.candidateInfoList[0];
+      $("#current-recommend").css("display", "block");
+      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#candidate-name").text(currentRecommend.nick_name);
+      $("#candidate-sex").text(currentRecommend.sex);
+      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      $("#candidate-intro").text(currentRecommend.self_intro);
+
+      // 更新後續的推薦人選
+      const nextRecommend = msg.candidateInfoList.slice(1);
+      $(".next-recommend").remove();
+      createNextRecommendDiv(nextRecommend);
     });
 
     // 顯示搜尋對話紀錄的結果
@@ -653,8 +681,8 @@ $("#btn-like").click(function (e) {
     return;
   }
 
-  const userId = $("#users option:selected").val();
-  const userName = $("#users option:selected").text();
+  const userId = $(".user-name").attr("id");
+  const userName = $(".user-name").text();
   const condidateId = $("#condidates option:selected").val();
   const condidateName = $("#condidates option:selected").text();
 

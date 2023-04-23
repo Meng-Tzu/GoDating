@@ -142,16 +142,40 @@ io.on("connection", (socket) => {
     await saveNeverMatchOfUser(userId, condidateId);
     await saveNeverMatchOfUser(condidateId, userId);
 
+    // 更新自己的 candidate list
+    const candidateListOfSelf = await getCandidateFromCache(userId);
+    const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
+    const candidateInfoListOfSelf = [];
+    for (const candidateId of candidateIdListOfSelf) {
+      const candidateInfo = await getCandidateInfoFromCache(candidateId);
+      candidateInfoListOfSelf.push(candidateInfo);
+    }
+
+    // 更新對方的 candidate list
+    const candidateListOfOtherSide = await getCandidateFromCache(condidateId);
+    const candidateIdListOfOtherSide = Object.keys(candidateListOfOtherSide);
+    const candidateInfoListOfOtherSide = [];
+    for (const candidateId of candidateIdListOfOtherSide) {
+      const candidateInfo = await getCandidateInfoFromCache(candidateId);
+      candidateInfoListOfOtherSide.push(candidateInfo);
+    }
+
     // 把自己的資訊送回對方的前端
     const responseForOtherSide = {
       userId: condidateId,
-      suitorId: userId,
-      suitorName: userName,
+      pursuerId: userId,
+      pursuerName: userName,
+      candidateInfoList: candidateInfoListOfOtherSide,
     };
     connections[condidateId].socket.emit("who-like-me", responseForOtherSide);
 
     // 把對方的資訊再次送回給自己的前端
-    const responseForSelf = { userId, condidateId, condidateName };
+    const responseForSelf = {
+      userId,
+      condidateId,
+      condidateName,
+      candidateInfoList: candidateInfoListOfSelf,
+    };
     socket.emit("success-send-like-signal", responseForSelf);
 
     console.log(
