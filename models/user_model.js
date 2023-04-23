@@ -218,6 +218,19 @@ const getCandidatesFromDB = async (userId) => {
   return candidateList;
 };
 
+// FIXME: 刪除 "user_candidate" 裡所有資料 (無法使用 prepared statement，使用白名單)
+const allowedTables = ["user_candidate", "user_pursuer"];
+
+const deleteAllRowInTable = async (tableName) => {
+  if (!allowedTables.includes(tableName)) {
+    throw new Error(`Table name '${tableName}' is not allowed to delete.`);
+  }
+
+  const queryStr = `TRUNCATE TABLE ${tableName}`;
+
+  await pool.query(queryStr);
+};
+
 // FIXME: 存入所有使用者的 "pursuer" 到 DB (遍歷效能差)
 const savePursuersToDB = async (userPursuerPairs) => {
   const queryStr = `
@@ -376,6 +389,7 @@ export {
   getMatchTag1,
   saveCandidatesToDB,
   getCandidatesFromDB,
+  deleteAllRowInTable,
   savePursuersToDB,
   getPursuersFromDB,
   saveCandidatesToCache,

@@ -52,5 +52,15 @@ $("#match-info").click(async function (e) {
 
   const response = await getApi(userApi, fetchOption);
   alert(response);
+
+  // 更新配對名單
+  fetchOption = {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  };
+  const matchApi = "/api/1.0/match/candidate";
+  const update = await getApi(matchApi, fetchOption);
+  console.log("update", update);
+
   location.reload();
 });
