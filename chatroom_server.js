@@ -184,31 +184,31 @@ io.on("connection", (socket) => {
   });
 
   // 監聽到使用者喜歡追求者
-  socket.on("like-suitor", async (msg) => {
-    const { userId, userName, suitorId, suitorName } = msg;
+  socket.on("like-pursuer", async (msg) => {
+    const { userId, userName, pursuerId, pursuerName } = msg;
 
     const roomId = uuidv4();
 
     // 從 cache 把對方從自己的 "who_like_me" 刪除
-    await deleteSuitorOfUser(userId, suitorId);
+    await deleteSuitorOfUser(userId, pursuerId);
 
     // 在 ElasticSearch 建立對話紀錄 index
-    const indexId = `chatrecord-${userId}-${suitorId}`;
+    const indexId = `chatrecord-${userId}-${pursuerId}`;
     await initChatIndexOfES(indexId);
 
     // 加入 roomId, indexId 到 cache 的 "partners"
-    await savePartnerOfUser(userId, suitorId, roomId, indexId);
-    await savePartnerOfUser(suitorId, userId, roomId, indexId);
+    await savePartnerOfUser(userId, pursuerId, roomId, indexId);
+    await savePartnerOfUser(pursuerId, userId, roomId, indexId);
 
     const responseForSelf = {
       userId,
-      partnerId: suitorId,
-      partnerName: suitorName,
+      partnerId: pursuerId,
+      partnerName: pursuerName,
       roomId,
     };
 
     const responseForOtherSide = {
-      userId: suitorId,
+      userId: pursuerId,
       partnerId: userId,
       partnerName: userName,
       roomId,
@@ -218,12 +218,12 @@ io.on("connection", (socket) => {
     socket.emit("success-match", responseForSelf);
 
     // 傳給對方
-    connections[suitorId].socket.emit(
+    connections[pursuerId].socket.emit(
       "success-be-matched",
       responseForOtherSide
     );
 
-    console.log(`Successfully match userId#${userId} with userId#${suitorId}`);
+    console.log(`Successfully match userId#${userId} with userId#${pursuerId}`);
   });
 
   // 當有使用者想傳送訊息到聊天室
