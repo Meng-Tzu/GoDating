@@ -16,6 +16,7 @@
     />
 
     <link rel="stylesheet" href="./default_style/style.css" />
+    <link rel="stylesheet" href="./profile_style/style.css" />
   </head>
   <body>
     <!-- header -->
@@ -40,7 +41,62 @@
       </section>
     </header>
     <main>
-      <section id="survey">填寫個人問卷</section>
+      <section id="survey">
+        <form
+          action="/api/1.0/user/profile"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <label for="picture">上傳個人照：</label>
+          <input type="file" name="picture" id="picture" />
+
+          <label for="birthday">生日：</label>
+          <input type="date" id="birthday" name="birthday" />
+
+          <label for="sex-id">性別：</label>
+          <select name="sex-id" id="sex-id">
+            <option value="1">男性</option>
+            <option value="2">女性</option>
+          </select>
+
+          <label for="sexual-orientation-id">性傾向：</label>
+          <select name="sexual-orientation-id" id="sexual-orientation-id">
+            <option value="1">異性戀</option>
+            <option value="2">同性戀</option>
+            <option value="3">雙性戀</option>
+            <option value="4">摸索中</option>
+          </select>
+
+          <div id="seek-age-range">
+            <h3>尋找年齡區間：</h3>
+            <label for="seek-age-min">最小年齡：</label>
+            <input
+              type="number"
+              name="seek-age-min"
+              id="seek-age-min"
+              min="18"
+              max="55"
+            />
+            <label for="seek-age-max">最大年齡：</label>
+            <input
+              type="number"
+              name="seek-age-max"
+              id="seek-age-max"
+              min="18"
+              max="55"
+            />
+          </div>
+
+          <label for="self-intro">自我簡介：</label>
+          <textarea
+            name="self-intro"
+            id="self-intro"
+            cols="30"
+            rows="10"
+          ></textarea>
+          <button id="match-info" type="submit">Submit</button>
+        </form>
+      </section>
     </main>
   </body>
   <script
