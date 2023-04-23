@@ -27,6 +27,48 @@ const saveUserBasicInfo = async (email, password, nickname) => {
   await pool.query(queryStr, [email, password, nickname]);
 };
 
+// 存入新註冊者的詳細資料到 DB
+const saveUserDetailInfo = async (
+  userId,
+  birthYear,
+  birthMonth,
+  birthDate,
+  sexId,
+  orientationId,
+  ageMin,
+  ageMax,
+  selfIntro,
+  pictureName
+) => {
+  const queryStr = `
+  UPDATE user
+  SET
+  birth_year = ?, 
+  birth_month = ?,  
+  birth_date = ?, 
+  sex_id = ?, 
+  sexual_orientation_id = ?, 
+  seek_age_min = ?, 
+  seek_age_max = ?, 
+  self_intro = ?, 
+  main_image = ?
+  WHERE id = ?
+  `;
+
+  await pool.query(queryStr, [
+    birthYear,
+    birthMonth,
+    birthDate,
+    sexId,
+    orientationId,
+    ageMin,
+    ageMax,
+    selfIntro,
+    pictureName,
+    userId,
+  ]);
+};
+
 // FIXME: 取得 DB 裡的所有使用者 id + nick_name
 const getAllUsers = async () => {
   const queryStr = `
@@ -176,6 +218,19 @@ const getCandidatesFromDB = async (userId) => {
   return candidateList;
 };
 
+// FIXME: 刪除 "user_candidate" 裡所有資料 (無法使用 prepared statement，使用白名單)
+const allowedTables = ["user_candidate", "user_pursuer"];
+
+const deleteAllRowInTable = async (tableName) => {
+  if (!allowedTables.includes(tableName)) {
+    throw new Error(`Table name '${tableName}' is not allowed to delete.`);
+  }
+
+  const queryStr = `TRUNCATE TABLE ${tableName}`;
+
+  await pool.query(queryStr);
+};
+
 // FIXME: 存入所有使用者的 "pursuer" 到 DB (遍歷效能差)
 const savePursuersToDB = async (userPursuerPairs) => {
   const queryStr = `
@@ -323,6 +378,7 @@ const getCandidateInfoFromCache = async (candidateId) => {
 
 export {
   saveUserBasicInfo,
+  saveUserDetailInfo,
   getAllUsers,
   getAllUserIds,
   getUserBasicInfo,
@@ -333,6 +389,7 @@ export {
   getMatchTag1,
   saveCandidatesToDB,
   getCandidatesFromDB,
+  deleteAllRowInTable,
   savePursuersToDB,
   getPursuersFromDB,
   saveCandidatesToCache,

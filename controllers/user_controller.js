@@ -8,6 +8,7 @@ import Cache from "../util/cache.js";
 
 import {
   saveUserBasicInfo,
+  saveUserDetailInfo,
   getAllUsers,
   getUserBasicInfo,
   getMultiCandidatesDetailInfo,
@@ -121,7 +122,7 @@ const signIn = async (req, res) => {
   }
 };
 
-// FIXME: 註冊 (必須有 middleware 去驗證 input 格式是正確的)
+// FIXME: 註冊
 const signUp = async (req, res) => {
   // 取得使用者輸入的data
   const { inputEmail, inputPassword, inputName } = req.body;
@@ -193,4 +194,60 @@ const verify = async (req, res) => {
   }
 };
 
-export { getUserIdName, certainUserPartnerList, signIn, signUp, verify };
+// 儲存使用者的詳細資料
+const saveDetailInfo = async (req, res) => {
+  const {
+    userId,
+    birthday,
+    sexId,
+    orientationId,
+    seekAgeMin,
+    seekAgeMax,
+    selfIntro,
+  } = req.body;
+
+  const birthYear = birthday.split("-")[0];
+  const birthMonth = birthday.split("-")[1];
+  const birthDate = birthday.split("-")[2];
+
+  // 取得圖片檔名
+  const picture = req.files.picture;
+
+  // 檢查圖片是否有填
+  if (!picture) {
+    res.status(403).json({ data: "error: Image is required." });
+    return;
+  } else {
+    const pictureName = picture[0].filename;
+
+    try {
+      // 存入 DB
+      await saveUserDetailInfo(
+        userId,
+        birthYear,
+        birthMonth,
+        birthDate,
+        sexId,
+        orientationId,
+        seekAgeMin,
+        seekAgeMax,
+        selfIntro,
+        pictureName
+      );
+      res.json({ data: "Successfully save." });
+      return;
+    } catch (error) {
+      console.error("cannot save user detail info into DB");
+      return;
+    }
+  }
+};
+
+export {
+  getUserIdName,
+  certainUserPartnerList,
+  signIn,
+  signUp,
+  verify,
+  saveDetailInfo,
+};

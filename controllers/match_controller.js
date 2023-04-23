@@ -5,6 +5,7 @@ import {
   getMatchTag1,
   saveCandidatesToDB,
   getCandidatesFromDB,
+  deleteAllRowInTable,
   getPursuersFromDB,
   getCandidateFromCache,
   getPursuerFromCache,
@@ -243,10 +244,18 @@ for (const userId in sex_match_pair) {
 // ------------------------- 篩選結束 -------------------------
 
 // FIXME: 存入 candidate 到 cache & DB (何時觸發?)
-// (async () => {
-//   await saveCandidatesToCache(sex_match_pair);
-//   await saveCandidatesToDB(sex_match_pair);
-// })();
+const suggestCandidate = async (req, res) => {
+  // TODO: 驗證 token 是否正確
+
+  // FIXME: 刪除所有使用者的 "candidate" 名單 (太激烈了)
+  await deleteAllRowInTable("user_candidate");
+
+  // 存新的所有 "candidate" 到 cache & DB
+  await saveCandidatesToCache(sex_match_pair);
+  await saveCandidatesToDB(sex_match_pair);
+
+  res.json({ data: "Successfully update candidateId list" });
+};
 
 // 輸出特定使用者的候選人 API ( cache miss 時改撈 DB)
 const certainUserCandidateList = async (req, res) => {
@@ -317,6 +326,7 @@ const AllUserCandidateList = async (req, res) => {
 };
 
 export {
+  suggestCandidate,
   certainUserCandidateList,
   certainUserPursuerList,
   AllUserCandidateList,

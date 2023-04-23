@@ -50,6 +50,9 @@ app.use("/api/1.0", [userRouter]);
 import { chatRouter } from "./routes/chat_record_route.js";
 app.use("/api/1.0", [chatRouter]);
 
+import { matchRouter } from "./routes/match_route.js";
+app.use("/api/1.0", [matchRouter]);
+
 // 當使用者輸入錯的路徑，會直接掉進這個 middle ware
 app.use((req, res) => {
   console.log("error request path", req.originalUrl);
