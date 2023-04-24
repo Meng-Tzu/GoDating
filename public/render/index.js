@@ -148,26 +148,39 @@ const createNextRecommendDiv = (candidateInfoList) => {
 };
 
 // TODO: Function9: 動態製造 DOM 物件 (create div for next-recommend)
-const createMessageDiv = (msg) => {
+const createMessageDiv = (msg, imgChunks) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#dialogue");
 
   // 新建 div
   const $div = $("<div>");
   const $outerDiv = $div.clone();
+  $outerDiv.attr("class", `message-in-dialogue ${msg.userId}`);
   const $inner1stDiv = $div.clone();
   const $inner2ndDiv = $div.clone();
-
-  $outerDiv.attr("class", `message-in-dialogue ${msg.userId}`);
-  $inner1stDiv
-    .attr("class", "single-message")
-    .text(`${msg.userName}: ${msg.message}`);
   $inner2ndDiv.attr("class", "timestamp").text(msg.timestamp);
 
-  // // 把複製出來的 div 加入 parent element
-  $inner1stDiv.appendTo($outerDiv);
-  $inner2ndDiv.appendTo($outerDiv);
-  $outerDiv.appendTo($parent);
+  if (!imgChunks) {
+    $inner1stDiv
+      .attr("class", "single-message")
+      .text(`${msg.userName}: ${msg.message}`);
+
+    // // 把複製出來的 div 加入 parent element
+    $inner1stDiv.appendTo($outerDiv);
+    $inner2ndDiv.appendTo($outerDiv);
+    $outerDiv.appendTo($parent);
+  } else {
+    $inner1stDiv.attr("class", "single-message").text(`${msg.userName}:`);
+    const $img = $("<img>");
+    $img
+      .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
+      .height(200);
+
+    $inner1stDiv.appendTo($outerDiv);
+    $img.appendTo($outerDiv);
+    $inner2ndDiv.appendTo($outerDiv);
+    $outerDiv.appendTo($parent);
+  }
 };
 
 // Function10: 動態製造 DOM 物件 (create div for search result)
@@ -251,7 +264,7 @@ const openChatroom = async function ($this) {
   // 隱藏取消圖示
   $("#cross").css("display", "none");
 
-  // TODO: 取得先前的對話紀錄 (改用 socketIO 取得??)
+  // 取得先前的對話紀錄 (改用 socketIO 取得??)
   const chatIndexId = classNames.split(" ")[2];
 
   const partnersUrl = `/api/1.0/chat/allrecord`;
@@ -268,17 +281,13 @@ const openChatroom = async function ($this) {
     chatRecord.forEach((record) => {
       const { userName, message, timestamp } = record;
       createMessageDiv(record);
-
-      // $("ul.message").append(
-      //   `<li>${userName}: ${message} ----- ${timestamp}</li>`
-      // );
     });
   }
 };
 
 // Function12: [WebSocket] 使用者上傳照片
 const upload = (roomId, partnerId, obj) => {
-  // console.log("obj:", obj);
+  console.log("partnerId:", partnerId);
   const files = obj.files;
   const [file] = files;
   // console.log("files:", files);
@@ -421,18 +430,10 @@ let fetchOption = {
       createNextRecommendDiv(nextRecommend);
     });
 
-    // TODO: 對話呈現純文字
+    // 對話呈現純文字
     socket.on("room-broadcast", (msg) => {
       console.log(msg);
       createMessageDiv(msg);
-
-      // if (msg.system) {
-      //   $("#dialogue").append(`<li>${msg.system}: ${msg.message}</li>`);
-      // } else {
-      //   $("#dialogue").append(
-      //     `<li>${msg.userName}: ${msg.message} ----- ${msg.timestamp}</li>`
-      //   );
-      // }
     });
 
     // 接收圖片
@@ -445,22 +446,8 @@ let fetchOption = {
     // 呈現圖片
     socket.on("wholeFile", (msg) => {
       console.log(msg);
-
-      if (msg.error) {
-        $("ul.message").append(`<li>${msg.userName}: ${msg.error}</li>`);
-      } else {
-        const $img = $("<img>");
-        $img
-          .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
-          .height(200);
-
-        $("ul.message")
-          .append(`<li>${msg.userName}:</li>`)
-          .append($img)
-          .append(`<span>----- ${msg.timestamp}</span>`);
-
-        imgChunks = [];
-      }
+      createMessageDiv(msg, imgChunks);
+      imgChunks = [];
     });
 
     // 主動配對成功
@@ -613,169 +600,6 @@ $(".logo").click(function (e) {
   // 隱藏取消圖示
   $("#cross").css("display", "none");
 });
-
-// $("#btn-connect").click(function (e) {
-//   e.preventDefault();
-
-//   if (socket !== null) {
-//     alert("Already connected");
-//     return;
-//   }
-//   // 建立一個 io 物件(?)，並連上 SocketIO server
-//   socket = io();
-
-//   // 取得連線的人是誰
-//   const id = +$("#users").val();
-//   const name = $("#users option:selected").text();
-
-//   // 傳送連線者資訊給 server
-//   const user = { id, name };
-//   socket.emit("online", user);
-
-//   // 連線建立後 (加上候選人的詳細資訊)
-//   socket.on("user-connect", async (msg) => {
-//     console.log("open connection to server");
-
-//     console.log("candidateInfoList", msg.candidateInfoList);
-//     const currentRecommend = msg.candidateInfoList[0];
-
-//     $("#current-recommend").css("display", "block");
-//     $("#candidate-picture").attr("src", currentRecommend.main_image);
-//     $(".candidate-name")
-//       .text(currentRecommend.nick_name)
-//       .attr("id", currentRecommend.id);
-//     $("#candidate-sex").text(currentRecommend.sex);
-//     $("#candidate-age").text(`${currentRecommend.age} 歲`);
-//     $("#candidate-intro").text(currentRecommend.self_intro);
-
-//     // 動態產生後續的推薦人選
-//     const nextRecommend = msg.candidateInfoList.slice(1);
-//     createNextRecommendDiv(nextRecommend);
-
-//     // 取得特定使用者的候選人名單
-//     const candidatesUrl = `/api/1.0/user/candidate`;
-//     const pursuersUrl = `/api/1.0/user/pursuer`;
-//     const partnersUrl = `/api/1.0/user/partner`;
-//     let fetchOption = {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: "",
-//     };
-//     fetchOption.body = JSON.stringify({ userid: msg.id });
-
-//     const userCandidateList = await getApi(candidatesUrl, fetchOption);
-//     const userPursuerList = await getApi(pursuersUrl, fetchOption);
-//     const userPartnerList = await getApi(partnersUrl, fetchOption);
-
-//     // FIXME: 動態產生下拉式選單的選項 (改用 socketIO 取得資料)
-//     (() => {
-//       // 取得該連線者的候選人名單
-//       const certainCandidateList = userCandidateList[0][msg.id];
-//       const certainPursuerList = userPursuerList[0][msg.id];
-//       const certainPartnerList = userPartnerList[0];
-
-//       // 產生想跟誰配對的下拉選單
-//       createCandidateOption(certainCandidateList, "condidate");
-
-//       // 產生有人喜歡你的下拉選單
-//       createCandidateOption(certainPursuerList, "pursuer");
-
-//       // 產生已配對成功的 partner 有誰
-//       createAllPartnerDiv(certainPartnerList, userIdNicknamePair);
-//     })();
-//   });
-
-//   // 房間的廣播
-//   socket.on("room-broadcast", (msg) => {
-//     console.log(msg);
-//     if (msg.system) {
-//       $("ul.message").append(`<li>${msg.system}: ${msg.message}</li>`);
-//     } else {
-//       $("ul.message").append(
-//         `<li>${msg.userName}: ${msg.message} ----- ${msg.timestamp}</li>`
-//       );
-//     }
-//   });
-
-//   // 接收圖片
-//   let imgChunks = [];
-//   socket.on("file", async (chunk) => {
-//     // 把照片的 base64 編碼拼湊回來
-//     imgChunks.push(chunk);
-//   });
-
-//   // 呈現圖片
-//   socket.on("wholeFile", (msg) => {
-//     console.log(msg);
-
-//     if (msg.error) {
-//       $("ul.message").append(`<li>${msg.userName}: ${msg.error}</li>`);
-//     } else {
-//       const $img = $("<img>");
-//       $img
-//         .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
-//         .height(200);
-
-//       $("ul.message")
-//         .append(`<li>${msg.userName}:</li>`)
-//         .append($img)
-//         .append(`<span>----- ${msg.timestamp}</span>`);
-
-//       imgChunks = [];
-//     }
-//   });
-
-//   // 主動配對成功
-//   socket.on("success-match", async (msg) => {
-//     const { userId, partnerId, partnerName, roomId } = msg;
-//     createPartnerDiv(roomId, partnerId, partnerName);
-
-//     // 重新產生有人喜歡你的下拉選單
-//     const pursuersUrl = `/api/1.0/user/pursuer`;
-//     let fetchOption = {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: "",
-//     };
-//     fetchOption.body = JSON.stringify({ userid: userId });
-
-//     const userPursuerList = await getApi(pursuersUrl, fetchOption);
-//     const certainPursuerList = userPursuerList[0][id];
-//     if (!certainPursuerList) {
-//       // 如果使用者目前沒有追求者，清空下拉選單
-//       $(".pursuer").remove();
-//     } else {
-//       // 如果使用者目前還有追求者，更新下拉選單
-//       $(".pursuer").remove();
-//       createCandidateOption(certainPursuerList, "pursuer");
-//     }
-//   });
-
-//   // 被動配對成功
-//   socket.on("success-be-matched", (msg) => {
-//     const { userId, partnerId, partnerName, roomId } = msg;
-//     createPartnerDiv(roomId, partnerId, partnerName);
-//   });
-
-//   // 新增誰喜歡我的下拉選單
-//   socket.on("who-like-me", (msg) => {
-//     const { userId, pursuerId, pursuerName } = msg;
-//     createPursuerOption(pursuerId, pursuerName);
-//     deleteCandidateOption(pursuerId);
-//   });
-
-//   // 刪除已選擇過的候選人
-//   socket.on("success-send-like-signal", (msg) => {
-//     const { userId, candidateId, candidateName } = msg;
-//     deleteCandidateOption(candidateId);
-//   });
-
-//   // 顯示搜尋對話紀錄的結果
-//   socket.on("search-result", (result) => {
-//     console.log("result", result);
-//     createSearchResultDiv(result);
-//   });
-// });
 
 // 把想配對的 candidate 資訊送給 server 儲存
 $("#btn-like").click(function (e) {
