@@ -15,16 +15,20 @@
       rel="stylesheet"
     />
 
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+    />
     <link rel="stylesheet" href="./default_style/style.css" />
   </head>
   <body>
     <!-- header -->
-    <header>
+    <header class="bg-yellow-200 shadow-md">
       <section class="left">
         <a href="#" class="logo"><img src="/logo.png" alt="Logo" /></a>
 
         <nav>
-          <ul>
+          <ul class="text-2xl text-yellow-950">
             <li class="chatroom">
               <a href="/chatroom.html">聊天室</a>
             </li>
@@ -36,12 +40,14 @@
 
       <section class="right">
         <a href="/profile.html"><img src="/profile.jpg" alt="profile" /></a>
-        <h1 class="user-name"></h1>
+        <h1
+          class="user-name text-lime-600 text-yellow-950 text-center text-2xl"
+        ></h1>
       </section>
     </header>
-    <main>
-      <section id="match">
-        <h3>配對成功</h3>
+    <main class="min-h-screen">
+      <section class="bg-yellow-100" id="match">
+        <h3 class="text-xl font-bold">配對成功</h3>
       </section>
       <section id="chatroom">
         <form id="connection" action="" method="post">
@@ -76,12 +82,21 @@
           <button type="submit" id="btn-like-too">Like!</button>
         </form>
 
-        <div id="current-recommend" style="display: none">
-          <img id="candidate-picture" src="" alt="personal picture" />
-          <h2 id="candidate-name"></h2>
+        <div
+          id="current-recommend"
+          class="bg-orange-50 shadow-xl shadow-orange-50 border-orange-200"
+          style="display: none"
+        >
+          <div id="front-cover">
+            <div id="candidate-cantainer">
+              <img id="candidate-picture" src="" alt="personal picture" />
+            </div>
+          </div>
+          <h2 id="candidate-name" class="text-2xl"></h2>
+
           <p id="candidate-sex"></p>
           <p id="candidate-age"></p>
-          <h3 id="intro-title">自我介紹</h3>
+          <h3 id="intro-title" class="text-xl">自我介紹</h3>
           <p id="candidate-intro"></p>
         </div>
 
@@ -106,17 +121,17 @@
           <button type="submit" id="btn-file">上傳檔案</button>
         </form>
       </section>
-      <section id="current">
+      <section id="current" class="bg-yellow-100">
         <div id="more-info">
-          <h3>猜你會喜歡...</h3>
+          <h3 class="decoration-4 text-xl font-bold">猜你會喜歡...</h3>
           <div id="cross" style="display: none"></div>
         </div>
 
         <div id="partner-info" style="display: none">
           <img src="./images/hwasa.jpg" alt="Hwasa" />
 
-          <div id="partner-name"></div>
-          <div id="tags">
+          <div id="partner-name" class="text-center"></div>
+          <div id="tags" class="">
             <a href="" class="tag">#MAMAMOO</a>
             <a href="" class="tag">#黑金妮</a>
             <a href="" class="tag">#KPOP</a>
@@ -135,5 +150,6 @@
     crossorigin="anonymous"
   ></script>
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="./index.js"></script>
 </html>
