@@ -11,8 +11,9 @@ const __dirname = path.dirname(__filename);
 
 // 導入 Cache function
 import {
-  getCandidateFromCache,
+  getAllCandidateFromCache,
   getCandidateInfoFromCache,
+  getAllPursuerFromCache,
 } from "./models/user_model.js";
 
 import {
@@ -107,44 +108,85 @@ io.on("connection", (socket) => {
     console.log(`user id #${id} successfully connect.`);
 
     // TODO: 傳送候選人的詳細資訊給使用者 (串接 sursuer & candidate list)
-    const candidateList = await getCandidateFromCache(id);
-    const candidateIdList = Object.keys(candidateList);
+    // const candidateList = await getAllCandidateFromCache(id);
+    // const candidateIdList = Object.keys(candidateList);
 
-    const testCandidateInfo = await getCandidateInfoFromCache(
-      candidateIdList[0]
+    // const testCandidateInfo = await getCandidateInfoFromCache(
+    //   candidateIdList[0]
+    // );
+
+    // const candidateInfoList = [];
+    // for (const candidateId of candidateIdList) {
+    //   const candidateInfo = await getCandidateInfoFromCache(candidateId);
+
+    //   candidateInfoList.push(candidateInfo);
+    // }
+
+    // 更新自己的 pursuer + candidate list
+    const candidateListOfSelf = await getAllCandidateFromCache(id);
+    const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
+
+    const pursuerListOfSelf = await getAllPursuerFromCache(id);
+    const pursuerIdListOfSelf = Object.keys(pursuerListOfSelf);
+
+    const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
+      candidateIdListOfSelf
     );
 
-    const candidateInfoList = [];
-    for (const candidateId of candidateIdList) {
-      const candidateInfo = await getCandidateInfoFromCache(candidateId);
-
-      candidateInfoList.push(candidateInfo);
+    const potentialInfoListOfSelf = [];
+    for (const potentialId of integratedIdListOfSelf) {
+      const potentialInfo = await getCandidateInfoFromCache(potentialId);
+      potentialInfoListOfSelf.push(potentialInfo);
     }
 
     // const response = { id, testCandidateInfo };
-    const response = { id, candidateInfoList };
+    const response = { id, potentialInfoList: potentialInfoListOfSelf };
 
     // 告知使用者已成功連線
     socket.emit("user-connect", response);
   });
 
+  // TODO: 監聽使用者按下 logo 並要求所有的 potential list
+  socket.on("request-all-potential", async (userId) => {
+    // 更新自己的 pursuer + candidate list
+    const candidateListOfSelf = await getAllCandidateFromCache(userId);
+    const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
+
+    const pursuerListOfSelf = await getAllPursuerFromCache(userId);
+    const pursuerIdListOfSelf = Object.keys(pursuerListOfSelf);
+
+    const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
+      candidateIdListOfSelf
+    );
+
+    const potentialInfoListOfSelf = [];
+    for (const potentialId of integratedIdListOfSelf) {
+      const potentialInfo = await getCandidateInfoFromCache(potentialId);
+      potentialInfoListOfSelf.push(potentialInfo);
+    }
+
+    const response = { potentialInfoList: potentialInfoListOfSelf };
+
+    socket.emit("response-all-potential", response);
+  });
+
   // 監聽到使用者喜歡候選人
   socket.on("desired-candidate", async (msg) => {
-    const { userId, userName, condidateId, condidateName } = msg;
+    const { userId, userName, candidateId, candidateName } = msg;
 
     // 對方尚未喜歡自己，把自己儲存到對方的 "who_like_me" 快取
-    await saveWhoLikeMeOfOtherSide(condidateId, userId, userName);
+    await saveWhoLikeMeOfOtherSide(candidateId, userId, userName);
 
     // 從快取把雙方的 "candidate" 刪除彼此
-    await deleteCandidateOfUser(userId, condidateId);
-    await deleteCandidateOfUser(condidateId, userId);
+    await deleteCandidateOfUser(userId, candidateId);
+    await deleteCandidateOfUser(candidateId, userId);
 
     // 存進雙方的 "never_match" 到快取
-    await saveNeverMatchOfUser(userId, condidateId);
-    await saveNeverMatchOfUser(condidateId, userId);
+    await saveNeverMatchOfUser(userId, candidateId);
+    await saveNeverMatchOfUser(candidateId, userId);
 
     // 更新自己的 candidate list
-    const candidateListOfSelf = await getCandidateFromCache(userId);
+    const candidateListOfSelf = await getAllCandidateFromCache(userId);
     const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
     const candidateInfoListOfSelf = [];
     for (const candidateId of candidateIdListOfSelf) {
@@ -152,35 +194,45 @@ io.on("connection", (socket) => {
       candidateInfoListOfSelf.push(candidateInfo);
     }
 
-    // 更新對方的 candidate list
-    const candidateListOfOtherSide = await getCandidateFromCache(condidateId);
+    // 更新對方的 pursuer + candidate list
+    const candidateListOfOtherSide = await getAllCandidateFromCache(
+      candidateId
+    );
     const candidateIdListOfOtherSide = Object.keys(candidateListOfOtherSide);
-    const candidateInfoListOfOtherSide = [];
-    for (const candidateId of candidateIdListOfOtherSide) {
-      const candidateInfo = await getCandidateInfoFromCache(candidateId);
-      candidateInfoListOfOtherSide.push(candidateInfo);
+
+    const pursuerListOfOtherSide = await getAllPursuerFromCache(candidateId);
+    const pursuerIdListOfOtherSide = Object.keys(pursuerListOfOtherSide);
+
+    const integratedIdListOfOtherSide = pursuerIdListOfOtherSide.concat(
+      candidateIdListOfOtherSide
+    );
+
+    const potentialInfoListOfOtherSide = [];
+    for (const potentialId of integratedIdListOfOtherSide) {
+      const potentialInfo = await getCandidateInfoFromCache(potentialId);
+      potentialInfoListOfOtherSide.push(potentialInfo);
     }
 
-    // 把自己的資訊送回對方的前端
+    // TODO: 把自己的資訊送回對方的前端 (好像沒有 concat 成功?)
     const responseForOtherSide = {
-      userId: condidateId,
+      userId: candidateId,
       pursuerId: userId,
       pursuerName: userName,
-      candidateInfoList: candidateInfoListOfOtherSide,
+      potentialInfoList: potentialInfoListOfOtherSide,
     };
-    connections[condidateId].socket.emit("who-like-me", responseForOtherSide);
+    connections[candidateId].socket.emit("who-like-me", responseForOtherSide);
 
     // 把對方的資訊再次送回給自己的前端
     const responseForSelf = {
       userId,
-      condidateId,
-      condidateName,
+      candidateId,
+      candidateName,
       candidateInfoList: candidateInfoListOfSelf,
     };
     socket.emit("success-send-like-signal", responseForSelf);
 
     console.log(
-      `userId#${userId}(${userName}) like userId#${condidateId}(${condidateName})`
+      `userId#${userId}(${userName}) like userId#${candidateId}(${candidateName})`
     );
   });
 
@@ -201,11 +253,29 @@ io.on("connection", (socket) => {
     await savePartnerOfUser(userId, pursuerId, roomId, indexId);
     await savePartnerOfUser(pursuerId, userId, roomId, indexId);
 
+    // 更新自己的 potential list
+    const candidateListOfSelf = await getAllCandidateFromCache(userId);
+    const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
+
+    const pursuerListOfSelf = await getAllPursuerFromCache(userId);
+    const pursuerIdListOfSelf = Object.keys(pursuerListOfSelf);
+
+    const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
+      candidateIdListOfSelf
+    );
+
+    const potentialInfoListOfSelf = [];
+    for (const potentialId of integratedIdListOfSelf) {
+      const potentialInfo = await getCandidateInfoFromCache(potentialId);
+      potentialInfoListOfSelf.push(potentialInfo);
+    }
+
     const responseForSelf = {
       userId,
       partnerId: pursuerId,
       partnerName: pursuerName,
       roomId,
+      potentialInfoList: potentialInfoListOfSelf,
     };
 
     const responseForOtherSide = {
