@@ -39,6 +39,7 @@ const app = express();
 app.use("/", express.static("public"));
 app.use("/", express.static("public/render"));
 app.use("/", express.static("public/images"));
+app.use("/", express.static("public/uploads"));
 
 // 可使用的 request body 格式
 app.use(express.json());
@@ -66,8 +67,8 @@ app.use((err, req, res, next) => {
 });
 
 // webserver 聽 3000 port
-const webSrv = app.listen(3030, () =>
-  console.log("Server is running on port 3030.")
+const webSrv = app.listen(3000, () =>
+  console.log("Server is running on port 3000.")
 );
 
 // ----------------------------- SocketIO 區塊 --------------------------------
