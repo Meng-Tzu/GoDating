@@ -157,6 +157,7 @@ const createSearchResultDiv = (result) => {
 
   // 顯示取消圖示
   $("#cross").css("display", "inline");
+  $("#partner-info").css("display", "none");
 
   if (!result.length) {
     const $li = $("<li>");
@@ -204,14 +205,19 @@ const openChatroom = async function ($this) {
   window.history.pushState({}, "", newUrl);
 
   // 顯示出聊天室窗
-  // $("#connection").css("display", "none");
+  $("#connection").css("display", "none");
   $("#short-list").css("display", "none");
   $("#who-like-me").css("display", "none");
+  $("#current-recommend").css("display", "none");
+  $(".next-recommend").css("display", "none");
   $("#title").css("display", "flex");
+  $("#partner-info").css("display", "block");
+  $("#partner-name").text(partnerName);
   $(".other-side").text(partnerName).attr("id", partnerId);
   $("#dialogue").css("display", "block");
   $("#text-msg").css("display", "block");
   $("#picture-msg").css("display", "block");
+  $("#current").css("display", "block");
   $("#current #more-info h3").text("目前聊天者資訊");
 
   // 移除搜尋結果
@@ -291,13 +297,24 @@ $(".logo").click(function (e) {
   window.history.pushState({}, "", indexUrl);
 
   // 隱藏聊天室窗
-  // $("#connection").css("display", "none");
+  $("#connection").css("display", "none");
   $("#short-list").css("display", "block");
   $("#title").css("display", "none");
   $("#dialogue").css("display", "none");
   $("#text-msg").css("display", "none");
   $("#picture-msg").css("display", "none");
   $("#current h3").text("猜你會喜歡...");
+  $("#partner-info").css("display", "none");
+
+  // 顯示目前推薦人選
+  $("#current-recommend").css("display", "block");
+  $(".next-recommend").css("display", "block");
+  $("#who-like-me").css("display", "block");
+  $("#candidate-picture").attr("src", currentRecommend.main_image);
+  $("#candidate-name").text(currentRecommend.nick_name);
+  $("#candidate-sex").text(currentRecommend.sex);
+  $("#candidate-age").text(`${currentRecommend.age} 歲`);
+  $("#candidate-intro").text(currentRecommend.self_intro);
 
   // 移除搜尋結果
   $(".search-message").remove();
@@ -339,11 +356,11 @@ let fetchOption = {
     const user = { id, name };
     socket.emit("online", user);
 
-    // 連線建立後 (加上候選人的詳細資訊)
+    // FIXME: 連線建立後 (加上追求者的詳細資訊) (從 socketIO 拿完整 candidate & pursuer list)
     socket.on("user-connect", async (msg) => {
       console.log("open connection to server");
 
-      console.log("candidateInfoList", msg.candidateInfoList);
+      // console.log("candidateInfoList", msg.candidateInfoList);
       const currentRecommend = msg.candidateInfoList[0];
 
       $("#current-recommend").css("display", "block");
@@ -467,12 +484,40 @@ let fetchOption = {
       const { userId, pursuerId, pursuerName } = msg;
       createPursuerOption(pursuerId, pursuerName);
       deleteCandidateOption(pursuerId);
+
+      // 更新目前推薦人選
+      const currentRecommend = msg.candidateInfoList[0];
+      $("#current-recommend").css("display", "block");
+      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#candidate-name").text(currentRecommend.nick_name);
+      $("#candidate-sex").text(currentRecommend.sex);
+      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      $("#candidate-intro").text(currentRecommend.self_intro);
+
+      // 更新後續的推薦人選
+      const nextRecommend = msg.candidateInfoList.slice(1);
+      $(".next-recommend").remove();
+      createNextRecommendDiv(nextRecommend);
     });
 
     // 刪除已選擇過的候選人
     socket.on("success-send-like-signal", (msg) => {
       const { userId, condidateId, condidateName } = msg;
       deleteCandidateOption(condidateId);
+
+      // 更新目前推薦人選
+      const currentRecommend = msg.candidateInfoList[0];
+      $("#current-recommend").css("display", "block");
+      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#candidate-name").text(currentRecommend.nick_name);
+      $("#candidate-sex").text(currentRecommend.sex);
+      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      $("#candidate-intro").text(currentRecommend.self_intro);
+
+      // 更新後續的推薦人選
+      const nextRecommend = msg.candidateInfoList.slice(1);
+      $(".next-recommend").remove();
+      createNextRecommendDiv(nextRecommend);
     });
 
     // 顯示搜尋對話紀錄的結果
@@ -653,8 +698,8 @@ $("#btn-like").click(function (e) {
     return;
   }
 
-  const userId = $("#users option:selected").val();
-  const userName = $("#users option:selected").text();
+  const userId = $(".user-name").attr("id");
+  const userName = $(".user-name").text();
   const condidateId = $("#condidates option:selected").val();
   const condidateName = $("#condidates option:selected").text();
 
@@ -758,6 +803,7 @@ $("#btn-search").click(function (e) {
 $("#cross").click(function () {
   // 更換標題
   $("#current #more-info h3").text("目前聊天者資訊");
+  $("#partner-info").css("display", "block");
 
   // 移除搜尋結果
   $(".search-message").remove();

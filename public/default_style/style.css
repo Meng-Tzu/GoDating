@@ -71,7 +71,7 @@ main section#chatroom {
   flex: 1 1 500px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  border: 1px solid rgb(255, 187, 0);
 }
 main section#chatroom div#current-recommend {
   border: 1px solid gray;
@@ -101,6 +101,11 @@ main section#chatroom div#title form#search-box {
   border-radius: 20px;
 }
 main section#chatroom div#title form#search-box input#keyword {
+  display: block;
+  width: 200px;
+  padding: 0;
+  margin-top: 0;
+  border-radius: 0;
   border: none;
 }
 main section#chatroom div#title form#search-box input#keyword:focus {
@@ -114,6 +119,7 @@ main section#chatroom div#title form#search-box button#btn-search {
   background-size: cover;
   background-position: center;
   border: none;
+  margin: 0;
   cursor: pointer;
 }
 main section#chatroom div#dialogue {
@@ -148,6 +154,36 @@ main section#current div#more-info div#cross {
   background-position: center;
   border: none;
   cursor: pointer;
+}
+main section#current div#partner-info {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+main section#current div#partner-info img {
+  width: 150px;
+  border-radius: 50%;
+  margin: 0.3rem 0;
+}
+main section#current div#partner-info div#partner-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.3rem 0;
+}
+main section#current div#partner-info div#tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0.3rem 0;
+}
+main section#current div#partner-info div#tags a.tag {
+  flex: 1 1 20px;
+  font-weight: bold;
+  text-decoration: none;
+}
+main section#current div#partner-info div#intro {
+  margin: 0.5rem 0;
 }
 main section#current div.next-recommend {
   width: 100px;
