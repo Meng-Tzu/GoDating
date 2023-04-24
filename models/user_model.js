@@ -294,7 +294,7 @@ const saveCandidatesToCache = async (match_pair) => {
 };
 
 // FIXME: 從 cache 取出特定使用者的 "candidate" (改成取 sorted set) (放在 model ?)
-const getCandidateFromCache = async (userId) => {
+const getAllCandidateFromCache = async (userId) => {
   if (Cache.ready) {
     const candidateIds = await Cache.hkeys(`candidates_of_userid#${userId}`);
     const candidateNames = await Cache.hvals(`candidates_of_userid#${userId}`);
@@ -308,7 +308,22 @@ const getCandidateFromCache = async (userId) => {
   }
 };
 
-// FIXME: 從 cache 輸出特定使用者的 "pursuer" (先 cache 後 DB 取出) (應該放在 model ?)
+// FIXME: 從 cache 取出特定使用者的 "pursuer" (改成取 sorted set) (放在 model ?)
+const getAllPursuerFromCache = async (userId) => {
+  if (Cache.ready) {
+    const pursuerIds = await Cache.hkeys(`who_like_me_of_userid#${userId}`);
+    const pursuerNames = await Cache.hvals(`who_like_me_of_userid#${userId}`);
+
+    const pursuerList = {};
+
+    pursuerIds.forEach((id, index) => {
+      pursuerList[id] = pursuerNames[index];
+    });
+    return pursuerList;
+  }
+};
+
+// FIXME: 從 cache 輸出特定使用者的 "pursuer" (同上) (應該放在 model ?)
 const getPursuerFromCache = async (userId) => {
   try {
     if (Cache.ready) {
@@ -393,7 +408,8 @@ export {
   savePursuersToDB,
   getPursuersFromDB,
   saveCandidatesToCache,
-  getCandidateFromCache,
+  getAllCandidateFromCache,
+  getAllPursuerFromCache,
   getPursuerFromCache,
   getPartnerFromCache,
   getPursuersOfAllUsersFromCache,

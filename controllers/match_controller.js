@@ -7,7 +7,7 @@ import {
   getCandidatesFromDB,
   deleteAllRowInTable,
   getPursuersFromDB,
-  getCandidateFromCache,
+  getAllCandidateFromCache,
   getPursuerFromCache,
   saveCandidatesToCache,
 } from "../models/user_model.js";
@@ -267,7 +267,7 @@ const certainUserCandidateList = async (req, res) => {
   const { userid } = req.body;
   let candidateList;
   try {
-    candidateList = await getCandidateFromCache(userid);
+    candidateList = await getAllCandidateFromCache(userid);
   } catch (error) {
     console.error("Cannot get candidate list from cache. Error:", error);
 
