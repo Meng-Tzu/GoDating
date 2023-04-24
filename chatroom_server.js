@@ -260,7 +260,7 @@ io.on("connection", (socket) => {
       msOfTime
     );
 
-    const response = { roomId, userName, message, timestamp };
+    const response = { userId, roomId, userName, message, timestamp };
 
     io.to(roomId).emit("room-broadcast", response);
   });
