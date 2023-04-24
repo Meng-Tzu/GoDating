@@ -295,8 +295,17 @@ main {
       min-height: 65vh;
       margin: 0.5rem 0;
 
-      ul.message {
-        list-style-type: none;
+      div.message-in-dialogue {
+        // display: inline;
+        background-color: rgb(250, 238, 214);
+        margin: 1rem 0.5rem;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        div.timestamp {
+          color: gray;
+          font-size: 0.5rem;
+        }
       }
     }
 

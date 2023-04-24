@@ -209,8 +209,15 @@ main section#chatroom div#dialogue {
   min-height: 65vh;
   margin: 0.5rem 0;
 }
-main section#chatroom div#dialogue ul.message {
-  list-style-type: none;
+main section#chatroom div#dialogue div.message-in-dialogue {
+  background-color: rgb(250, 238, 214);
+  margin: 1rem 0.5rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+main section#chatroom div#dialogue div.message-in-dialogue div.timestamp {
+  color: gray;
+  font-size: 0.5rem;
 }
 main section#chatroom div#pass-msg {
   display: flex;
