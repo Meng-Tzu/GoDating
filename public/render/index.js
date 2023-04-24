@@ -353,7 +353,7 @@ let fetchOption = {
     socket.on("user-connect", async (msg) => {
       console.log("open connection to server");
 
-      const { potentialInfoList } = msg;
+      const { potentialInfoList, pursuerIdList } = msg;
 
       // 顯示目前推薦人選
       const currentRecommend = potentialInfoList[0];
@@ -368,6 +368,14 @@ let fetchOption = {
       $("#candidate-sex").text(currentRecommend.sex);
       $("#candidate-age").text(`${currentRecommend.age} 歲`);
       $("#candidate-intro").text(currentRecommend.self_intro);
+
+      if (pursuerIdList.includes(currentRecommend.id)) {
+        $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
+        $("#btn-like-too").css("cursor", "pointer");
+      } else {
+        $("#btn-like").css("cursor", "pointer");
+        $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
+      }
 
       // TODO: 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
@@ -452,7 +460,14 @@ let fetchOption = {
 
     // 主動配對成功
     socket.on("success-match", async (msg) => {
-      const { userId, partnerId, partnerName, roomId, potentialInfoList } = msg;
+      const {
+        userId,
+        partnerId,
+        partnerName,
+        roomId,
+        potentialInfoList,
+        pursuerIdList,
+      } = msg;
       createPartnerDiv(roomId, partnerId, partnerName);
 
       // 重新產生有人喜歡你的下拉選單
@@ -486,6 +501,14 @@ let fetchOption = {
       $("#candidate-age").text(`${currentRecommend.age} 歲`);
       $("#candidate-intro").text(currentRecommend.self_intro);
 
+      if (pursuerIdList.includes(currentRecommend.id)) {
+        $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
+        $("#btn-like-too").css("cursor", "pointer");
+      } else {
+        $("#btn-like").css("cursor", "pointer");
+        $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
+      }
+
       // TODO: 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
@@ -502,7 +525,13 @@ let fetchOption = {
 
     // 新增誰喜歡我的下拉選單
     socket.on("who-like-me", (msg) => {
-      const { userId, pursuerId, pursuerName, potentialInfoList } = msg;
+      const {
+        userId,
+        pursuerId,
+        pursuerName,
+        potentialInfoList,
+        pursuerIdList,
+      } = msg;
       createPursuerOption(pursuerId, pursuerName);
       deleteCandidateOption(pursuerId);
 
@@ -516,6 +545,14 @@ let fetchOption = {
       $("#candidate-sex").text(currentRecommend.sex);
       $("#candidate-age").text(`${currentRecommend.age} 歲`);
       $("#candidate-intro").text(currentRecommend.self_intro);
+
+      if (pursuerIdList.includes(currentRecommend.id)) {
+        $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
+        $("#btn-like-too").css("cursor", "pointer");
+      } else {
+        $("#btn-like").css("cursor", "pointer");
+        $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
+      }
 
       // TODO: 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
@@ -540,6 +577,7 @@ let fetchOption = {
       $("#candidate-sex").text(currentRecommend.sex);
       $("#candidate-age").text(`${currentRecommend.age} 歲`);
       $("#candidate-intro").text(currentRecommend.self_intro);
+      $("#btn-like-too").css("pointer-events", "none");
 
       // 更新後續的推薦人選
       const nextRecommend = msg.candidateInfoList.slice(1);

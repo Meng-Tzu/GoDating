@@ -140,7 +140,11 @@ io.on("connection", (socket) => {
     }
 
     // const response = { id, testCandidateInfo };
-    const response = { id, potentialInfoList: potentialInfoListOfSelf };
+    const response = {
+      id,
+      potentialInfoList: potentialInfoListOfSelf,
+      pursuerIdList: pursuerIdListOfSelf,
+    };
 
     // 告知使用者已成功連線
     socket.emit("user-connect", response);
@@ -165,7 +169,10 @@ io.on("connection", (socket) => {
       potentialInfoListOfSelf.push(potentialInfo);
     }
 
-    const response = { potentialInfoList: potentialInfoListOfSelf };
+    const response = {
+      potentialInfoList: potentialInfoListOfSelf,
+      pursuerIdList: pursuerIdListOfSelf,
+    };
 
     socket.emit("response-all-potential", response);
   });
@@ -219,6 +226,7 @@ io.on("connection", (socket) => {
       pursuerId: userId,
       pursuerName: userName,
       potentialInfoList: potentialInfoListOfOtherSide,
+      pursuerIdList: pursuerIdListOfOtherSide,
     };
     connections[candidateId].socket.emit("who-like-me", responseForOtherSide);
 
@@ -276,6 +284,7 @@ io.on("connection", (socket) => {
       partnerName: pursuerName,
       roomId,
       potentialInfoList: potentialInfoListOfSelf,
+      pursuerIdList: pursuerIdListOfSelf,
     };
 
     const responseForOtherSide = {
