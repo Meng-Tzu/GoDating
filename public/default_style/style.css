@@ -199,38 +199,46 @@ main section#chatroom div#dialogue ul.message {
 }
 main section#chatroom div#pass-msg {
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
   align-items: center;
 }
-main section#chatroom div#pass-msg div#pass-msg form {
-  display: inline-block;
-}
-main section#chatroom div#pass-msg form#text-msg,
-main section#chatroom div#pass-msg form#picture-msg {
-  width: 50%;
+main section#chatroom div#pass-msg form#text-msg {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
-main section#chatroom div#pass-msg form#text-msg input#message,
-main section#chatroom div#pass-msg form#picture-msg input#message {
-  flex: 2 1 300px;
+main section#chatroom div#pass-msg form#text-msg input#message {
+  flex: 3 1 300px;
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-main section#chatroom div#pass-msg form#text-msg input#picture,
+main section#chatroom div#pass-msg form#text-msg button {
+  flex: 1 1 200px;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: rgb(255, 253, 248);
+}
+main section#chatroom div#pass-msg form#picture-msg {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 main section#chatroom div#pass-msg form#picture-msg input#picture {
-  flex: 2 1 250px;
+  flex: 3 1 300px;
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-main section#chatroom div#pass-msg form#text-msg button,
 main section#chatroom div#pass-msg form#picture-msg button {
-  flex: 1 1 100px;
+  flex: 1 1 200px;
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
@@ -249,23 +257,25 @@ main section#current h3 {
 }
 main section#current div#more-info {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
   align-items: center;
 }
 main section#current div#more-info h3 {
-  flex: 1 1 80px;
+  flex: 2 1 100px;
   text-align: center;
 }
 main section#current div#more-info div#cross {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+main section#current div#more-info div#cross {
   flex: 1 1 10px;
+  cursor: pointer;
+}
+main section#current div#more-info div#cross img {
   height: 10px;
   width: 10px;
-  background-color: transparent;
-  background-image: url(../images/cross.png);
-  background-size: cover;
-  background-position: center;
-  border: none;
-  cursor: pointer;
 }
 main section#current div#partner-info {
   width: 100%;
@@ -274,7 +284,7 @@ main section#current div#partner-info {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 30px;
+  padding: 1rem;
   overflow: hidden;
 }
 main section#current div#partner-info div#partner-cantainer {
@@ -282,7 +292,7 @@ main section#current div#partner-info div#partner-cantainer {
   justify-content: center;
 }
 main section#current div#partner-info div#partner-cantainer img {
-  height: 300px;
+  height: 250px;
   -webkit-clip-path: circle();
           clip-path: circle();
   -o-object-fit: cover;
@@ -304,13 +314,13 @@ main section#current div#partner-info div#tags {
   margin: 0.3rem 0;
 }
 main section#current div#partner-info div#tags a.tag {
-  flex: 1 1 20px;
+  flex: 1 1 40px;
   width: 50px;
   font-size: 1rem;
   font-weight: bold;
   text-decoration: none;
   text-align: center;
-  color: #3c3c3c;
+  color: #585858;
   padding: 5px 10px;
   border-radius: 20px;
   background-color: #eaeaea;
