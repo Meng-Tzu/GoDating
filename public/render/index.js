@@ -84,15 +84,15 @@ const createPartnerDiv = (roomId, candidateId, candidateName) => {
   const $parent = $("#match");
 
   // 新建 button element
-  const $button = $("<button>");
-  $button
-    .addClass(`partner ${candidateId}`)
+  const $div = $("<div>");
+  $div
+    .addClass(`partner ${candidateId} text-xl text-center shadow-md`)
     .attr("id", roomId)
     .attr("onClick", `openChatroom($(this))`)
     .text(candidateName);
 
-  // 把新的 button 加入 parant element
-  $button.appendTo($parent);
+  // 把新的 div 加入 parant element
+  $div.appendTo($parent);
 };
 
 // FIXME: Function7: 動態製造 DOM 物件 (create div for all partners) (chatIndexId 沒有用??)
@@ -108,16 +108,18 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
     const partnerName = userIdNicknamePair[partnerId];
 
     // 新建 button element
-    const $button = $("<button>");
+    const $div = $("<div>");
 
-    $button
-      .addClass(`partner ${partnerId} ${chatIndexId}`)
+    $div
+      .addClass(
+        `partner ${partnerId} ${chatIndexId} text-xl text-center shadow-md`
+      )
       .attr("id", roomId)
       .attr("onClick", `openChatroom($(this))`)
       .text(partnerName);
 
-    // 把新的 button 加入 parant element
-    $button.appendTo($parent);
+    // 把新的 div 加入 parant element
+    $div.appendTo($parent);
   }
 };
 
@@ -133,9 +135,9 @@ const createNextRecommendDiv = (candidateInfoList) => {
     const $img = $("<img>");
     const $h2 = $("<h2>");
 
-    $div.addClass("next-recommend");
+    $div.addClass("next-recommend text-xl");
     $img.addClass("next-picture").attr("src", candidateInfo.main_image);
-    $h2.addClass(".next-name").text(candidateInfo.nick_name);
+    $h2.addClass(".next-name text-center").text(candidateInfo.nick_name);
 
     $img.appendTo($div);
     $h2.appendTo($div);
