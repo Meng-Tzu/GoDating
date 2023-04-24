@@ -92,6 +92,7 @@ main section#chatroom {
   flex: 1 1 500px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 }
 main section#chatroom div#current-recommend {
@@ -108,10 +109,9 @@ main section#chatroom div#current-recommend {
 main section#chatroom div#current-recommend div#front-cover {
   width: 100%;
   position: relative;
-  top: 0;
   overflow: hidden;
   margin: 0 auto;
-  min-height: 30vh;
+  min-height: 300px;
   background-image: url(../images/pikabu.png);
   background-size: cover;
   background-position: center;
@@ -138,6 +138,21 @@ main section#chatroom div#current-recommend h3#intro-title {
 main section#chatroom div#current-recommend p#candidate-intro {
   margin: 1rem 5rem;
   text-align: center;
+}
+main section#chatroom div#current-recommend div#choose-btn {
+  display: flex;
+  width: 100%;
+}
+main section#chatroom div#current-recommend div#choose-btn button {
+  flex: 1 1 auto;
+  padding: 1rem 1rem;
+  margin: 0 0.3rem;
+  background-color: rgb(255, 247, 165);
+  color: #313538;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 main section#chatroom div#title {
   display: flex;

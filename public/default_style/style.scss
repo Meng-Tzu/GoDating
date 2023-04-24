@@ -135,13 +135,12 @@ main {
     flex: 1 1 500px;
     display: flex;
     flex-direction: column;
-    // justify-content: space-between;
+    justify-content: space-between;
     align-items: center;
     // flex-wrap: wrap;
     // border: 1px solid rgb(255, 187, 0);
 
     div#current-recommend {
-      // position: ;
       margin: 2rem 0;
       width: 60%;
       min-height: 60vh;
@@ -157,10 +156,10 @@ main {
       div#front-cover {
         width: 100%;
         position: relative;
-        top: 0;
+        // top: 0;
         overflow: hidden;
         margin: 0 auto;
-        min-height: 30vh;
+        min-height: 300px;
         background-image: url(../images/pikabu.png);
         background-size: cover;
         background-position: center;
@@ -178,7 +177,6 @@ main {
 
           position: absolute;
           bottom: 0;
-          // clip-path: circle();
 
           img#candidate-picture {
             height: 300px;
@@ -201,6 +199,24 @@ main {
       p#candidate-intro {
         margin: 1rem 5rem;
         text-align: center;
+      }
+
+      div#choose-btn {
+        display: flex;
+        width: 100%;
+
+        button {
+          flex: 1 1 auto;
+          padding: 1rem 1rem;
+          margin: 0 0.3rem;
+          background-color: rgb(255, 247, 165);
+          color: #313538;
+          // border-bottom: 1px solid gray;
+          border-radius: 7px;
+          cursor: pointer;
+          font-size: 1.2rem;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
       }
     }
 
