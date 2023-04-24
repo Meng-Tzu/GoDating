@@ -101,25 +101,30 @@
         </div>
 
         <div id="title" style="display: none">
-          <h2 class="other-side"></h2>
+          <h2 class="other-side text-yellow-950 text-2xl"></h2>
           <form action="" id="search-box">
             <input type="text" id="keyword" />
             <button id="btn-search" type="submit"></button>
           </form>
         </div>
         <div id="dialogue" style="display: none">
-          <ul class="message"></ul>
+          <div class="message-in-dialogue" style="display: none">
+            <div class="single-message"></div>
+            <div class="timestamp"></div>
+          </div>
         </div>
 
-        <form id="text-msg" action="" method="post" style="display: none">
-          <input type="text" name="message" id="message" placeholder="訊息" />
-          <button type="submit" id="btn-text">Send</button>
-        </form>
+        <div id="pass-msg">
+          <form id="text-msg" action="" method="post" style="display: none">
+            <input type="text" name="message" id="message" placeholder="訊息" />
+            <button type="submit" id="btn-text">Send</button>
+          </form>
 
-        <form id="picture-msg" action="" method="post" style="display: none">
-          <input type="file" id="picture" accept="image/*" />
-          <button type="submit" id="btn-file">上傳檔案</button>
-        </form>
+          <form id="picture-msg" action="" method="post" style="display: none">
+            <input type="file" id="picture" accept="image/*" />
+            <button type="submit" id="btn-file">上傳檔案</button>
+          </form>
+        </div>
       </section>
       <section id="current" class="bg-yellow-100">
         <div id="more-info">
@@ -128,7 +133,9 @@
         </div>
 
         <div id="partner-info" style="display: none">
-          <img src="./images/hwasa.jpg" alt="Hwasa" />
+          <div id="partner-cantainer">
+            <img src="./images/hwasa.jpg" alt="Hwasa" />
+          </div>
 
           <div id="partner-name" class="text-center"></div>
           <div id="tags" class="">

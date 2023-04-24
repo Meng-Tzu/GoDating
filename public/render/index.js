@@ -147,7 +147,30 @@ const createNextRecommendDiv = (candidateInfoList) => {
   });
 };
 
-// Function9: 動態製造 DOM 物件 (create div for search result)
+// TODO: Function9: 動態製造 DOM 物件 (create div for next-recommend)
+const createMessageDiv = (msg) => {
+  // 選取要被插入 child 的 parant element
+  const $parent = $("#dialogue");
+
+  // 新建 div
+  const $div = $("<div>");
+  const $outerDiv = $div.clone();
+  const $inner1stDiv = $div.clone();
+  const $inner2ndDiv = $div.clone();
+
+  $outerDiv.attr("class", `message-in-dialogue ${msg.userId}`);
+  $inner1stDiv
+    .attr("class", "single-message")
+    .text(`${msg.userName}: ${msg.message}`);
+  $inner2ndDiv.attr("class", "timestamp").text(msg.timestamp);
+
+  // // 把複製出來的 div 加入 parent element
+  $inner1stDiv.appendTo($outerDiv);
+  $inner2ndDiv.appendTo($outerDiv);
+  $outerDiv.appendTo($parent);
+};
+
+// Function10: 動態製造 DOM 物件 (create div for search result)
 const createSearchResultDiv = (result) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#current");
@@ -179,7 +202,7 @@ const createSearchResultDiv = (result) => {
 
   $ul.appendTo($parent);
 };
-// Function10: 點擊特定 partner 開啟聊天室
+// Function11: 點擊特定 partner 開啟聊天室
 const openChatroom = async function ($this) {
   const roomId = $this.attr("id");
   const partnerName = $this.text();
@@ -196,11 +219,11 @@ const openChatroom = async function ($this) {
     // 如果原本在別的聊天室，就要替換掉 room id
     indexUrl = currentUrl.split("?room=")[0];
     newUrl = indexUrl + `?room=${roomId}`;
-    $("ul.message").children().remove();
+    $("#dialogue").children().remove();
   } else {
     // 如果在首頁，直接加 room id
     newUrl = currentUrl + `?room=${roomId}`;
-    $("ul.message").children().remove();
+    $("#dialogue").children().remove();
   }
 
   // 不跳轉網址
@@ -213,10 +236,10 @@ const openChatroom = async function ($this) {
   $("#current-recommend").css("display", "none");
   $(".next-recommend").css("display", "none");
   $("#title").css("display", "flex");
+  $("#dialogue").css("display", "block");
   $("#partner-info").css("display", "block");
   $("#partner-name").text(partnerName);
   $(".other-side").text(partnerName).attr("id", partnerId);
-  $("#dialogue").css("display", "block");
   $("#text-msg").css("display", "block");
   $("#picture-msg").css("display", "block");
   $("#current").css("display", "block");
@@ -228,7 +251,7 @@ const openChatroom = async function ($this) {
   // 隱藏取消圖示
   $("#cross").css("display", "none");
 
-  // FIXME: 取得先前的對話紀錄 (改用 socketIO 取得??)
+  // TODO: 取得先前的對話紀錄 (改用 socketIO 取得??)
   const chatIndexId = classNames.split(" ")[2];
 
   const partnersUrl = `/api/1.0/chat/allrecord`;
@@ -244,14 +267,16 @@ const openChatroom = async function ($this) {
   if (chatRecord) {
     chatRecord.forEach((record) => {
       const { userName, message, timestamp } = record;
-      $("ul.message").append(
-        `<li>${userName}: ${message} ----- ${timestamp}</li>`
-      );
+      createMessageDiv(record);
+
+      // $("ul.message").append(
+      //   `<li>${userName}: ${message} ----- ${timestamp}</li>`
+      // );
     });
   }
 };
 
-// Function11: [WebSocket] 使用者上傳照片
+// Function12: [WebSocket] 使用者上傳照片
 const upload = (roomId, partnerId, obj) => {
   // console.log("obj:", obj);
   const files = obj.files;
@@ -309,8 +334,9 @@ $(".logo").click(function (e) {
   $("#partner-info").css("display", "none");
 
   // 顯示目前推薦人選
-  $("#current-recommend").css("display", "block");
-  $(".next-recommend").css("display", "block");
+  $("#current").css("display", "flex");
+  $("#current-recommend").css("display", "flex");
+  $(".next-recommend").css("display", "flex");
   $("#who-like-me").css("display", "block");
   $("#candidate-picture").attr("src", currentRecommend.main_image);
   $("#candidate-name").text(currentRecommend.nick_name);
@@ -409,16 +435,18 @@ let fetchOption = {
       })();
     });
 
-    // 房間的廣播
+    // TODO: 對話呈現純文字
     socket.on("room-broadcast", (msg) => {
       console.log(msg);
-      if (msg.system) {
-        $("ul.message").append(`<li>${msg.system}: ${msg.message}</li>`);
-      } else {
-        $("ul.message").append(
-          `<li>${msg.userName}: ${msg.message} ----- ${msg.timestamp}</li>`
-        );
-      }
+      createMessageDiv(msg);
+
+      // if (msg.system) {
+      //   $("#dialogue").append(`<li>${msg.system}: ${msg.message}</li>`);
+      // } else {
+      //   $("#dialogue").append(
+      //     `<li>${msg.userName}: ${msg.message} ----- ${msg.timestamp}</li>`
+      //   );
+      // }
     });
 
     // 接收圖片
