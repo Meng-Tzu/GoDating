@@ -234,7 +234,7 @@ const saveDetailInfo = async (req, res) => {
         selfIntro,
         pictureName
       );
-      res.json({ data: "Successfully save." });
+      res.json({ data: "儲存成功！" });
       return;
     } catch (error) {
       console.error("cannot save user detail info into DB");

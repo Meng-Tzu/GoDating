@@ -44,6 +44,8 @@ app.use("/", express.static("public/uploads"));
 
 // 可使用的 request body 格式
 app.use(express.json());
+// for content-type: application/x-www-form-urlencoded
+matchRouter.use(express.urlencoded({ extended: false }));
 
 // FIXME: API routes (可否共用前面的 path ??)
 import { userRouter } from "./routes/user_route.js";
@@ -304,6 +306,46 @@ io.on("connection", (socket) => {
     );
 
     console.log(`Successfully match userId#${userId} with userId#${pursuerId}`);
+  });
+
+  // 監聽到有新註冊者填完問卷，加入符合條件的其他使用者的「猜你會喜歡」
+  socket.on("new-user-sign-up", async (msg) => {
+    const { newUserId, otherUserIdsList } = msg;
+
+    for (const otherUserId of otherUserIdsList) {
+      if (!(otherUserId in connections)) {
+        continue;
+      }
+      // 更新對方的 pursuer + candidate list
+      const candidateListOfOtherSide = await getAllCandidateFromCache(
+        otherUserId
+      );
+      const candidateIdListOfOtherSide = Object.keys(candidateListOfOtherSide);
+
+      const pursuerListOfOtherSide = await getAllPursuerFromCache(otherUserId);
+      const pursuerIdListOfOtherSide = Object.keys(pursuerListOfOtherSide);
+
+      const integratedIdListOfOtherSide = pursuerIdListOfOtherSide.concat(
+        candidateIdListOfOtherSide
+      );
+
+      const potentialInfoListOfOtherSide = [];
+      for (const potentialId of integratedIdListOfOtherSide) {
+        const potentialInfo = await getCandidateInfoFromCache(potentialId);
+        potentialInfoListOfOtherSide.push(potentialInfo);
+      }
+
+      // 把新註冊者的資訊送回對方的前端
+      const responseForOtherSide = {
+        userId: otherUserId,
+        newUserId,
+        potentialInfoList: potentialInfoListOfOtherSide,
+      };
+      connections[otherUserId].socket.emit(
+        "new-user-added",
+        responseForOtherSide
+      );
+    }
   });
 
   // 當有使用者想傳送訊息到聊天室

@@ -34,6 +34,15 @@ let fetchOption = {
 $("#match-info").click(async function (e) {
   e.preventDefault();
 
+  // 送出表單時再次驗證
+  const userData = await getApi(userApi, fetchOption);
+  if (!userData) {
+    // token 錯誤
+    alert("Sorry, you need to sign up / sign in again.");
+    localStorage.removeItem("token");
+    window.location.href = "/login.html";
+  }
+
   let formData = new FormData();
   formData.append("userId", $(".user-name").attr("id"));
   formData.append("picture", $("#picture")[0].files[0]);
@@ -47,20 +56,43 @@ $("#match-info").click(async function (e) {
   formData.append("seekAgeMax", $("#seek-age-max").val());
   formData.append("selfIntro", $("#self-intro").val());
 
+  // 把新註冊者詳細資訊存進 DB
   fetchOption.body = formData;
   userApi = "/api/1.0/user/profile";
 
   const response = await getApi(userApi, fetchOption);
   alert(response);
 
-  // 更新配對名單
+  // 取得新註冊者的 candidate list
+  const data = { newuserid: $(".user-name").attr("id") };
   fetchOption = {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: "",
   };
-  const matchApi = "/api/1.0/match/candidate";
-  const update = await getApi(matchApi, fetchOption);
-  console.log("update", update);
+  fetchOption.body = JSON.stringify(data);
 
+  console.log("fetchOption", fetchOption);
+  const matchApi = "/api/1.0/match/newone";
+  const candidateListOfNewUser = await getApi(matchApi, fetchOption);
+
+  // 如果新註冊者的配對條件沒有任何人符合，會建議使用者更改條件
+  if ("error" in candidateListOfNewUser) {
+    alert(candidateListOfNewUser.error);
+    return;
+  }
+
+  // 以 socketIO 即時更新其他使用者的 candidate list
+  const socket = io();
+  const update = {
+    newUserId: candidateListOfNewUser.userId,
+    otherUserIdsList: candidateListOfNewUser.potentialListOfCertainUser,
+  };
+  socket.emit("new-user-sign-up", update);
+
+  alert("儲存成功，感謝您填寫問卷！");
   location.reload();
 });

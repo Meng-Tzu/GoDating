@@ -105,7 +105,7 @@ const getUserBasicInfo = async (email) => {
   return result;
 };
 
-// FIXME: 取得使用者配對資料 (需要 nick_name 嗎?)
+// 取得使用者配對資料
 const getUserMatchInfo = async (id) => {
   const queryStr = `
     SELECT id, nick_name,
@@ -191,6 +191,25 @@ const saveCandidatesToDB = async (match_pair) => {
       values.push([+userId, candidateId]);
     });
   }
+
+  const [result] = await pool.query(queryStr, [values]);
+
+  return result;
+};
+
+// FIXME: 將新註冊者與其配對者互相存彼此為 candidates 到 DB
+const saveCandidatesOfCertainUser = async (userId, potentialList) => {
+  const queryStr = `
+  INSERT INTO user_candidate
+  (user_id, candidate_id)
+  VALUES ?
+  `;
+
+  const values = [];
+  potentialList.forEach((candidateId) => {
+    values.push([+userId, candidateId]);
+    values.push([candidateId, +userId]);
+  });
 
   const [result] = await pool.query(queryStr, [values]);
 
@@ -289,6 +308,36 @@ const saveCandidatesToCache = async (match_pair) => {
       } catch (error) {
         console.error(`cannot save candidates into cache:`, error);
       }
+    }
+  }
+};
+
+// FIXME: 將新註冊者與其配對者互相存彼此為 candidates 到 cache (放在 model ??)
+const saveCandidatesOfCertainUserToCache = async (userId, potentialList) => {
+  // 取得 user 的基本資訊
+  const userInfo = await getUserMatchInfo(userId);
+
+  // 要幫每一個候選人加上 nickname
+  for (const candidateId of potentialList) {
+    // 取得 candidate 的基本資訊
+    const candidateInfo = await getUserMatchInfo(candidateId);
+
+    try {
+      if (Cache.ready) {
+        await Cache.hset(
+          `candidates_of_userid#${userId}`,
+          candidateId,
+          candidateInfo.nick_name
+        );
+
+        await Cache.hset(
+          `candidates_of_userid#${candidateId}`,
+          userId,
+          userInfo.nick_name
+        );
+      }
+    } catch (error) {
+      console.error(`cannot save candidates into cache:`, error);
     }
   }
 };
@@ -403,11 +452,13 @@ export {
   getUserDesireAgeRange,
   getMatchTag1,
   saveCandidatesToDB,
+  saveCandidatesOfCertainUser,
   getCandidatesFromDB,
   deleteAllRowInTable,
   savePursuersToDB,
   getPursuersFromDB,
   saveCandidatesToCache,
+  saveCandidatesOfCertainUserToCache,
   getAllCandidateFromCache,
   getAllPursuerFromCache,
   getPursuerFromCache,
