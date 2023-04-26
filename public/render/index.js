@@ -160,7 +160,17 @@ const createMessageDiv = (msg, imgChunks) => {
   const $inner2ndDiv = $div.clone();
   $inner2ndDiv.attr("class", "timestamp").text(msg.timestamp);
 
-  if (!imgChunks) {
+  if (msg.message.includes(".jpg")) {
+    // 如果是拿 ES 裡的照片檔名
+    $inner1stDiv.attr("class", "single-message").text(`${msg.userName}:`);
+    const $img = $("<img>");
+    $img.attr("src", `/${msg.message}`).height(200);
+
+    $inner1stDiv.appendTo($outerDiv);
+    $img.appendTo($outerDiv);
+    $inner2ndDiv.appendTo($outerDiv);
+    $outerDiv.appendTo($parent);
+  } else if (!imgChunks) {
     $inner1stDiv
       .attr("class", "single-message")
       .text(`${msg.userName}: ${msg.message}`);

@@ -403,7 +403,7 @@ io.on("connection", (socket) => {
     response.userName = userName;
     response.userId = userId;
 
-    writeFile(`upload/${filename}`, msg.file, (err) => {
+    writeFile(`public/uploads/${filename}`, msg.file, async (err) => {
       if (err) {
         response.error = `This picture cannot display.`;
         io.emit("wholeFile", response);
@@ -411,7 +411,7 @@ io.on("connection", (socket) => {
       } else {
         // FIXME: 讀取硬碟中的圖片 (解析度跑掉)
         const readStream = createReadStream(
-          path.join(__dirname, `/upload/${filename}`),
+          path.join(__dirname, `/public/uploads/${filename}`),
           {
             encoding: "binary",
           }
@@ -436,17 +436,34 @@ io.on("connection", (socket) => {
         });
 
         // 顯示圖片
-        readStream.on("end", () => {
+        readStream.on("end", async () => {
           console.log("Image loaded");
           response.status = "success";
           response.roomId = roomId;
 
           // 傳送訊息時間
+          const msOfTime = Date.now();
           const time = new Date();
-          response.timestamp = time.toLocaleString("en-US", {
+          const timestamp = time.toLocaleString("en-US", {
             timeZone: "Asia/Taipei",
           });
-          response.msOfTime = Date.now();
+
+          // 從快取的 "partner" 拿到 chat index
+          const chatroomInfo = await getPartnerOfUser(userId, partnerId);
+          const chatIndexId = chatroomInfo[1];
+
+          // 把照片檔名存進 ES
+          await saveChatRecordToES(
+            chatIndexId,
+            userId,
+            userName,
+            filename,
+            timestamp,
+            msOfTime
+          );
+
+          response.timestamp = timestamp;
+          response.msOfTime = msOfTime;
           io.to(roomId).emit("wholeFile", response);
         });
       }
