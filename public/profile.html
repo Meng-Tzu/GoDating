@@ -22,7 +22,7 @@
     <!-- header -->
     <header>
       <section class="left">
-        <a href="#" class="logo"><img src="/logo.png" alt="Logo" /></a>
+        <a href="/" class="logo"><img src="/logo.png" alt="Logo" /></a>
 
         <nav>
           <ul>
@@ -76,6 +76,7 @@
               id="seek-age-min"
               min="18"
               max="55"
+              value="18"
             />
             <label for="seek-age-max">最大年齡：</label>
             <input
@@ -84,16 +85,14 @@
               id="seek-age-max"
               min="18"
               max="55"
+              value="26"
             />
           </div>
 
           <label for="self-intro">自我簡介：</label>
-          <textarea
-            name="self-intro"
-            id="self-intro"
-            cols="30"
-            rows="10"
-          ></textarea>
+          <textarea name="self-intro" id="self-intro" cols="30" rows="10">
+大家好，我是</textarea
+          >
           <button id="match-info" type="submit">Submit</button>
         </form>
       </section>
@@ -104,5 +103,7 @@
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
     crossorigin="anonymous"
   ></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="./render/profile.js"></script>
 </html>

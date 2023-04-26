@@ -147,7 +147,7 @@ const createNextRecommendDiv = (candidateInfoList) => {
   });
 };
 
-// TODO: Function9: 動態製造 DOM 物件 (create div for next-recommend)
+// Function9: 動態製造 DOM 物件 (create div for next-recommend)
 const createMessageDiv = (msg, imgChunks) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#dialogue");
@@ -377,7 +377,7 @@ let fetchOption = {
         $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
       }
 
-      // TODO: 更新後續的推薦人選
+      // 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
@@ -432,7 +432,7 @@ let fetchOption = {
       $("#candidate-age").text(`${currentRecommend.age} 歲`);
       $("#candidate-intro").text(currentRecommend.self_intro);
 
-      // TODO: 更新後續的推薦人選
+      // 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
@@ -490,7 +490,7 @@ let fetchOption = {
         createCandidateOption(certainPursuerList, "pursuer");
       }
 
-      // TODO: 更新目前推薦人選
+      // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
       $("#current-recommend").css("display", "block");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
@@ -509,7 +509,7 @@ let fetchOption = {
         $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
       }
 
-      // TODO: 更新後續的推薦人選
+      // 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
@@ -535,7 +535,7 @@ let fetchOption = {
       createPursuerOption(pursuerId, pursuerName);
       deleteCandidateOption(pursuerId);
 
-      // TODO: 更新目前推薦人選
+      // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
       $("#current-recommend").css("display", "block");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
@@ -554,7 +554,7 @@ let fetchOption = {
         $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
       }
 
-      // TODO: 更新後續的推薦人選
+      // 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
@@ -581,6 +581,16 @@ let fetchOption = {
 
       // 更新後續的推薦人選
       const nextRecommend = msg.candidateInfoList.slice(1);
+      $(".next-recommend").remove();
+      createNextRecommendDiv(nextRecommend);
+    });
+
+    // 新增新註冊者到右方推薦欄
+    socket.on("new-user-added", (msg) => {
+      const { userId, newUserId, potentialInfoList } = msg;
+
+      // 更新後續的推薦人選
+      const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
     });
@@ -616,7 +626,7 @@ $(".logo").click(function (e) {
   // 不跳轉網址
   window.history.pushState({}, "", indexUrl);
 
-  // TODO: 取得使用者所有的 potential list
+  // 取得使用者所有的 potential list
   const userId = $(".user-name").attr("id");
   socket.emit("request-all-potential", userId);
 

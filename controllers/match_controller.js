@@ -1,5 +1,9 @@
+// 快取
+import Cache from "../util/cache.js";
+
 import {
   getAllUserIds,
+  getUserDetailInfo,
   getUserMatchInfo,
   getUserDesireAgeRange,
   getMatchTag1,
@@ -268,7 +272,7 @@ const suggestCandidateToAllUsers = async (req, res) => {
 
 // 針對新註冊的使用者，篩選合適的 candidate 給他
 const suggestCandidateToNewOne = async (req, res) => {
-  const { userId } = req.body;
+  const { newuserid } = req.body;
 
   allUserIds = await getAllUserIds(); // [ 1, 2, 3, 4 ];
   // console.log("allUserIds", allUserIds);
@@ -454,12 +458,44 @@ const suggestCandidateToNewOne = async (req, res) => {
 
   // TODO: 驗證 token 是否正確
 
-  // 把新註冊者的 potentialList 存進 DB & cache
-  const potentialListOfCertainUser = potentialList[userId];
-  await saveCandidatesOfCertainUser(userId, potentialListOfCertainUser);
-  await saveCandidatesOfCertainUserToCache(userId, potentialListOfCertainUser);
+  // 取得新註冊者的 potentialList
+  const potentialListOfCertainUser = potentialList[newuserid];
 
-  res.json({ data: `Successfully save candidateId list of user#${userId}` });
+  // 如果新註冊者的配對條件沒有任何人符合，回傳錯誤
+  if (!potentialListOfCertainUser) {
+    res.json({
+      data: { error: "抱歉，目前沒有合適的人選推薦給您，要再更改配對條件嗎?" },
+    });
+    return;
+  }
+
+  // 把新註冊者的 potentialList 存進 DB & cache
+  await saveCandidatesOfCertainUser(newuserid, potentialListOfCertainUser);
+  await saveCandidatesOfCertainUserToCache(
+    newuserid,
+    potentialListOfCertainUser
+  );
+
+  // 把新註冊者的詳細資訊存到 cache
+  const sexType = { 1: "男性", 2: "女性" };
+  const newUserInfo = await getUserDetailInfo(newuserid);
+  const candidateBirthday = `${newUserInfo.birth_year}/${newUserInfo.birth_month}/${newUserInfo.birth_date}`;
+  const age = getAge(candidateBirthday);
+  const sex = sexType[newUserInfo.sex_id];
+  const imageUrl = `${process.env.IP}/${newUserInfo.main_image}`;
+  newUserInfo.age = age;
+  newUserInfo.sex = sex;
+  newUserInfo.main_image = imageUrl;
+  delete newUserInfo.sex_id;
+  delete newUserInfo.birth_year;
+  delete newUserInfo.birth_month;
+  delete newUserInfo.birth_date;
+
+  if (Cache.ready) {
+    await Cache.hset(`candidate_info_id#${newUserInfo.id}`, newUserInfo);
+  }
+
+  res.json({ data: { userId: newuserid, potentialListOfCertainUser } });
 };
 
 // 輸出特定使用者的候選人 API ( cache miss 時改撈 DB)
