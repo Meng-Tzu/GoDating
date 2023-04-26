@@ -197,7 +197,7 @@ const saveCandidatesToDB = async (match_pair) => {
   return result;
 };
 
-// 存入特定使用者的 candidates 到 DB
+// FIXME: 將新註冊者與其配對者互相存彼此為 candidates 到 DB
 const saveCandidatesOfCertainUser = async (userId, potentialList) => {
   const queryStr = `
   INSERT INTO user_candidate
@@ -206,7 +206,10 @@ const saveCandidatesOfCertainUser = async (userId, potentialList) => {
   `;
 
   const values = [];
-  potentialList.forEach((candidateId) => values.push([+userId, candidateId]));
+  potentialList.forEach((candidateId) => {
+    values.push([+userId, candidateId]);
+    values.push([candidateId, +userId]);
+  });
 
   const [result] = await pool.query(queryStr, [values]);
 
@@ -309,8 +312,11 @@ const saveCandidatesToCache = async (match_pair) => {
   }
 };
 
-// FIXME: 把特定使用者的 candidate 存進 cache (放在 model ??)
+// FIXME: 將新註冊者與其配對者互相存彼此為 candidates 到 cache (放在 model ??)
 const saveCandidatesOfCertainUserToCache = async (userId, potentialList) => {
+  // 取得 user 的基本資訊
+  const userInfo = await getUserMatchInfo(userId);
+
   // 要幫每一個候選人加上 nickname
   for (const candidateId of potentialList) {
     // 取得 candidate 的基本資訊
@@ -322,6 +328,12 @@ const saveCandidatesOfCertainUserToCache = async (userId, potentialList) => {
           `candidates_of_userid#${userId}`,
           candidateId,
           candidateInfo.nick_name
+        );
+
+        await Cache.hset(
+          `candidates_of_userid#${candidateId}`,
+          userId,
+          userInfo.nick_name
         );
       }
     } catch (error) {
