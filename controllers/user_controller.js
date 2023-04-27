@@ -13,6 +13,7 @@ import {
   getAllUsers,
   getUserBasicInfo,
   getUserDetailInfo,
+  getMatchTagTitles,
   getMultiCandidatesDetailInfo,
   getPartnerFromCache,
   getCandidateInfoFromCache,
@@ -246,15 +247,16 @@ const saveDetailInfo = async (req, res) => {
   }
 };
 
-// 取得特定使用者的詳細資訊
+// TODO: 取得特定使用者的詳細資訊
 const getDetailInfo = async (userId) => {
+  let detailInfo;
   try {
-    return await getCandidateInfoFromCache(userId);
+    detailInfo = await getCandidateInfoFromCache(userId);
   } catch (error) {
     console.error(`cannot get detail info of user from cache:`, error);
 
     console.log("get detail info of user from DB");
-    const detailInfoFromDB = await getUserDetailInfo(userId);
+    detailInfo = await getUserDetailInfo(userId);
 
     const candidateBirthday = `${detailInfoFromDB.birth_year}/${detailInfoFromDB.birth_month}/${detailInfoFromDB.birth_date}`;
     const age = getAge(candidateBirthday);
@@ -267,9 +269,13 @@ const getDetailInfo = async (userId) => {
     delete detailInfoFromDB.birth_year;
     delete detailInfoFromDB.birth_month;
     delete detailInfoFromDB.birth_date;
-
-    return detailInfoFromDB;
   }
+
+  // FIXME: 取得使用者的 tags (目前從 DB 拿，可以從 cache 拿 ??)
+  const tags = await getMatchTagTitles(userId);
+  detailInfo.tagList = tags;
+
+  return detailInfo;
 };
 
 export {
