@@ -33,7 +33,7 @@ const saveWhoLikeMeOfOtherSide = async (userId, suitorId, suitorName) => {
 };
 
 // 刪除使用者的 "who_like_me"
-const deleteSuitorOfUser = async (userId, suitorId) => {
+const deletePursuerOfUser = async (userId, suitorId) => {
   try {
     if (Cache.ready) {
       await Cache.hdel(`who_like_me_of_userid#${userId}`, suitorId);
@@ -103,7 +103,7 @@ const getPartnerOfUser = async (userId, partnerId) => {
 export {
   getWhoLikeMeOfSelf,
   saveWhoLikeMeOfOtherSide,
-  deleteSuitorOfUser,
+  deletePursuerOfUser,
   deleteCandidateOfUser,
   saveNeverMatchOfUser,
   savePartnerOfUser,
