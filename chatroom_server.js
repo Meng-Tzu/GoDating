@@ -1,5 +1,5 @@
 // 導入模組
-import express from "express";
+import express, { response } from "express";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import { writeFile, createReadStream } from "fs";
@@ -16,6 +16,8 @@ import {
   getAllPursuerFromCache,
   getPursuerFromCache,
 } from "./models/user_model.js";
+
+import { getDetailInfo } from "./controllers/user_controller.js";
 
 import {
   getWhoLikeMeOfSelf,
@@ -153,7 +155,7 @@ io.on("connection", (socket) => {
     socket.emit("user-connect", response);
   });
 
-  // TODO: 監聽使用者按下 logo 並要求所有的 potential list
+  // 監聽使用者按下 logo 並要求所有的 potential list
   socket.on("request-all-potential", async (userId) => {
     // 更新自己的 pursuer + candidate list
     const candidateListOfSelf = await getAllCandidateFromCache(userId);
@@ -474,6 +476,13 @@ io.on("connection", (socket) => {
         responseForOtherSide
       );
     }
+  });
+
+  // 監聽到使用者想要 partner 詳細資訊
+  socket.on("ask-for-partner-info", async (partnerId) => {
+    const response = await getDetailInfo(+partnerId);
+
+    socket.emit("get-partner-info", response);
   });
 
   // 當有使用者想傳送訊息到聊天室

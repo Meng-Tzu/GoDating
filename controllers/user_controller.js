@@ -7,12 +7,16 @@ import * as argon2 from "argon2";
 import Cache from "../util/cache.js";
 
 import {
+  getAllUserIds,
   saveUserBasicInfo,
   saveUserDetailInfo,
   getAllUsers,
   getUserBasicInfo,
+  getUserDetailInfo,
+  getMatchTagTitles,
   getMultiCandidatesDetailInfo,
   getPartnerFromCache,
+  getCandidateInfoFromCache,
 } from "../models/user_model.js";
 
 import { getAge } from "../util/util.js";
@@ -23,6 +27,9 @@ const getUserIdName = async (req, res) => {
   res.status(200).json(response);
   return;
 };
+
+const sexType = { 1: "男性", 2: "女性" };
+const allUserIds = await getAllUserIds();
 
 // FIXME: 輸出特定使用者的 partner API ( cache miss 時改撈 DB)
 const certainUserPartnerList = async (req, res) => {
@@ -39,9 +46,6 @@ const certainUserPartnerList = async (req, res) => {
 };
 
 // FIXME: 把候選人資料從 DB 存進 cache (何時觸發 ?)
-const sexType = { 1: "男性", 2: "女性" };
-
-const candidateIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const saveCandidateInfoFromDBtoCache = async (candidateIds) => {
   // 整理從 DB 拿到的候選人詳細資料
@@ -50,7 +54,7 @@ const saveCandidateInfoFromDBtoCache = async (candidateIds) => {
     const candidateBirthday = `${candidate.birth_year}/${candidate.birth_month}/${candidate.birth_date}`;
     const age = getAge(candidateBirthday);
     const sex = sexType[candidate.sex_id];
-    const imageUrl = `${process.env.IP}/${candidate.main_image}`;
+    const imageUrl = `/${candidate.main_image}`;
     candidate.age = age;
     candidate.sex = sex;
     candidate.main_image = imageUrl;
@@ -243,6 +247,37 @@ const saveDetailInfo = async (req, res) => {
   }
 };
 
+// TODO: 取得特定使用者的詳細資訊
+const getDetailInfo = async (userId) => {
+  let detailInfo;
+  try {
+    detailInfo = await getCandidateInfoFromCache(userId);
+  } catch (error) {
+    console.error(`cannot get detail info of user from cache:`, error);
+
+    console.log("get detail info of user from DB");
+    detailInfo = await getUserDetailInfo(userId);
+
+    const candidateBirthday = `${detailInfoFromDB.birth_year}/${detailInfoFromDB.birth_month}/${detailInfoFromDB.birth_date}`;
+    const age = getAge(candidateBirthday);
+    const sex = sexType[detailInfoFromDB.sex_id];
+    const imageUrl = `/${detailInfoFromDB.main_image}`;
+    detailInfoFromDB.age = age;
+    detailInfoFromDB.sex = sex;
+    detailInfoFromDB.main_image = imageUrl;
+    delete detailInfoFromDB.sex_id;
+    delete detailInfoFromDB.birth_year;
+    delete detailInfoFromDB.birth_month;
+    delete detailInfoFromDB.birth_date;
+  }
+
+  // FIXME: 取得使用者的 tags (目前從 DB 拿，可以從 cache 拿 ??)
+  const tags = await getMatchTagTitles(userId);
+  detailInfo.tagList = tags;
+
+  return detailInfo;
+};
+
 export {
   getUserIdName,
   certainUserPartnerList,
@@ -250,4 +285,5 @@ export {
   signUp,
   verify,
   saveDetailInfo,
+  getDetailInfo,
 };

@@ -6,7 +6,7 @@ import {
   getUserDetailInfo,
   getUserMatchInfo,
   getUserDesireAgeRange,
-  getMatchTag1,
+  getMatchTagIds,
   saveCandidatesToDB,
   saveCandidatesOfCertainUser,
   getCandidatesFromDB,
@@ -199,7 +199,7 @@ const suggestCandidateToAllUsers = async (req, res) => {
   // 列出各個使用者總共的 tag_id
   const user_tags_pair = {};
   for (let userId of allUserIds) {
-    let tagIds = await getMatchTag1(userId);
+    let tagIds = await getMatchTagIds(userId);
     tagIds = tagIds.map((tagObj) => tagObj.tag_id);
 
     user_tags_pair[userId] = tagIds;
@@ -398,7 +398,7 @@ const suggestCandidateToNewOne = async (req, res) => {
   // 列出各個使用者總共的 tag_id
   const user_tags_pair = {};
   for (let userId of allUserIds) {
-    let tagIds = await getMatchTag1(userId);
+    let tagIds = await getMatchTagIds(userId);
     tagIds = tagIds.map((tagObj) => tagObj.tag_id);
 
     user_tags_pair[userId] = tagIds;

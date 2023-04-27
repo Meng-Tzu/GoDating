@@ -54,6 +54,30 @@ const createCandidateOption = (candidates, elementName) => {
   }
 };
 
+// Function3: 動態製造 DOM 物件 (create p element for tags)
+const createTags = (tagList, elementName) => {
+  // 移除先前渲染過的 tags，避免重複渲染
+  $(`.${elementName}`).remove();
+  // 選擇要當模板的 element tag
+  const $tagTemplete = $(`.templete-${elementName}`);
+
+  // 選取要被插入 child 的 parant element
+  const $parent = $(`#${elementName}s`);
+
+  // 依據 tagList array 的長度，產生多少個 p element
+  tagList.forEach((tag) => {
+    // 複製出一個下拉式選單的 p element tag
+    const $newDom = $tagTemplete.clone();
+    $newDom
+      .attr("class", `${elementName} ${tag.tag_id}`)
+      .text(tag.title)
+      .css("display", "inline");
+
+    // 把新的 p element 加入 parant element
+    $newDom.appendTo($parent);
+  });
+};
+
 // Function4: 動態製造 DOM 物件 (create option for pursuer)
 const createPursuerOption = (pursuerId, pursuerName) => {
   // 選取要被插入 child 的 parant element
@@ -252,6 +276,21 @@ const openChatroom = async function ($this) {
   // 不跳轉網址
   window.history.pushState({}, "", newUrl);
 
+  // 取得目前聊天者的詳細資訊
+  socket.emit("ask-for-partner-info", partnerId);
+  socket.on("get-partner-info", (msg) => {
+    const { id, nick_name, main_image, sex, age, self_intro, tagList } = msg;
+
+    $("#partner-name").text(nick_name);
+    $("#partner-cantainer img").attr("src", main_image).attr("alt", nick_name);
+    $("#partner-sex").text(sex);
+    $("#partner-age").text(age);
+    $("#partner-intro").text(self_intro);
+
+    // render tag title
+    createTags(tagList, "tag");
+  });
+
   // 顯示出聊天室窗
   $("#connection").css("display", "none");
   $("#short-list").css("display", "none");
@@ -261,7 +300,6 @@ const openChatroom = async function ($this) {
   $("#title").css("display", "flex");
   $("#dialogue").css("display", "block");
   $("#partner-info").css("display", "block");
-  $("#partner-name").text(partnerName);
   $(".other-side").text(partnerName).attr("id", partnerId);
   $("#text-msg").css("display", "flex");
   $("#picture-msg").css("display", "flex");

@@ -161,8 +161,8 @@ const getUserDesireAgeRange = async (id) => {
   return result;
 };
 
-// FIXME: 取得配對標籤 (以 tag_id number 表示)
-const getMatchTag1 = async (id) => {
+// 取得配對標籤 id
+const getMatchTagIds = async (id) => {
   const queryStr = `
     SELECT U.id, UT.tag_id
     FROM user AS U
@@ -172,6 +172,23 @@ const getMatchTag1 = async (id) => {
     `;
 
   const [result] = await pool.query(queryStr, [id]);
+
+  return result;
+};
+
+// 取得配對標籤 title
+const getMatchTagTitles = async (userId) => {
+  const queryStr = `
+    SELECT U.id, UT.tag_id, T.title
+    FROM user AS U
+    INNER JOIN user_tag AS UT
+    ON U.id = UT.user_id
+    INNER JOIN tag AS T
+    ON UT.tag_id = T.id
+    WHERE U.id = ?
+    `;
+
+  const [result] = await pool.query(queryStr, [userId]);
 
   return result;
 };
@@ -450,7 +467,8 @@ export {
   getUserDetailInfo,
   getMultiCandidatesDetailInfo,
   getUserDesireAgeRange,
-  getMatchTag1,
+  getMatchTagIds,
+  getMatchTagTitles,
   saveCandidatesToDB,
   saveCandidatesOfCertainUser,
   getCandidatesFromDB,
