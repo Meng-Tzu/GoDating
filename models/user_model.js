@@ -162,7 +162,7 @@ const getUserDesireAgeRange = async (id) => {
 };
 
 // FIXME: 取得配對標籤 (以 tag_id number 表示)
-const getMatchTag1 = async (id) => {
+const getMatchTagIds = async (id) => {
   const queryStr = `
     SELECT U.id, UT.tag_id
     FROM user AS U
@@ -450,7 +450,7 @@ export {
   getUserDetailInfo,
   getMultiCandidatesDetailInfo,
   getUserDesireAgeRange,
-  getMatchTag1,
+  getMatchTagIds,
   saveCandidatesToDB,
   saveCandidatesOfCertainUser,
   getCandidatesFromDB,
