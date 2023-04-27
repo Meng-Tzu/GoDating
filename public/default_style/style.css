@@ -335,7 +335,7 @@ main section#current div#partner-info div#tags {
   flex-wrap: wrap;
   margin: 0.3rem 0;
 }
-main section#current div#partner-info div#tags a.tag {
+main section#current div#partner-info div#tags p.tag {
   flex: 1 1 40px;
   width: 50px;
   font-size: 1rem;
