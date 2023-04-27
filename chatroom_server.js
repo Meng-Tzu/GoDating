@@ -14,12 +14,13 @@ import {
   getAllCandidateFromCache,
   getCandidateInfoFromCache,
   getAllPursuerFromCache,
+  getPursuerFromCache,
 } from "./models/user_model.js";
 
 import {
   getWhoLikeMeOfSelf,
   saveWhoLikeMeOfOtherSide,
-  deleteSuitorOfUser,
+  deletePursuerOfUser,
   deleteCandidateOfUser,
   saveNeverMatchOfUser,
   savePartnerOfUser,
@@ -222,7 +223,7 @@ io.on("connection", (socket) => {
       potentialInfoListOfOtherSide.push(potentialInfo);
     }
 
-    // TODO: 把自己的資訊送回對方的前端 (好像沒有 concat 成功?)
+    // 把重新整理的名單送到對方的前端
     const responseForOtherSide = {
       userId: candidateId,
       pursuerId: userId,
@@ -232,7 +233,7 @@ io.on("connection", (socket) => {
     };
     connections[candidateId].socket.emit("who-like-me", responseForOtherSide);
 
-    // 把對方的資訊再次送回給自己的前端
+    // 把重新整理的名單再次送回給自己的前端
     const responseForSelf = {
       userId,
       candidateId,
@@ -253,7 +254,7 @@ io.on("connection", (socket) => {
     const roomId = uuidv4();
 
     // 從 cache 把對方從自己的 "who_like_me" 刪除
-    await deleteSuitorOfUser(userId, pursuerId);
+    await deletePursuerOfUser(userId, pursuerId);
 
     // 在 ElasticSearch 建立對話紀錄 index
     const indexId = `chatrecord-${userId}-${pursuerId}`;
@@ -306,6 +307,133 @@ io.on("connection", (socket) => {
     );
 
     console.log(`Successfully match userId#${userId} with userId#${pursuerId}`);
+  });
+
+  // 監聽到使用者不喜歡被推薦的人
+  socket.on("unlike", async (msg) => {
+    const { userId, userName, unlikeId, unlikeName } = msg;
+    const originPursuerListOfSelf = await getPursuerFromCache(userId);
+
+    // 檢查被按不喜歡的人是否為 pursuer
+    if (unlikeId in originPursuerListOfSelf) {
+      // 從快取把對方從自己的 "pursuer" 刪除
+      await deletePursuerOfUser(userId, unlikeId);
+
+      // 更新自己的 pursuer + candidate list
+      const candidateListOfSelf = await getAllCandidateFromCache(userId);
+      const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
+
+      const pursuerListOfSelf = await getPursuerFromCache(userId);
+      const pursuerIdListOfSelf = Object.keys(pursuerListOfSelf);
+
+      const potentialInfoListOfSelf = [];
+      let isPusrsuerexist = 0;
+      // 檢查使用者是否還有 pursuer
+      if (!pursuerIdListOfSelf.length) {
+        for (const potentialId of candidateIdListOfSelf) {
+          const potentialInfo = await getCandidateInfoFromCache(potentialId);
+          potentialInfoListOfSelf.push(potentialInfo);
+        }
+      } else {
+        // 如果還有 pursuer，整合 pursuer + candidate list
+        const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
+          candidateIdListOfSelf
+        );
+
+        for (const potentialId of integratedIdListOfSelf) {
+          const potentialInfo = await getCandidateInfoFromCache(potentialId);
+          potentialInfoListOfSelf.push(potentialInfo);
+        }
+
+        isPusrsuerexist = 1;
+      }
+
+      // 把重新整理的名單再次送回給自己的前端
+      const responseForSelf = {
+        userId,
+        unlikeId,
+        unlikeName,
+        isPusrsuerexist,
+        potentialInfoList: potentialInfoListOfSelf,
+      };
+      socket.emit("send-unlike-signal", responseForSelf);
+
+      console.log(
+        `userId#${userId}(${userName}) unlike userId#${unlikeId}(${unlikeName})`
+      );
+    } else {
+      // 從快取把雙方的 "candidate" 刪除彼此
+      await deleteCandidateOfUser(userId, unlikeId);
+      await deleteCandidateOfUser(unlikeId, userId);
+
+      // 存進雙方的 "never_match" 到快取
+      await saveNeverMatchOfUser(userId, unlikeId);
+      await saveNeverMatchOfUser(unlikeId, userId);
+
+      // 更新自己的 candidate list
+      const candidateListOfSelf = await getAllCandidateFromCache(userId);
+      const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
+      const candidateInfoListOfSelf = [];
+      for (const candidateId of candidateIdListOfSelf) {
+        const candidateInfo = await getCandidateInfoFromCache(candidateId);
+        candidateInfoListOfSelf.push(candidateInfo);
+      }
+
+      // 把重新整理的名單再次送回給自己的前端
+      const responseForSelf = {
+        userId,
+        unlikeId,
+        unlikeName,
+        isPusrsuerexist: 0,
+        potentialInfoList: candidateInfoListOfSelf,
+      };
+      socket.emit("send-unlike-signal", responseForSelf);
+
+      console.log(
+        `userId#${userId}(${userName}) unlike userId#${unlikeId}(${unlikeName})`
+      );
+
+      // 更新對方的 pursuer + candidate list
+      const candidateListOfOtherSide = await getAllCandidateFromCache(unlikeId);
+      const candidateIdListOfOtherSide = Object.keys(candidateListOfOtherSide);
+
+      const pursuerListOfOtherSide = await getPursuerFromCache(unlikeId);
+      const pursuerIdListOfOtherSide = Object.keys(pursuerListOfOtherSide);
+
+      const potentialInfoListOfOtherSide = [];
+      let isPusrsuerexist = 0;
+      // 檢查被不喜歡者是否還有 pursuer
+      if (!pursuerIdListOfOtherSide.length) {
+        for (const potentialId of candidateIdListOfOtherSide) {
+          const potentialInfo = await getCandidateInfoFromCache(potentialId);
+          potentialInfoListOfOtherSide.push(potentialInfo);
+        }
+      } else {
+        const integratedIdListOfOtherSide = pursuerIdListOfOtherSide.concat(
+          candidateIdListOfOtherSide
+        );
+
+        for (const potentialId of integratedIdListOfOtherSide) {
+          const potentialInfo = await getCandidateInfoFromCache(potentialId);
+          potentialInfoListOfOtherSide.push(potentialInfo);
+        }
+
+        isPusrsuerexist = 1;
+      }
+
+      // 把重新整理的名單送到對方的前端
+      const responseForOtherSide = {
+        userId: unlikeId,
+        unlikeId: userId,
+        unlikeName: userName,
+        isPusrsuerexist,
+        potentialInfoList: potentialInfoListOfOtherSide,
+      };
+      connections[unlikeId].socket.emit(
+        "send-be-unlike-signal",
+        responseForOtherSide
+      );
+    }
   });
 
   // 監聽到有新註冊者填完問卷，加入符合條件的其他使用者的「猜你會喜歡」

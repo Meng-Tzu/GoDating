@@ -381,9 +381,9 @@ let fetchOption = {
 
       if (pursuerIdList.includes(currentRecommend.id)) {
         $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
-        $("#btn-like-too").css("cursor", "pointer");
+        $("#btn-like-too").css("cursor", "pointer").css("opacity", "1");
       } else {
-        $("#btn-like").css("cursor", "pointer");
+        $("#btn-like").css("cursor", "pointer").css("opacity", "1");
         $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
       }
 
@@ -513,9 +513,9 @@ let fetchOption = {
 
       if (pursuerIdList.includes(currentRecommend.id)) {
         $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
-        $("#btn-like-too").css("cursor", "pointer");
+        $("#btn-like-too").css("cursor", "pointer").css("opacity", "1");
       } else {
-        $("#btn-like").css("cursor", "pointer");
+        $("#btn-like").css("cursor", "pointer").css("opacity", "1");
         $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
       }
 
@@ -558,9 +558,9 @@ let fetchOption = {
 
       if (pursuerIdList.includes(currentRecommend.id)) {
         $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
-        $("#btn-like-too").css("cursor", "pointer");
+        $("#btn-like-too").css("cursor", "pointer").css("opacity", "1");
       } else {
-        $("#btn-like").css("cursor", "pointer");
+        $("#btn-like").css("cursor", "pointer").css("opacity", "1");
         $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
       }
 
@@ -572,7 +572,7 @@ let fetchOption = {
       alert(`${pursuerName} 喜歡你！`);
     });
 
-    // 刪除已選擇過的候選人
+    // 喜歡後，刪除已選擇過的候選人
     socket.on("success-send-like-signal", (msg) => {
       const { userId, candidateId, candidateName } = msg;
       deleteCandidateOption(candidateId);
@@ -591,6 +591,78 @@ let fetchOption = {
 
       // 更新後續的推薦人選
       const nextRecommend = msg.candidateInfoList.slice(1);
+      $(".next-recommend").remove();
+      createNextRecommendDiv(nextRecommend);
+    });
+
+    // 不喜歡後，刪除已選擇過的推薦者人
+    socket.on("send-unlike-signal", (msg) => {
+      const {
+        userId,
+        unlikeId,
+        unlikeName,
+        isPusrsuerexist,
+        potentialInfoList,
+      } = msg;
+
+      // 更新目前推薦人選
+      const currentRecommend = potentialInfoList[0];
+      $("#current-recommend").css("display", "block");
+      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $(".candidate-name")
+        .text(currentRecommend.nick_name)
+        .attr("id", currentRecommend.id);
+      $("#candidate-sex").text(currentRecommend.sex);
+      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      $("#candidate-intro").text(currentRecommend.self_intro);
+
+      // 如果還有 pursuer
+      if (isPusrsuerexist) {
+        $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
+        $("#btn-like-too").css("cursor", "pointer").css("opacity", "1");
+      } else {
+        $("#btn-like").css("cursor", "pointer").css("opacity", "1");
+        $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
+      }
+
+      // 更新後續的推薦人選
+      const nextRecommend = potentialInfoList.slice(1);
+      $(".next-recommend").remove();
+      createNextRecommendDiv(nextRecommend);
+    });
+
+    // 被不喜歡後，刪掉該推薦者人
+    socket.on("send-be-unlike-signal", (msg) => {
+      const {
+        userId,
+        unlikeId,
+        unlikeName,
+        isPusrsuerexist,
+        potentialInfoList,
+      } = msg;
+
+      // 更新目前推薦人選
+      const currentRecommend = potentialInfoList[0];
+      $("#current-recommend").css("display", "block");
+      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $(".candidate-name")
+        .text(currentRecommend.nick_name)
+        .attr("id", currentRecommend.id);
+      $("#candidate-sex").text(currentRecommend.sex);
+      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      $("#candidate-intro").text(currentRecommend.self_intro);
+
+      // 如果還有 pursuer
+      if (isPusrsuerexist) {
+        $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
+        $("#btn-like-too").css("cursor", "pointer").css("opacity", "1");
+      } else {
+        $("#btn-like").css("cursor", "pointer").css("opacity", "1");
+        $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
+      }
+
+      // 更新後續的推薦人選
+      const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
     });
@@ -695,6 +767,25 @@ $("#btn-like-too").click(function (e) {
   const messages = { userId, userName, pursuerId, pursuerName };
 
   socket.emit("like-pursuer", messages);
+});
+
+// TODO: 不喜歡對方
+$("#unlike").click(function (e) {
+  e.preventDefault();
+
+  if (socket === null) {
+    alert("Please connect first");
+    return;
+  }
+
+  const userId = $(".user-name").attr("id");
+  const userName = $(".user-name").text();
+  const unlikeId = $(".candidate-name").attr("id");
+  const unlikeName = $(".candidate-name").text();
+
+  const messages = { userId, userName, unlikeId, unlikeName };
+
+  socket.emit("unlike", messages);
 });
 
 // 傳送文字
