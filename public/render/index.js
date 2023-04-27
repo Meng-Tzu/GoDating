@@ -252,6 +252,18 @@ const openChatroom = async function ($this) {
   // 不跳轉網址
   window.history.pushState({}, "", newUrl);
 
+  // TODO: 取得目前聊天者的詳細資訊
+  socket.emit("ask-for-partner-info", partnerId);
+  socket.on("get-partner-info", (msg) => {
+    const { id, nick_name, main_image, sex, age, self_intro } = msg;
+
+    $("#partner-name").text(nick_name);
+    $("#partner-cantainer img").attr("src", main_image).attr("alt", nick_name);
+    $("#partner-sex").text(sex);
+    $("#partner-age").text(age);
+    $("#partner-intro").text(self_intro);
+  });
+
   // 顯示出聊天室窗
   $("#connection").css("display", "none");
   $("#short-list").css("display", "none");
@@ -261,7 +273,6 @@ const openChatroom = async function ($this) {
   $("#title").css("display", "flex");
   $("#dialogue").css("display", "block");
   $("#partner-info").css("display", "block");
-  $("#partner-name").text(partnerName);
   $(".other-side").text(partnerName).attr("id", partnerId);
   $("#text-msg").css("display", "flex");
   $("#picture-msg").css("display", "flex");
