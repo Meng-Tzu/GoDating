@@ -163,8 +163,19 @@ const createNextRecommendDiv = (candidateInfoList) => {
     $img.addClass("next-picture").attr("src", candidateInfo.main_image);
     $h2.addClass(".next-name text-center").text(candidateInfo.nick_name);
 
+    // 增加 tags
+    const $tags = $("<div>");
+    $tags.attr("id", "next-tags");
+
+    candidateInfo.tags.forEach((tag) => {
+      const $p = $("<p>");
+      $p.addClass(`candidate-tag ${tag.tag_id}`).text(tag.title);
+      $p.appendTo($tags);
+    });
+
     $img.appendTo($div);
     $h2.appendTo($div);
+    $tags.appendTo($div);
 
     // 把複製出來的 div 加入 parant element
     $div.appendTo($parent);
@@ -415,6 +426,11 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       $("#candidate-sex").text(currentRecommend.sex);
       $("#candidate-age").text(`${currentRecommend.age} 歲`);
+
+      // 創造 tags
+      const tagList = currentRecommend.tags;
+      createTags(tagList, "candidate-tag");
+
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       if (pursuerIdList.includes(currentRecommend.id)) {
