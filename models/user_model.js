@@ -161,6 +161,23 @@ const getUserDesireAgeRange = async (id) => {
   return result;
 };
 
+// 存入配對標籤
+const saveMatchTagIds = async (userId, tagsIdList) => {
+  const queryStr = `
+  INSERT INTO user_tag
+  (user_id, tag_id)
+  VALUES ?
+  `;
+
+  const values = [];
+  tagsIdList.forEach((tagId) => {
+    values.push([+userId, +tagId]);
+  });
+
+  const [result] = await pool.query(queryStr, [values]);
+  return result;
+};
+
 // 取得配對標籤 id
 const getMatchTagIds = async (id) => {
   const queryStr = `
@@ -467,6 +484,7 @@ export {
   getUserDetailInfo,
   getMultiCandidatesDetailInfo,
   getUserDesireAgeRange,
+  saveMatchTagIds,
   getMatchTagIds,
   getMatchTagTitles,
   saveCandidatesToDB,
