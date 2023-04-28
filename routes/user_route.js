@@ -6,6 +6,7 @@ import {
   getUserIdName,
   certainUserPartnerList,
   saveDetailInfo,
+  saveTags,
 } from "../controllers/user_controller.js";
 import { signIn, signUp, verify } from "../controllers/user_controller.js";
 
@@ -32,8 +33,11 @@ userRouter.post("/user/signup", signUp);
 // 使用者資料驗證
 userRouter.post("/user/verify", verify);
 
-// 使用者上傳問卷資料 (必須有 middleware 去驗證 input 格式是正確的)
+// FIXME: 使用者上傳問卷資料 (必須有 middleware 去驗證 input 格式是正確的)
 userRouter.post("/user/profile", pictureUpload, saveDetailInfo);
+
+// FIXME: 使用者上傳問卷資料 (必須有 middleware 去驗證 input 格式是正確的)
+userRouter.post("/user/tags", saveTags);
 
 // FIXME: 所有使用者名單(需要增加權限管理)
 userRouter.get("/user/userslist", getUserIdName);

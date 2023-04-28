@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 
 // 導入 Cache function
 import {
+  getMatchTagTitles,
   getAllCandidateFromCache,
   getCandidateInfoFromCache,
   getAllPursuerFromCache,
@@ -141,6 +142,8 @@ io.on("connection", (socket) => {
     const potentialInfoListOfSelf = [];
     for (const potentialId of integratedIdListOfSelf) {
       const potentialInfo = await getCandidateInfoFromCache(potentialId);
+      const tags = await getMatchTagTitles(potentialId);
+      potentialInfo.tags = tags;
       potentialInfoListOfSelf.push(potentialInfo);
     }
 

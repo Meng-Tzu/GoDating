@@ -75,7 +75,6 @@ $("#match-info").click(async function (e) {
   };
   fetchOption.body = JSON.stringify(data);
 
-  console.log("fetchOption", fetchOption);
   const matchApi = "/api/1.0/match/newone";
   const candidateListOfNewUser = await getApi(matchApi, fetchOption);
 
@@ -95,4 +94,40 @@ $("#match-info").click(async function (e) {
 
   alert("儲存成功，感謝您填寫問卷！");
   location.reload();
+});
+
+// TODO: 選擇標籤 (與詳細資訊表單合併)
+// $("#multiple-select").chosen({
+//   no_results_text: "Oops, nothing found!",
+// });
+
+$("#tags-select").click(async function (e) {
+  e.preventDefault();
+
+  // 送出表單時再次驗證
+  const userData = await getApi(userApi, fetchOption);
+  if (!userData) {
+    // token 錯誤
+    alert("Sorry, you need to sign up / sign in again.");
+    localStorage.removeItem("token");
+    window.location.href = "/login.html";
+  }
+
+  const tagApi = "/api/1.0/user/tags";
+  fetchOption = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: "",
+  };
+
+  const data = {
+    userid: $(".user-name").attr("id"),
+    tags: $("#multiple-select").val(),
+  };
+  fetchOption.body = JSON.stringify(data);
+  const response = await getApi(tagApi, fetchOption);
+  alert(response);
 });

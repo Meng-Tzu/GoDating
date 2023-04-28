@@ -14,6 +14,7 @@ import {
   getUserBasicInfo,
   getUserDetailInfo,
   getMatchTagTitles,
+  saveMatchTagIds,
   getMultiCandidatesDetailInfo,
   getPartnerFromCache,
   getCandidateInfoFromCache,
@@ -247,7 +248,29 @@ const saveDetailInfo = async (req, res) => {
   }
 };
 
-// TODO: 取得特定使用者的詳細資訊
+// TODO:
+const saveTags = async (req, res) => {
+  const { userid, tags } = req.body;
+
+  if (!tags.length) {
+    res.json({
+      data: "您尚未選擇任何標籤，選擇標籤可以讓我們幫您找到更適合您的人喔！",
+    });
+    return;
+  }
+
+  try {
+    // 存入 DB
+    await saveMatchTagIds(userid, tags);
+    res.json({ data: "儲存標籤成功！" });
+    return;
+  } catch (error) {
+    console.error("cannot save user's tags info into DB", error);
+    return;
+  }
+};
+
+// 取得特定使用者的詳細資訊
 const getDetailInfo = async (userId) => {
   let detailInfo;
   try {
@@ -285,5 +308,6 @@ export {
   signUp,
   verify,
   saveDetailInfo,
+  saveTags,
   getDetailInfo,
 };

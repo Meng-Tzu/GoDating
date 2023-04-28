@@ -46,6 +46,7 @@
           action="/api/1.0/user/profile"
           method="post"
           enctype="multipart/form-data"
+          id="detail-info"
         >
           <label for="picture">上傳個人照：</label>
           <input type="file" name="picture" id="picture" />
@@ -94,6 +95,30 @@
 大家好，我是</textarea
           >
           <button id="match-info" type="submit">Submit</button>
+        </form>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+        <link
+          href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css"
+          rel="stylesheet"
+        />
+        <form action="" method="get">
+          <label for="multiple-select"> 什麼標籤最能形容你‧‧‧？ </label>
+          <select
+            data-placeholdes="選擇標籤"
+            name="multiple-select"
+            id="multiple-select"
+            multiple
+          >
+            <option class="tag" value="1">吃貨</option>
+            <option class="tag" value="2">只想躺一整天</option>
+            <option class="tag" value="3">寫 code</option>
+            <option class="tag" value="9">裝文青</option>
+            <option class="tag" value="16">運動仔</option>
+            <option class="tag" value="17">看電影</option>
+          </select>
+          <input type="submit" id="tags-select" />
         </form>
       </section>
     </main>
