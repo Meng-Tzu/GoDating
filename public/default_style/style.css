@@ -5,6 +5,15 @@
   font-family: "Noto Sans TC", sans-serif;
 }
 
+html,
+body {
+  height: 100%;
+}
+
+body {
+  position: relative;
+}
+
 header {
   position: sticky;
   top: 0;
@@ -101,8 +110,8 @@ main section#chatroom {
 }
 main section#chatroom div#current-recommend {
   margin: 2rem 0;
-  width: 60%;
-  min-height: 55vh;
+  width: 50%;
+  max-height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -115,7 +124,7 @@ main section#chatroom div#current-recommend div#front-cover {
   position: relative;
   overflow: hidden;
   margin: 0 auto;
-  min-height: 250px;
+  height: 250px;
   background-image: url(../images/pikabu.png);
   background-size: cover;
   background-position: center;
@@ -129,7 +138,7 @@ main section#chatroom div#current-recommend div#front-cover div#candidate-cantai
   bottom: 0;
 }
 main section#chatroom div#current-recommend div#front-cover div#candidate-cantainer img#candidate-picture {
-  height: 250px;
+  height: 220px;
   -webkit-clip-path: circle();
           clip-path: circle();
 }
@@ -137,7 +146,29 @@ main section#chatroom div#current-recommend h2#candidate-name {
   margin: 1.5rem 0;
 }
 main section#chatroom div#current-recommend div#current-recommend-detail-info {
+  width: 100%;
   max-height: 200px;
+  overflow-y: auto;
+}
+main section#chatroom div#current-recommend div#current-recommend-detail-info div#sex-age {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+main section#chatroom div#current-recommend div#current-recommend-detail-info div#sex-age img#candidate-sex {
+  height: 20px;
+  margin-right: 0.2rem;
+}
+main section#chatroom div#current-recommend div#current-recommend-detail-info div#candidate-tags {
+  display: flex;
+  justify-content: space-around;
+}
+main section#chatroom div#current-recommend div#current-recommend-detail-info div#candidate-tags p.candidate-tag {
+  padding: 0.2rem 0.3rem;
+  margin: 0 0.3rem;
+  border: 1.5px solid #e3b04b;
+  border-radius: 20px;
+  background-color: transparent;
 }
 main section#chatroom div#current-recommend div#current-recommend-detail-info h3#intro-title {
   margin-top: 1.5rem;
@@ -354,18 +385,11 @@ main section#current div#partner-info div#tags {
   margin: 0.3rem 0;
 }
 main section#current div#partner-info div#tags p.tag {
-  flex: 1 1 40px;
-  width: 50px;
-  font-size: 1rem;
-  font-weight: bold;
-  text-decoration: none;
-  text-align: center;
-  color: #585858;
-  padding: 5px 10px;
+  padding: 0.2rem 0.3rem;
+  margin: 0 0.3rem;
+  border: 1.5px solid #e3b04b;
   border-radius: 20px;
-  background-color: #eaeaea;
-  margin-right: 10px;
-  margin-bottom: 10px;
+  background-color: transparent;
 }
 main section#current div#partner-info div#intro {
   margin: 0.5rem 0;
@@ -389,6 +413,22 @@ main section#current div#next-recommend-list div.next-recommend img.next-picture
   -webkit-clip-path: circle();
           clip-path: circle();
   margin-bottom: 1rem;
+}
+main section#current div#next-recommend-list div.next-recommend div#next-tags {
+  display: flex;
+  justify-content: space-around;
+}
+main section#current div#next-recommend-list div.next-recommend div#next-tags p.candidate-tag {
+  font-size: 1.2rem;
+  padding: 0.2rem 0.3rem;
+  margin: 0 0.3rem;
+  border: 1.5px solid #e3b04b;
+  border-radius: 20px;
+  background-color: transparent;
+}
+main section#current div#next-recommend-list div.next-recommend h2.next-name {
+  margin-bottom: 1rem;
+  font-size: 3rem;
 }
 main section#current div.search-message {
   background-color: rgb(250, 238, 223);
