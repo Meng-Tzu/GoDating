@@ -7,19 +7,23 @@
     <title>GoDating</title>
     <meta name="author" content="Meng-Tzu Tsai" />
 
-    <!-- google font setting -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap"
       rel="stylesheet"
     />
 
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link rel="stylesheet" href="./default_style/style.css" />
+    <link rel="stylesheet" href="./login_style/css/style.css" />
+
     <link rel="stylesheet" href="./login_style/style.css" />
   </head>
   <body>
@@ -39,85 +43,110 @@
         </nav>
       </section>
 
-      <section class="right">
+      <!-- <section class="right">
         <a href="/profile.html"><img src="/profile.jpg" alt="profile" /></a>
-      </section>
+      </section> -->
     </header>
 
     <main>
-      <form id="signUp" action="" method="post">
-        <h1>Sign Up</h1>
+      <section class="ftco-section">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div id="login-block" class="col-md-12 col-lg-10">
+              <div class="wrap d-md-flex">
+                <div
+                  id="background-image"
+                  class="img"
+                  style="background-image: url(./images/signin.jpg)"
+                ></div>
+                <div class="login-wrap p-4 p-md-5">
+                  <div id="title" class="d-flex">
+                    <div class="w-100">
+                      <h3 class="mb-4">登入</h3>
+                    </div>
+                    <div class="w-100">
+                      <p class="social-media d-flex justify-content-end">
+                        <a
+                          href="#"
+                          class="social-icon d-flex align-items-center justify-content-center"
+                          ><span class="fa fa-facebook"></span
+                        ></a>
+                        <a
+                          href="#"
+                          class="social-icon d-flex align-items-center justify-content-center"
+                          ><span class="fa fa-twitter"></span
+                        ></a>
+                      </p>
+                    </div>
+                  </div>
+                  <form id="login" action="" class="signin-form">
+                    <div id="email" class="form-group mb-3">
+                      <label class="label" for="name">電子郵件</label>
+                      <input
+                        type="text"
+                        id="loginEmail"
+                        class="form-control"
+                        placeholder="test@test.com"
+                        required
+                      />
+                    </div>
 
-        <div class="email">
-          <label for="signUpEmail">Email:</label>
-          <input
-            type="email"
-            name="signUpEmail"
-            id="signUpEmail"
-            placeholder="test@test.com"
-            required
-          />
+                    <div id="password" class="form-group mb-3">
+                      <label class="label" for="password">密碼</label>
+                      <input
+                        type="password"
+                        id="loginPwd"
+                        class="form-control"
+                        placeholder="請輸入七個字元以上"
+                        required
+                      />
+                    </div>
+
+                    <div
+                      id="nickname"
+                      class="form-group mb-3"
+                      style="display: none"
+                    >
+                      <label class="label" for="password">暱稱</label>
+                      <input
+                        type="text"
+                        id="loginName"
+                        class="form-control"
+                        placeholder="想怎麼被稱呼？"
+                      />
+                    </div>
+                    <div id="bnt-login" class="form-group">
+                      <button
+                        type="submit"
+                        class="form-control btn btn-primary rounded submit px-3"
+                      >
+                        出發吧！
+                      </button>
+                    </div>
+                    <div class="form-group d-md-flex">
+                      <div class="w-50 text-left">
+                        <label class="checkbox-wrap checkbox-primary mb-0"
+                          >記住我的電子郵件
+                          <input type="checkbox" checked />
+                          <span class="checkmark"></span>
+                        </label>
+                      </div>
+                      <div class="w-50 text-md-right">
+                        <a href="#">忘記密碼？</a>
+                      </div>
+                    </div>
+                  </form>
+                  <p class="text-center">
+                    還不是會員嗎？
+                    <a id="join">加入我們吧!(註冊)</a>
+                    <a id="member" style="display: none">歡迎回來!(登入)</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="password">
-          <label for="signUpPwd">Password:</label>
-          <input
-            type="password"
-            name="signUpPwd"
-            id="signUpPwd"
-            placeholder="at least 7 character"
-            required
-          />
-        </div>
-        <div class="name">
-          <label for="signUpName">Nickname:</label>
-          <input
-            type="text"
-            name="signUpName"
-            id="signUpName"
-            placeholder="at least 1 character"
-            required
-          />
-        </div>
-
-        <div
-          class="signUpErrorMsg"
-          style="display: none; color: red; font-size: 0.5rem"
-        ></div>
-
-        <button type="submit">Join Us!</button>
-      </form>
-
-      <form id="signIn" action="" method="post">
-        <h1>Sign In</h1>
-
-        <div class="email">
-          <label for="signInEmail">Email:</label>
-          <input
-            type="email"
-            name="signInEmail"
-            id="signInEmail"
-            placeholder="test@test.com"
-            required
-          />
-        </div>
-        <div class="password">
-          <label for="signInPwd">Password:</label>
-          <input
-            type="password"
-            name="signInPwd"
-            id="signInPwd"
-            placeholder="at least 7 character"
-            required
-          />
-        </div>
-
-        <div
-          class="signInErrorMsg"
-          style="display: none; color: red; font-size: 0.5rem"
-        ></div>
-
-        <button type="submit">Sign In!</button>
-      </form>
+      </section>
     </main>
   </body>
   <script
@@ -127,4 +156,6 @@
   ></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="./render/login.js"></script>
+  <script src="./login_style/js/jquery.min.js"></script>
+  <script src="./login_style/js/main.js"></script>
 </html>
