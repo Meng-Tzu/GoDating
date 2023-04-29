@@ -1,24 +1,29 @@
 main {
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-  // border: red solid 1px;
-  form#signUp,
-  form#signIn {
-    flex: 1 1 100px;
-    margin: 0 5rem;
-    min-height: 40vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-  }
+  div#login-block {
+    width: 70%;
 
-  form#signUp {
-    background-color: #d3ffbb;
-  }
+    div#title {
+      display: flex;
+      justify-content: space-around;
+      h3 {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+    }
 
-  form#signIn {
-    background-color: #bbbbbb;
+    form#login {
+      div.form-group {
+        label {
+          font-size: 1rem;
+        }
+      }
+    }
+    p.text-center {
+      a {
+        color: #e3b04b;
+        cursor: pointer;
+      }
+    }
   }
 }

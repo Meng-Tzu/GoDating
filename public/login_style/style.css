@@ -1,21 +1,19 @@
-main {
+main div#login-block {
+  width: 70%;
+}
+main div#login-block div#title {
   display: flex;
   justify-content: space-around;
-  width: 100%;
 }
-main form#signUp,
-main form#signIn {
-  flex: 1 1 100px;
-  margin: 0 5rem;
-  min-height: 40vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
+main div#login-block div#title h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
-main form#signUp {
-  background-color: #d3ffbb;
+main div#login-block form#login div.form-group label {
+  font-size: 1rem;
 }
-main form#signIn {
-  background-color: #bbbbbb;
+main div#login-block p.text-center a {
+  color: #e3b04b;
+  cursor: pointer;
 }/*# sourceMappingURL=style.css.map */
