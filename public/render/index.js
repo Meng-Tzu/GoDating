@@ -124,6 +124,11 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#match");
 
+  // 新建 button element
+  const $div = $("<div>");
+  const $img = $("<img>");
+  const $span = $("<span>");
+
   for (const partnerId in partners) {
     const chatroomInfo = partners[partnerId];
 
@@ -131,26 +136,59 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
     const chatIndexId = chatroomInfo[1];
     const partnerName = userIdNicknamePair[partnerId];
 
-    // 新建 button element
-    const $div = $("<div>");
+    // 大頭貼
+    const $inner1ndDiv = $div.clone();
+    $inner1ndDiv.attr("class", "partner-img-container w-1/4");
+    const $innerImg = $img.clone();
+    $innerImg
+      .attr("class", "partner-img h-12 object-cover rounded-full")
+      .attr("src", "https://source.unsplash.com/otT2199XwI8/600x600");
 
-    $div
-      .addClass(
-        `partner ${partnerId} ${chatIndexId} text-xl text-center shadow-md`
-      )
+    $innerImg.appendTo($inner1ndDiv);
+
+    // 名字 + 最後訊息框
+    const $inner2ndDiv = $div.clone();
+    $inner2ndDiv.attr(
+      "class",
+      "name-msg-container w-full text-lg font-semibold"
+    );
+
+    // 名字
+    const $innerNameDiv = $div.clone();
+    $innerNameDiv
       .attr("id", roomId)
-      .attr("onClick", `openChatroom($(this))`)
+      .attr("class", "text-lg font-semibold")
       .text(partnerName);
 
+    // 最後訊息
+    const $innerMsg = $span.clone();
+    $innerMsg.attr("class", "text-gray-500").text("Hi Sam, Welcome");
+
+    $innerNameDiv.appendTo($inner2ndDiv);
+    $innerMsg.appendTo($inner2ndDiv);
+
+    // 最外框
+    const $outerDiv = $div.clone();
+    $outerDiv
+      .attr(
+        "class",
+        `partner ${partnerId} ${chatIndexId} flex flex-row py-4 px-2 items-center border-b-2`
+      )
+      .attr("id", roomId)
+      .attr("onClick", `openChatroom($(this))`);
+
     // 把新的 div 加入 parant element
-    $div.appendTo($parent);
+    $inner1ndDiv.appendTo($outerDiv);
+    $inner2ndDiv.appendTo($outerDiv);
+    $outerDiv.appendTo($parent);
   }
 };
 
 // Function8: 動態製造 DOM 物件 (create div for next-recommend)
 const createNextRecommendDiv = (candidateInfoList) => {
   // 選取要被插入 child 的 parant element
-  const $parent = $("#current");
+  const $parent = $("#next-recommend-list");
+  $parent.css("display", "flex");
 
   const $templete = $(".templete-next-recommend");
   candidateInfoList.forEach((candidateInfo, index) => {
@@ -189,15 +227,26 @@ const createMessageDiv = (msg, imgChunks) => {
 
   // 新建 div
   const $div = $("<div>");
-  const $outerDiv = $div.clone();
-  $outerDiv.attr("class", `message-in-dialogue ${msg.userId}`);
-  const $inner1stDiv = $div.clone();
-  const $inner2ndDiv = $div.clone();
+  const $span = $("<span>");
+  const $outerDiv = $span.clone();
+  $outerDiv.attr(
+    "class",
+    // `message-in-dialogue ${msg.userId} flex justify-start mb-4`
+    `message-in-dialogue ${msg.userId}`
+  );
+  const $inner1stDiv = $span.clone();
+  const $inner2ndDiv = $span.clone();
   $inner2ndDiv.attr("class", "timestamp").text(msg.timestamp);
 
   if (msg.message.includes(".jpg")) {
     // 如果是拿 ES 裡的照片檔名
-    $inner1stDiv.attr("class", "single-message").text(`${msg.userName}:`);
+    $inner1stDiv
+      .attr(
+        "class",
+        // "single-message ml-2 py-3 px-4 rounded-br-3xl rounded-tr-3xl rounded-tl-xl"
+        "single-message"
+      )
+      .text(`${msg.userName}:`);
     const $img = $("<img>");
     $img.attr("src", `/${msg.message}`).height(200);
 
@@ -274,7 +323,9 @@ const createSearchResultDiv = (result) => {
 // Function11: 點擊特定 partner 開啟聊天室
 const openChatroom = async function ($this) {
   const roomId = $this.attr("id");
-  const partnerName = $this.text();
+
+  const $nameDiv = $this.children("div").last();
+  const partnerName = $nameDiv.children("div").first().text();
   const classNames = $this.attr("class");
   // console.log("classNames", classNames, typeof classNames);
   const partnerId = classNames.split(" ")[1];
@@ -320,7 +371,7 @@ const openChatroom = async function ($this) {
   $("#current-recommend").css("display", "none");
   $(".next-recommend").css("display", "none");
   $("#title").css("display", "flex");
-  $("#dialogue").css("display", "block");
+  $("#dialogue").css("display", "flex");
   $("#partner-info").css("display", "block");
   $(".other-side").text(partnerName).attr("id", partnerId);
   $("#text-msg").css("display", "flex");

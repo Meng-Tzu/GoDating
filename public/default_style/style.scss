@@ -114,23 +114,40 @@ main {
 
     div.partner {
       width: 100%;
-      padding: 1rem 2rem;
-      // border: 1px solid gray;
-      // cursor: pointer;
+      .partner-img-container {
+        margin-right: 1rem;
 
-      margin-bottom: 5px;
-      background-color: rgb(255, 247, 165);
-      color: #313538;
-      // border-bottom: 1px solid gray;
-      border-radius: 4px;
-      // padding: 10px;
+        .partner-img {
+          clip-path: circle();
+          // margin-right: 1rem;
+        }
+      }
+
+      .name-msg-container {
+        span {
+          font-size: 0.7rem;
+        }
+      }
+
+      // width: 100%;
+      // padding: 1rem 2rem;
+      // // border: 1px solid gray;
       cursor: pointer;
-      font-size: 1.2rem;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+      // margin-bottom: 5px;
+      // background-color: rgb(255, 247, 165);
+      // color: #313538;
+      // // border-bottom: 1px solid gray;
+      // border-radius: 4px;
+      // // padding: 10px;
+      // cursor: pointer;
+      // font-size: 1.2rem;
+      // box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
   }
 
   section#chatroom {
+    background-color: #ffede1;
     position: relative;
     flex: 1 1 600px;
     display: flex;
@@ -192,8 +209,11 @@ main {
         margin: 1.5rem 0;
       }
 
-      h3#intro-title {
-        margin-top: 1.5rem;
+      div#current-recommend-detail-info {
+        max-height: 200px;
+        h3#intro-title {
+          margin-top: 1.5rem;
+        }
       }
 
       p#candidate-intro {
@@ -221,6 +241,7 @@ main {
     }
 
     div#title {
+      background-color: #ffede1;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -290,21 +311,40 @@ main {
     }
 
     div#dialogue {
+      background-color: white;
       border: gray solid 2px;
       width: 100%;
-      min-height: 65vh;
+      max-height: 80vh;
       margin: 0.5rem 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
 
-      div.message-in-dialogue {
+      span.message-in-dialogue {
+        display: flex;
+        flex-direction: column;
+        // flex: 1 1 100px;
         // display: inline;
         background-color: rgb(250, 238, 214);
         margin: 1rem 0.5rem;
+        margin-right: auto;
         border-radius: 4px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 
-        div.timestamp {
+        span.single-message {
+          display: inline;
+          padding: 0.5rem;
+        }
+
+        span.timestamp {
+          // display: inline;
           color: gray;
           font-size: 0.5rem;
+          // display: inline-block;
+          // color: gray;
+          // font-size: 0.5rem;
+          // width: 4rem;
+          // margin-left: 0.5rem;
         }
       }
     }
@@ -413,29 +453,24 @@ main {
     div#partner-info {
       // border: 1px solid blue;
       width: 100%;
-      min-height: 60vh;
+      max-height: 60vh;
       display: flex;
       flex-direction: column;
       // justify-content: space-around;
       justify-content: center;
       align-items: center;
       padding: 1rem;
-      overflow: hidden;
+      overflow-y: auto;
 
       div#partner-cantainer {
         display: flex;
         justify-content: center;
+        margin-bottom: 1rem;
 
         img {
-          // width: 150px;
           height: 250px;
-          // border: 5px solid white;
-          // border-radius: 50%;
           clip-path: circle();
-          // margin: 0.3rem 0;
           object-fit: cover;
-          margin: 2rem 0;
-          margin-bottom: 20px;
           background-position: center;
         }
       }
@@ -478,24 +513,30 @@ main {
       }
     }
 
-    div.next-recommend {
-      margin: 1rem 0;
-      width: 200px;
+    div#next-recommend-list {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      max-height: 80vh;
+      overflow-y: auto;
+      div.next-recommend {
+        margin: 1rem 0;
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 
-      img.next-picture {
-        height: 150px;
-        // border: 5px solid white;
-        // border-radius: 50%;
-        clip-path: circle();
-        margin-bottom: 1rem;
+        img.next-picture {
+          height: 150px;
+          // border: 5px solid white;
+          // border-radius: 50%;
+          clip-path: circle();
+          margin-bottom: 1rem;
+        }
+
+        // h2.next-name {
+        //   // margin: 1rem 0;
+        // }
       }
-
-      // h2.next-name {
-      //   // margin: 1rem 0;
-      // }
     }
 
     div.search-message {

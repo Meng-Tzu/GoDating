@@ -45,11 +45,23 @@
         ></h1>
       </section>
     </header>
-    <main class="min-h-screen">
-      <section class="bg-yellow-100" id="match">
-        <h3 class="text-xl font-bold">配對成功</h3>
+    <main class="min-h-screen flex flex-row justify-between bg-white">
+      <section
+        id="match"
+        class="flex flex-col w-2/5 border-r-2 overflow-y-auto"
+      >
+        <!-- <h3 class="text-xl font-bold">配對成功</h3> -->
+        <!-- search compt -->
+        <div class="border-b-2 py-4 px-2">
+          <input
+            type="text"
+            placeholder="搜尋人名"
+            class="py-2 px-2 border-2 border-gray-200 rounded-2xl w-full"
+          />
+        </div>
+        <!-- end search compt -->
       </section>
-      <section id="chatroom">
+      <section id="chatroom" class="w-full px-5 flex flex-col justify-between">
         <!-- <form id="connection" action="" method="post">
           <label for="users">名字:</label>
           <select name="users" id="users">
@@ -94,13 +106,15 @@
           </div>
           <h2 id="" class="candidate-name text-2xl"></h2>
 
-          <p id="candidate-sex"></p>
-          <p id="candidate-age"></p>
-          <div id="candidate-tags" class="">
-            <p class="templete-candidate-tag" style="display: none"></p>
+          <div id="current-recommend-detail-info">
+            <p id="candidate-sex"></p>
+            <p id="candidate-age"></p>
+            <div id="candidate-tags" class="">
+              <p class="templete-candidate-tag" style="display: none"></p>
+            </div>
+            <h3 id="intro-title" class="text-xl">自我介紹</h3>
+            <p id="candidate-intro"></p>
           </div>
-          <h3 id="intro-title" class="text-xl">自我介紹</h3>
-          <p id="candidate-intro"></p>
 
           <div id="choose-btn">
             <button id="btn-like">喜歡</button>
@@ -116,7 +130,7 @@
             <button id="btn-search" type="submit"></button>
           </form>
         </div>
-        <div id="dialogue" style="display: none">
+        <div id="dialogue" style="display: none" class="flex-1 overflow-auto">
           <div class="message-in-dialogue" style="display: none">
             <div class="single-message"></div>
             <div class="timestamp"></div>
@@ -135,7 +149,7 @@
           </form>
         </div>
       </section>
-      <section id="current" class="bg-yellow-100">
+      <section id="current" class="bg-yellow-100 w-2/5 border-l-2 px-5">
         <div id="more-info">
           <h3 class="decoration-4 text-xl font-bold">猜你會喜歡...</h3>
           <div id="cross" style="display: none">
@@ -143,6 +157,7 @@
           </div>
         </div>
 
+        <div id="next-recommend-list" style="display: none"></div>
         <div id="partner-info" style="display: none">
           <div id="partner-cantainer">
             <img src="" alt="" />

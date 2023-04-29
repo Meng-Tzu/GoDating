@@ -78,16 +78,20 @@ main section#match h3 {
 }
 main section#match div.partner {
   width: 100%;
-  padding: 1rem 2rem;
-  margin-bottom: 5px;
-  background-color: rgb(255, 247, 165);
-  color: #313538;
-  border-radius: 4px;
   cursor: pointer;
-  font-size: 1.2rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+main section#match div.partner .partner-img-container {
+  margin-right: 1rem;
+}
+main section#match div.partner .partner-img-container .partner-img {
+  -webkit-clip-path: circle();
+          clip-path: circle();
+}
+main section#match div.partner .name-msg-container span {
+  font-size: 0.7rem;
 }
 main section#chatroom {
+  background-color: #ffede1;
   position: relative;
   flex: 1 1 600px;
   display: flex;
@@ -132,7 +136,10 @@ main section#chatroom div#current-recommend div#front-cover div#candidate-cantai
 main section#chatroom div#current-recommend h2#candidate-name {
   margin: 1.5rem 0;
 }
-main section#chatroom div#current-recommend h3#intro-title {
+main section#chatroom div#current-recommend div#current-recommend-detail-info {
+  max-height: 200px;
+}
+main section#chatroom div#current-recommend div#current-recommend-detail-info h3#intro-title {
   margin-top: 1.5rem;
 }
 main section#chatroom div#current-recommend p#candidate-intro {
@@ -155,6 +162,7 @@ main section#chatroom div#current-recommend div#choose-btn button {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 main section#chatroom div#title {
+  background-color: #ffede1;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -204,18 +212,29 @@ main section#chatroom div#title form#search-box button#btn-search {
   cursor: pointer;
 }
 main section#chatroom div#dialogue {
+  background-color: white;
   border: gray solid 2px;
   width: 100%;
-  min-height: 65vh;
+  max-height: 80vh;
   margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
-main section#chatroom div#dialogue div.message-in-dialogue {
+main section#chatroom div#dialogue span.message-in-dialogue {
+  display: flex;
+  flex-direction: column;
   background-color: rgb(250, 238, 214);
   margin: 1rem 0.5rem;
+  margin-right: auto;
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-main section#chatroom div#dialogue div.message-in-dialogue div.timestamp {
+main section#chatroom div#dialogue span.message-in-dialogue span.single-message {
+  display: inline;
+  padding: 0.5rem;
+}
+main section#chatroom div#dialogue span.message-in-dialogue span.timestamp {
   color: gray;
   font-size: 0.5rem;
 }
@@ -301,17 +320,18 @@ main section#current div#more-info div#cross img {
 }
 main section#current div#partner-info {
   width: 100%;
-  min-height: 60vh;
+  max-height: 60vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 1rem;
-  overflow: hidden;
+  overflow-y: auto;
 }
 main section#current div#partner-info div#partner-cantainer {
   display: flex;
   justify-content: center;
+  margin-bottom: 1rem;
 }
 main section#current div#partner-info div#partner-cantainer img {
   height: 250px;
@@ -319,8 +339,6 @@ main section#current div#partner-info div#partner-cantainer img {
           clip-path: circle();
   -o-object-fit: cover;
      object-fit: cover;
-  margin: 2rem 0;
-  margin-bottom: 20px;
   background-position: center;
 }
 main section#current div#partner-info div#partner-name {
@@ -353,14 +371,20 @@ main section#current div#partner-info div#intro {
   margin: 0.5rem 0;
   padding: 2rem 0;
 }
-main section#current div.next-recommend {
+main section#current div#next-recommend-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+main section#current div#next-recommend-list div.next-recommend {
   margin: 1rem 0;
   width: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-main section#current div.next-recommend img.next-picture {
+main section#current div#next-recommend-list div.next-recommend img.next-picture {
   height: 150px;
   -webkit-clip-path: circle();
           clip-path: circle();
