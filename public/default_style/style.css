@@ -67,7 +67,7 @@ main {
   min-height: 90vh;
 }
 main section#match {
-  flex: 1 1 200px;
+  flex: 1 1 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -89,7 +89,7 @@ main section#match div.partner {
 }
 main section#chatroom {
   position: relative;
-  flex: 1 1 500px;
+  flex: 1 1 600px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -98,7 +98,7 @@ main section#chatroom {
 main section#chatroom div#current-recommend {
   margin: 2rem 0;
   width: 60%;
-  min-height: 60vh;
+  min-height: 55vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -111,7 +111,7 @@ main section#chatroom div#current-recommend div#front-cover {
   position: relative;
   overflow: hidden;
   margin: 0 auto;
-  min-height: 300px;
+  min-height: 250px;
   background-image: url(../images/pikabu.png);
   background-size: cover;
   background-position: center;
@@ -125,7 +125,7 @@ main section#chatroom div#current-recommend div#front-cover div#candidate-cantai
   bottom: 0;
 }
 main section#chatroom div#current-recommend div#front-cover div#candidate-cantainer img#candidate-picture {
-  height: 300px;
+  height: 250px;
   -webkit-clip-path: circle();
           clip-path: circle();
 }
@@ -145,7 +145,7 @@ main section#chatroom div#current-recommend div#choose-btn {
 }
 main section#chatroom div#current-recommend div#choose-btn button {
   flex: 1 1 auto;
-  padding: 1rem 1rem;
+  padding: 0.5rem 1rem;
   margin: 0 0.3rem;
   background-color: rgb(255, 247, 165);
   color: #313538;
@@ -268,7 +268,7 @@ main section#chatroom div#pass-msg form#picture-msg button {
   background-color: rgb(255, 253, 248);
 }
 main section#current {
-  flex: 1 1 200px;
+  flex: 1 1 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -355,22 +355,30 @@ main section#current div#partner-info div#intro {
 }
 main section#current div.next-recommend {
   margin: 1rem 0;
-  width: 300px;
+  width: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 main section#current div.next-recommend img.next-picture {
-  max-width: 200px;
+  height: 150px;
   -webkit-clip-path: circle();
           clip-path: circle();
   margin-bottom: 1rem;
 }
-main section#current ul.search-message {
-  list-style-type: none;
-}
-main section#current ul.search-message li {
-  border: 1px solid gray;
+main section#current div.search-message {
   background-color: rgb(250, 238, 223);
-  margin: 0.5rem 0.2rem;
+  margin: 0.5rem 0;
+  border-radius: 10px;
+}
+main section#current div.search-message p {
+  text-align: center;
+}
+main section#current div.search-message div.single-message {
+  border: none;
+}
+main section#current div.search-message div.timestamp {
+  border: none;
+  color: gray;
+  font-size: 0.5rem;
 }/*# sourceMappingURL=style.css.map */

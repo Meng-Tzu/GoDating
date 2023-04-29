@@ -100,7 +100,7 @@ main {
   min-height: 90vh;
 
   section#match {
-    flex: 1 1 200px;
+    flex: 1 1 150px;
     // border: 2px solid red;
     // background-color: rgb(225, 253, 207);
     display: flex;
@@ -132,7 +132,7 @@ main {
 
   section#chatroom {
     position: relative;
-    flex: 1 1 500px;
+    flex: 1 1 600px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -143,7 +143,7 @@ main {
     div#current-recommend {
       margin: 2rem 0;
       width: 60%;
-      min-height: 60vh;
+      min-height: 55vh;
       // border: 1px solid gray;
       display: flex;
       flex-direction: column;
@@ -159,7 +159,7 @@ main {
         // top: 0;
         overflow: hidden;
         margin: 0 auto;
-        min-height: 300px;
+        min-height: 250px;
         background-image: url(../images/pikabu.png);
         background-size: cover;
         background-position: center;
@@ -179,7 +179,7 @@ main {
           bottom: 0;
 
           img#candidate-picture {
-            height: 300px;
+            height: 250px;
             // width: 200pxs;
 
             // border: 5px solid white;
@@ -207,7 +207,7 @@ main {
 
         button {
           flex: 1 1 auto;
-          padding: 1rem 1rem;
+          padding: 0.5rem 1rem;
           margin: 0 0.3rem;
           background-color: rgb(255, 247, 165);
           color: #313538;
@@ -370,7 +370,7 @@ main {
     }
   }
   section#current {
-    flex: 1 1 200px;
+    flex: 1 1 150px;
     // border: 2px solid red;
     // background-color: rgb(250, 235, 215);
     // text-align: center;
@@ -480,13 +480,13 @@ main {
 
     div.next-recommend {
       margin: 1rem 0;
-      width: 300px;
+      width: 200px;
       display: flex;
       flex-direction: column;
       align-items: center;
 
       img.next-picture {
-        max-width: 200px;
+        height: 150px;
         // border: 5px solid white;
         // border-radius: 50%;
         clip-path: circle();
@@ -498,13 +498,22 @@ main {
       // }
     }
 
-    ul.search-message {
-      list-style-type: none;
+    div.search-message {
+      background-color: rgb(250, 238, 223);
+      margin: 0.5rem 0;
+      border-radius: 10px;
+      p {
+        text-align: center;
+      }
 
-      li {
-        border: 1px solid gray;
-        background-color: rgb(250, 238, 223);
-        margin: 0.5rem 0.2rem;
+      div.single-message {
+        border: none;
+      }
+
+      div.timestamp {
+        border: none;
+        color: gray;
+        font-size: 0.5rem;
       }
     }
   }

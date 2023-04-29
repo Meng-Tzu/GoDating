@@ -232,8 +232,7 @@ const createMessageDiv = (msg, imgChunks) => {
 const createSearchResultDiv = (result) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#current");
-  const $ul = $("<ul>");
-  $ul.addClass("search-message");
+  const $div = $("<div>");
 
   // 更換標題
   $("#current #more-info h3").text("搜尋結果");
@@ -243,18 +242,30 @@ const createSearchResultDiv = (result) => {
   $("#partner-info").css("display", "none");
 
   if (!result.length) {
-    const $li = $("<li>");
-    $li.text("沒有搜尋結果");
-    $li.appendTo($ul);
-  } else {
-    result.forEach((message) => {
-      // 新建 li element
-      const $li = $("<li>");
-      $li.text(
-        `${message.userName}: ${message.message} ----- ${message.timestamp}`
-      );
+    const $outerDiv = $div.clone();
+    $outerDiv.attr("class", "search-message text-xl text-center shadow-md");
 
-      $li.appendTo($ul);
+    const $p = $("<p>");
+    $p.text("沒有搜尋結果");
+    $p.appendTo($outerDiv);
+    $outerDiv.appendTo($parent);
+  } else {
+    result.forEach((msg) => {
+      // 新建搜尋筆數
+      const $outerDiv = $div.clone();
+      $outerDiv.attr("class", "search-message text-xl text-center shadow-md");
+      const $inner1stDiv = $div.clone();
+      $inner1stDiv
+        .attr("class", "single-message")
+        .text(`${msg.userName}: ${msg.message}`);
+
+      const $inner2ndDiv = $div.clone();
+      $inner2ndDiv.attr("class", "timestamp").text(msg.timestamp);
+
+      // // 把複製出來的 div 加入 parent element
+      $inner1stDiv.appendTo($outerDiv);
+      $inner2ndDiv.appendTo($outerDiv);
+      $outerDiv.appendTo($parent);
     });
   }
 
