@@ -138,13 +138,13 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
 
     // 大頭貼
     const $inner1ndDiv = $div.clone();
-    $inner1ndDiv.attr("class", "partner-img-container w-1/4");
+    // $inner1ndDiv.attr("class", "partner-img-container w-1/4");
     const $innerImg = $img.clone();
     $innerImg
       .attr("class", "partner-img h-12 object-cover rounded-full")
       .attr("src", chatroomInfo[1]);
 
-    $innerImg.appendTo($inner1ndDiv);
+    // $innerImg.appendTo($inner1ndDiv);
 
     // 名字 + 最後訊息框
     const $inner2ndDiv = $div.clone();
@@ -162,7 +162,7 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
 
     // 最後訊息
     const $innerMsg = $span.clone();
-    $innerMsg.attr("class", "text-gray-500").text("Hi Sam, Welcome");
+    $innerMsg.attr("class", "text-gray-500").text("哈囉，今天好嗎？");
 
     $innerNameDiv.appendTo($inner2ndDiv);
     $innerMsg.appendTo($inner2ndDiv);
@@ -178,7 +178,7 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
       .attr("onClick", `openChatroom($(this))`);
 
     // 把新的 div 加入 parant element
-    $inner1ndDiv.appendTo($outerDiv);
+    $innerImg.appendTo($outerDiv);
     $inner2ndDiv.appendTo($outerDiv);
     $outerDiv.appendTo($parent);
   }
@@ -199,7 +199,7 @@ const createNextRecommendDiv = (candidateInfoList) => {
 
     $div.addClass("next-recommend text-xl");
     $img.addClass("next-picture").attr("src", candidateInfo.main_image);
-    $h2.addClass(".next-name text-center").text(candidateInfo.nick_name);
+    $h2.addClass("next-name text-center").text(candidateInfo.nick_name);
 
     // 增加 tags
     const $tags = $("<div>");

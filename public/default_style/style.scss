@@ -7,7 +7,7 @@
 
 html,
 body {
-  height: 100%;
+  height: 100vh;
 }
 
 body {
@@ -27,6 +27,7 @@ header {
   // justify-content: space-around;
   align-items: center;
   margin: 0;
+  max-height: 300px;
 
   section.left {
     flex: 1 1 500px;
@@ -37,25 +38,26 @@ header {
       margin-left: 2rem;
       img {
         // flex: 1 1 100px;
-        width: 12vw;
+        width: 15vw;
       }
     }
 
     nav {
       flex: 1 1 100px;
       align-items: center;
+
       ul {
         display: flex;
         list-style-type: none;
         align-items: center;
         justify-content: space-around;
-        letter-spacing: 0.25em;
 
         li {
           a {
             // color: #3f3a3a;
             text-decoration: none;
-            // font-size: 1.2rem;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
           }
         }
 
@@ -85,14 +87,20 @@ header {
 
       img {
         // flex: 1 1 100px;
-        margin: 0.5rem 0.5rem;
+        margin: 0.5rem 0rem;
         width: 50px;
-        border: 1px solid white;
-        clip-path: circle();
+        // border: 1px solid white;
+        // clip-path: circle();
+        object-fit: cover;
+        border-radius: 50%;
+        background-position: center;
       }
 
       h1.user-name {
-        margin-left: 1rem;
+        margin-left: 0.5rem;
+        font-size: 1.3rem;
+        font-weight: bolder;
+        letter-spacing: 2px;
       }
     }
 
@@ -110,12 +118,16 @@ header {
 main {
   display: flex;
   flex-wrap: wrap;
-  min-height: 90vh;
+  // min-height: 90vh;
+  max-height: calc(
+    100vh - 300px
+  ); /* adjust this value based on the height of your header */
+  overflow-y: auto;
 
   section#match {
     flex: 1 1 150px;
     // border: 2px solid red;
-    // background-color: rgb(225, 253, 207);
+    background-color: #ffede1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -127,18 +139,34 @@ main {
 
     div.partner {
       width: 100%;
-      .partner-img-container {
-        margin-right: 1rem;
+      padding: 16px 16px;
+      // border: 1px solid blue;
 
-        .partner-img {
-          clip-path: circle();
-          // margin-right: 1rem;
-        }
+      .partner-img {
+        // clip-path: circle();
+        // margin-right: 1rem;
+        height: 60px;
+        width: 60px;
+        object-fit: cover;
+        border-radius: 50%;
+        background-position: center;
+        // border: 1px solid red;
       }
 
       .name-msg-container {
+        // border: 1px solid green;
+        padding: 0 0.5rem;
+
+        div {
+          font-size: 1.3rem;
+          font-weight: bolder;
+          letter-spacing: 2px;
+          color: rgb(66 32 6);
+        }
+
         span {
           font-size: 0.7rem;
+          letter-spacing: 1px;
         }
       }
 
@@ -160,7 +188,7 @@ main {
   }
 
   section#chatroom {
-    background-color: #ffede1;
+    background-color: #fff7da;
     position: relative;
     flex: 1 1 600px;
     display: flex;
@@ -206,27 +234,34 @@ main {
           // margin: 1rem 0;
 
           position: absolute;
-          bottom: 0;
+          bottom: 7px;
 
           img#candidate-picture {
-            height: 220px;
-            // width: 200pxs;
+            height: 170px;
+            width: 170px;
+            object-fit: cover;
+            border-radius: 50%;
+            background-position: center;
 
             // border: 5px solid white;
             // border-radius: 50%;
-            clip-path: circle();
+            // clip-path: circle();
           }
         }
       }
 
-      h2#candidate-name {
-        margin: 1.5rem 0;
+      h2.candidate-name {
+        margin: 0.7rem 0;
+        font-weight: bolder;
+        letter-spacing: 2px;
+        color: rgb(66 32 6);
       }
 
       div#current-recommend-detail-info {
         width: 100%;
         max-height: 200px;
-        overflow-y: auto;
+        // overflow-y: auto;
+        // border: 1px solid blue;
 
         div#sex-age {
           display: flex;
@@ -235,31 +270,46 @@ main {
 
           img#candidate-sex {
             height: 20px;
-            margin-right: 0.2rem;
+            // margin-right: 0.2rem;
+          }
+
+          p#candidate-age {
+            padding-left: 0.2rem;
           }
         }
 
         div#candidate-tags {
+          // border: 1px solid red;
+          padding: 0.3rem 0;
           display: flex;
-          justify-content: space-around;
+          justify-content: center;
+          gap: 4px;
 
           p.candidate-tag {
-            padding: 0.2rem 0.3rem;
-            margin: 0 0.3rem;
+            padding: 0.2rem 0.6rem;
+            // margin: 0 0.3rem;
             border: 1.5px solid #e3b04b;
             border-radius: 20px;
             background-color: transparent;
+            color: rgb(66 32 6);
           }
         }
 
         h3#intro-title {
-          margin-top: 1.5rem;
+          font-size: 1rem;
+          padding-top: 1rem;
+          color: rgb(66 32 6);
         }
       }
 
       p#candidate-intro {
-        margin: 1rem 5rem;
+        // border: 1px solid red;
+        padding: 0.7rem 2rem;
+        font-size: 1.2rem;
         text-align: center;
+        color: rgb(66 32 6);
+        max-height: 100px;
+        overflow-y: auto;
       }
 
       div#choose-btn {
@@ -276,6 +326,9 @@ main {
           border-radius: 7px;
           cursor: pointer;
           font-size: 1.2rem;
+          font-weight: 700;
+          letter-spacing: 2px;
+          color: rgb(66 32 6);
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
       }
@@ -299,6 +352,9 @@ main {
         // flex: 1 1 auto;
         // flex-basis: 20%;
         margin-left: 2rem;
+        font-weight: bolder;
+        letter-spacing: 2px;
+        color: rgb(66 32 6);
       }
 
       form#search-box {
@@ -453,7 +509,7 @@ main {
   section#current {
     flex: 1 1 150px;
     // border: 2px solid red;
-    // background-color: rgb(250, 235, 215);
+    background-color: #f7c96fb3;
     // text-align: center;
     display: flex;
     flex-direction: column;
@@ -461,10 +517,10 @@ main {
 
     h3 {
       padding: 1rem 0;
-      letter-spacing: 0.5em;
     }
 
     div#more-info {
+      // border: 1px solid blue;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -472,6 +528,12 @@ main {
       h3 {
         flex: 2 1 100px;
         text-align: center;
+        font-size: 1.25rem;
+        font-weight: bolder;
+        letter-spacing: 2px;
+        color: rgb(66 32 6);
+        padding-bottom: 8px;
+        padding-top: 16px;
       }
 
       div#cross {
@@ -493,49 +555,50 @@ main {
 
     div#partner-info {
       // border: 1px solid blue;
-      width: 100%;
-      max-height: 60vh;
+      // width: 100%;
+      // max-height: 60vh;
       display: flex;
       flex-direction: column;
       // justify-content: space-around;
       justify-content: center;
       align-items: center;
-      padding: 1rem;
       overflow-y: auto;
+      gap: 2rem;
 
-      div#partner-cantainer {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 1rem;
-
-        img {
-          height: 250px;
-          clip-path: circle();
-          object-fit: cover;
-          background-position: center;
-        }
+      img {
+        height: 120px;
+        width: 120px;
+        margin: 0 auto;
+        object-fit: cover;
+        border-radius: 50%;
+        background-position: center;
       }
+      // }
 
       div#partner-name {
-        font-size: 2rem;
-        font-weight: bold;
-        margin: 0.5rem 0;
+        font-size: 1.5rem;
+        font-weight: bolder;
+        letter-spacing: 2px;
+        color: rgb(66 32 6);
+        // margin: 0.5rem 0;
       }
 
       div#partner-sex-age {
         display: flex;
         justify-content: center;
         align-items: center;
-
+        width: 20%;
+        margin: 0 auto;
         img#partner-sex {
           height: 20px;
-          margin-right: 0.2rem;
+          // margin-right: 0.2rem;
         }
       }
 
       div#tags {
         display: flex;
-        justify-content: space-around;
+        justify-content: center;
+        gap: 4px;
         align-items: center;
         flex-wrap: wrap;
         margin: 0.3rem 0;
@@ -545,44 +608,65 @@ main {
           text-align: center;
           // flex: 1 1 60px;
           font-size: 1rem;
-          padding: 0.2rem 0.3rem;
+          padding: 0.2rem 0.6rem;
           margin: 0.3rem 0.3rem;
-          border: 1.5px solid #e3b04b;
+          border: 1.5px solid #fff7ed;
           border-radius: 20px;
           background-color: transparent;
+          color: white;
         }
       }
 
-      div#intro {
-        margin: 0.5rem 0;
-        padding: 2rem 0;
+      div#partner-intro {
+        padding: 2rem 1.5rem;
+        color: rgb(66 32 6);
       }
     }
 
     div#next-recommend-list {
+      // border: 1px solid red;
+      width: 100%;
       display: flex;
       flex-direction: column;
       max-height: 80vh;
       overflow-y: auto;
+      padding-left: 20px;
+      padding-top: 10px;
 
       div.next-recommend {
-        margin: 1rem 0;
+        // border: 1px solid white;
+        padding-bottom: 2rem;
         width: 200px;
         display: flex;
         flex-direction: column;
         align-items: center;
 
         img.next-picture {
-          height: 150px;
+          height: 120px;
+          width: 120px;
           // border: 5px solid white;
           // border-radius: 50%;
-          clip-path: circle();
+          // clip-path: circle();
+          object-fit: cover;
+          border-radius: 50%;
+          background-position: center;
           margin-bottom: 1rem;
         }
 
+        h2.next-name {
+          // border: 1px solid yellow;
+          padding-bottom: 1rem;
+          font-size: 1.3rem;
+          font-weight: bolder;
+          letter-spacing: 2px;
+          color: rgb(66 32 6);
+        }
+
         div#next-tags {
+          // border: 1px solid yellow;
           display: flex;
-          justify-content: space-around;
+          justify-content: center;
+          gap: 4px;
           align-items: center;
           flex-wrap: wrap;
 
@@ -591,17 +675,13 @@ main {
             text-align: center;
             // flex: 1 1 60px;
             font-size: 1rem;
-            padding: 0.2rem 0.3rem;
+            padding: 0.2rem 0.6rem;
             margin: 0.3rem 0.3rem;
-            border: 1.5px solid #e3b04b;
+            border: 1.5px solid #fff7ed;
             border-radius: 20px;
             background-color: transparent;
+            color: rgb(66 32 6);
           }
-        }
-
-        h2.next-name {
-          margin-bottom: 3rem;
-          font-size: 3rem;
         }
       }
     }

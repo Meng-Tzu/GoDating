@@ -7,7 +7,7 @@
 
 html,
 body {
-  height: 100%;
+  height: 100vh;
 }
 
 body {
@@ -22,6 +22,7 @@ header {
   flex-wrap: wrap;
   align-items: center;
   margin: 0;
+  max-height: 300px;
 }
 header section.left {
   flex: 1 1 500px;
@@ -32,7 +33,7 @@ header section.left a.logo {
   margin-left: 2rem;
 }
 header section.left a.logo img {
-  width: 12vw;
+  width: 15vw;
 }
 header section.left nav {
   flex: 1 1 100px;
@@ -43,10 +44,11 @@ header section.left nav ul {
   list-style-type: none;
   align-items: center;
   justify-content: space-around;
-  letter-spacing: 0.25em;
 }
 header section.left nav ul li a {
   text-decoration: none;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
 }
 header section.left nav ul li.line {
   font-size: 2rem;
@@ -64,23 +66,29 @@ header section.right div#profile {
   cursor: pointer;
 }
 header section.right div#profile img {
-  margin: 0.5rem 0.5rem;
+  margin: 0.5rem 0rem;
   width: 50px;
-  border: 1px solid white;
-  -webkit-clip-path: circle();
-          clip-path: circle();
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 50%;
+  background-position: center;
 }
 header section.right div#profile h1.user-name {
-  margin-left: 1rem;
+  margin-left: 0.5rem;
+  font-size: 1.3rem;
+  font-weight: bolder;
+  letter-spacing: 2px;
 }
 
 main {
   display: flex;
   flex-wrap: wrap;
-  min-height: 90vh;
+  max-height: calc(100vh - 300px); /* adjust this value based on the height of your header */
+  overflow-y: auto;
 }
 main section#match {
   flex: 1 1 150px;
+  background-color: #ffede1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -91,20 +99,32 @@ main section#match h3 {
 }
 main section#match div.partner {
   width: 100%;
+  padding: 16px 16px;
   cursor: pointer;
 }
-main section#match div.partner .partner-img-container {
-  margin-right: 1rem;
+main section#match div.partner .partner-img {
+  height: 60px;
+  width: 60px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 50%;
+  background-position: center;
 }
-main section#match div.partner .partner-img-container .partner-img {
-  -webkit-clip-path: circle();
-          clip-path: circle();
+main section#match div.partner .name-msg-container {
+  padding: 0 0.5rem;
+}
+main section#match div.partner .name-msg-container div {
+  font-size: 1.3rem;
+  font-weight: bolder;
+  letter-spacing: 2px;
+  color: rgb(66, 32, 6);
 }
 main section#match div.partner .name-msg-container span {
   font-size: 0.7rem;
+  letter-spacing: 1px;
 }
 main section#chatroom {
-  background-color: #ffede1;
+  background-color: #fff7da;
   position: relative;
   flex: 1 1 600px;
   display: flex;
@@ -139,20 +159,25 @@ main section#chatroom div#current-recommend div#front-cover {
 }
 main section#chatroom div#current-recommend div#front-cover div#candidate-cantainer {
   position: absolute;
-  bottom: 0;
+  bottom: 7px;
 }
 main section#chatroom div#current-recommend div#front-cover div#candidate-cantainer img#candidate-picture {
-  height: 220px;
-  -webkit-clip-path: circle();
-          clip-path: circle();
+  height: 170px;
+  width: 170px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 50%;
+  background-position: center;
 }
-main section#chatroom div#current-recommend h2#candidate-name {
-  margin: 1.5rem 0;
+main section#chatroom div#current-recommend h2.candidate-name {
+  margin: 0.7rem 0;
+  font-weight: bolder;
+  letter-spacing: 2px;
+  color: rgb(66, 32, 6);
 }
 main section#chatroom div#current-recommend div#current-recommend-detail-info {
   width: 100%;
   max-height: 200px;
-  overflow-y: auto;
 }
 main section#chatroom div#current-recommend div#current-recommend-detail-info div#sex-age {
   display: flex;
@@ -161,25 +186,35 @@ main section#chatroom div#current-recommend div#current-recommend-detail-info di
 }
 main section#chatroom div#current-recommend div#current-recommend-detail-info div#sex-age img#candidate-sex {
   height: 20px;
-  margin-right: 0.2rem;
+}
+main section#chatroom div#current-recommend div#current-recommend-detail-info div#sex-age p#candidate-age {
+  padding-left: 0.2rem;
 }
 main section#chatroom div#current-recommend div#current-recommend-detail-info div#candidate-tags {
+  padding: 0.3rem 0;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 4px;
 }
 main section#chatroom div#current-recommend div#current-recommend-detail-info div#candidate-tags p.candidate-tag {
-  padding: 0.2rem 0.3rem;
-  margin: 0 0.3rem;
+  padding: 0.2rem 0.6rem;
   border: 1.5px solid #e3b04b;
   border-radius: 20px;
   background-color: transparent;
+  color: rgb(66, 32, 6);
 }
 main section#chatroom div#current-recommend div#current-recommend-detail-info h3#intro-title {
-  margin-top: 1.5rem;
+  font-size: 1rem;
+  padding-top: 1rem;
+  color: rgb(66, 32, 6);
 }
 main section#chatroom div#current-recommend p#candidate-intro {
-  margin: 1rem 5rem;
+  padding: 0.7rem 2rem;
+  font-size: 1.2rem;
   text-align: center;
+  color: rgb(66, 32, 6);
+  max-height: 100px;
+  overflow-y: auto;
 }
 main section#chatroom div#current-recommend div#choose-btn {
   display: flex;
@@ -194,6 +229,9 @@ main section#chatroom div#current-recommend div#choose-btn button {
   border-radius: 7px;
   cursor: pointer;
   font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgb(66, 32, 6);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 main section#chatroom div#title {
@@ -212,6 +250,9 @@ main section#chatroom div#title h2.other-side {
   flex: 1 1 150px;
   width: 20%;
   margin-left: 2rem;
+  font-weight: bolder;
+  letter-spacing: 2px;
+  color: rgb(66, 32, 6);
 }
 main section#chatroom div#title form#search-box {
   flex: 2 1 250px;
@@ -323,13 +364,13 @@ main section#chatroom div#pass-msg form#picture-msg button {
 }
 main section#current {
   flex: 1 1 150px;
+  background-color: rgba(247, 201, 111, 0.7019607843);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 main section#current h3 {
   padding: 1rem 0;
-  letter-spacing: 0.5em;
 }
 main section#current div#more-info {
   display: flex;
@@ -339,6 +380,12 @@ main section#current div#more-info {
 main section#current div#more-info h3 {
   flex: 2 1 100px;
   text-align: center;
+  font-size: 1.25rem;
+  font-weight: bolder;
+  letter-spacing: 2px;
+  color: rgb(66, 32, 6);
+  padding-bottom: 8px;
+  padding-top: 16px;
 }
 main section#current div#more-info div#cross {
   display: flex;
@@ -354,45 +401,42 @@ main section#current div#more-info div#cross img {
   width: 10px;
 }
 main section#current div#partner-info {
-  width: 100%;
-  max-height: 60vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
   overflow-y: auto;
+  gap: 2rem;
 }
-main section#current div#partner-info div#partner-cantainer {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-main section#current div#partner-info div#partner-cantainer img {
-  height: 250px;
-  -webkit-clip-path: circle();
-          clip-path: circle();
+main section#current div#partner-info img {
+  height: 120px;
+  width: 120px;
+  margin: 0 auto;
   -o-object-fit: cover;
      object-fit: cover;
+  border-radius: 50%;
   background-position: center;
 }
 main section#current div#partner-info div#partner-name {
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: bolder;
+  letter-spacing: 2px;
+  color: rgb(66, 32, 6);
 }
 main section#current div#partner-info div#partner-sex-age {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 20%;
+  margin: 0 auto;
 }
 main section#current div#partner-info div#partner-sex-age img#partner-sex {
   height: 20px;
-  margin-right: 0.2rem;
 }
 main section#current div#partner-info div#tags {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 4px;
   align-items: center;
   flex-wrap: wrap;
   margin: 0.3rem 0;
@@ -400,53 +444,65 @@ main section#current div#partner-info div#tags {
 main section#current div#partner-info div#tags p.tag {
   text-align: center;
   font-size: 1rem;
-  padding: 0.2rem 0.3rem;
+  padding: 0.2rem 0.6rem;
   margin: 0.3rem 0.3rem;
-  border: 1.5px solid #e3b04b;
+  border: 1.5px solid #fff7ed;
   border-radius: 20px;
   background-color: transparent;
+  color: white;
 }
-main section#current div#partner-info div#intro {
-  margin: 0.5rem 0;
-  padding: 2rem 0;
+main section#current div#partner-info div#partner-intro {
+  padding: 2rem 1.5rem;
+  color: rgb(66, 32, 6);
 }
 main section#current div#next-recommend-list {
+  width: 100%;
   display: flex;
   flex-direction: column;
   max-height: 80vh;
   overflow-y: auto;
+  padding-left: 20px;
+  padding-top: 10px;
 }
 main section#current div#next-recommend-list div.next-recommend {
-  margin: 1rem 0;
+  padding-bottom: 2rem;
   width: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 main section#current div#next-recommend-list div.next-recommend img.next-picture {
-  height: 150px;
-  -webkit-clip-path: circle();
-          clip-path: circle();
+  height: 120px;
+  width: 120px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 50%;
+  background-position: center;
   margin-bottom: 1rem;
+}
+main section#current div#next-recommend-list div.next-recommend h2.next-name {
+  padding-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: bolder;
+  letter-spacing: 2px;
+  color: rgb(66, 32, 6);
 }
 main section#current div#next-recommend-list div.next-recommend div#next-tags {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 4px;
   align-items: center;
   flex-wrap: wrap;
 }
 main section#current div#next-recommend-list div.next-recommend div#next-tags p.candidate-tag {
   text-align: center;
   font-size: 1rem;
-  padding: 0.2rem 0.3rem;
+  padding: 0.2rem 0.6rem;
   margin: 0.3rem 0.3rem;
-  border: 1.5px solid #e3b04b;
+  border: 1.5px solid #fff7ed;
   border-radius: 20px;
   background-color: transparent;
-}
-main section#current div#next-recommend-list div.next-recommend h2.next-name {
-  margin-bottom: 3rem;
-  font-size: 3rem;
+  color: rgb(66, 32, 6);
 }
 main section#current div.search-message {
   background-color: rgb(250, 238, 223);
