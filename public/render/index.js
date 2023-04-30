@@ -356,8 +356,20 @@ const openChatroom = async function ($this) {
 
     $("#partner-name").text(nick_name);
     $("#partner-cantainer img").attr("src", main_image).attr("alt", nick_name);
-    $("#partner-sex").text(sex);
-    $("#partner-age").text(age);
+    if (sex == "女性") {
+      $("#partner-sex")
+        .attr("src", "./images/female.svg")
+        .attr("alt", sex)
+        .css("fill", "#FA76AD");
+      $("#partner-age").text(age).css("color", "#FA76AD");
+    } else if (sex == "男性") {
+      $("#partner-sex")
+        .attr("src", "./images/male.svg")
+        .attr("alt", sex)
+        .css("fill", "#0086DE");
+      $("#partner-age").text(age).css("color", "#0086DE");
+    }
+
     $("#partner-intro").text(self_intro);
 
     // render tag title
@@ -489,14 +501,16 @@ let fetchOption = {
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
           .attr("src", "./images/male.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
       }
-
-      $("#candidate-age").text(currentRecommend.age);
 
       // 創造 tags
       const tagList = currentRecommend.tags;
@@ -566,14 +580,17 @@ let fetchOption = {
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
           .attr("src", "./images/male.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
       }
 
-      $("#candidate-age").text(`${currentRecommend.age} 歲`);
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       // 更新後續的推薦人選
@@ -644,14 +661,17 @@ let fetchOption = {
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
           .attr("src", "./images/male.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
       }
 
-      $("#candidate-age").text(currentRecommend.age);
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       if (pursuerIdList.includes(currentRecommend.id)) {
@@ -699,17 +719,16 @@ let fetchOption = {
         $("#candidate-sex")
           .attr("src", "./images/female.svg")
           .attr("alt", currentRecommend.sex)
-          .css("fill", "#FA76AD");
-        $("#candidate-age").css("color", "#FA76AD");
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
           .attr("src", "./images/male.svg")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#0086DE");
-        $("#candidate-age");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
       }
 
-      $("#candidate-age").text(currentRecommend.age);
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       if (pursuerIdList.includes(currentRecommend.id)) {
@@ -743,14 +762,17 @@ let fetchOption = {
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
           .attr("src", "./images/male.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
       }
 
-      $("#candidate-age").text(currentRecommend.age);
       $("#candidate-intro").text(currentRecommend.self_intro);
       $("#btn-like-too").css("pointer-events", "none");
 
@@ -780,14 +802,17 @@ let fetchOption = {
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
           .attr("src", "./images/male.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
       }
 
-      $("#candidate-age").text(currentRecommend.age);
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       // 如果還有 pursuer
@@ -825,14 +850,17 @@ let fetchOption = {
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
           .attr("src", "./images/male.svg")
-          .attr("alt", currentRecommend.sex);
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
       }
 
-      $("#candidate-age").text(currentRecommend.age);
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       // 如果還有 pursuer

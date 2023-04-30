@@ -78,18 +78,22 @@ header {
     align-items: center;
     margin-right: 100px;
 
-    a {
-      margin: 0.5rem 0.5rem;
-      img {
-        // flex: 1 1 100px;
-        width: 4vw;
-        border: 1px solid white;
-        border-radius: 20px;
+    div#profile {
+      display: flex;
+      align-items: center;
+      a {
+        margin: 0.5rem 0.5rem;
+        img {
+          // flex: 1 1 100px;
+          width: 4vw;
+          border: 1px solid white;
+          border-radius: 20px;
+        }
       }
-    }
 
-    h1.user-name {
-      margin-left: 1rem;
+      h1.user-name {
+        margin-left: 1rem;
+      }
     }
 
     // a {
@@ -518,6 +522,17 @@ main {
         margin: 0.5rem 0;
       }
 
+      div#partner-sex-age {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img#partner-sex {
+          height: 20px;
+          margin-right: 0.2rem;
+        }
+      }
+
       div#tags {
         display: flex;
         justify-content: space-around;
@@ -526,21 +541,12 @@ main {
         margin: 0.3rem 0;
 
         p.tag {
-          // flex: 1 1 40px;
-          // width: 50px;
-          // font-size: 1rem;
-          // font-weight: bold;
-          // text-decoration: none;
-          // text-align: center;
-          // color: #585858;
-          // padding: 5px 10px;
-          // border-radius: 20px;
-          // background-color: #eaeaea;
-          // margin-right: 10px;
-          // margin-bottom: 10px;
-
+          // width: 60px;
+          text-align: center;
+          // flex: 1 1 60px;
+          font-size: 1rem;
           padding: 0.2rem 0.3rem;
-          margin: 0 0.3rem;
+          margin: 0.3rem 0.3rem;
           border: 1.5px solid #e3b04b;
           border-radius: 20px;
           background-color: transparent;
@@ -558,6 +564,7 @@ main {
       flex-direction: column;
       max-height: 80vh;
       overflow-y: auto;
+
       div.next-recommend {
         margin: 1rem 0;
         width: 200px;
@@ -576,11 +583,16 @@ main {
         div#next-tags {
           display: flex;
           justify-content: space-around;
+          align-items: center;
+          flex-wrap: wrap;
 
           p.candidate-tag {
-            font-size: 1.2rem;
+            // width: 60px;
+            text-align: center;
+            // flex: 1 1 60px;
+            font-size: 1rem;
             padding: 0.2rem 0.3rem;
-            margin: 0 0.3rem;
+            margin: 0.3rem 0.3rem;
             border: 1.5px solid #e3b04b;
             border-radius: 20px;
             background-color: transparent;
@@ -588,7 +600,7 @@ main {
         }
 
         h2.next-name {
-          margin-bottom: 1rem;
+          margin-bottom: 3rem;
           font-size: 3rem;
         }
       }

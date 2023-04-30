@@ -58,15 +58,19 @@ header section.right {
   align-items: center;
   margin-right: 100px;
 }
-header section.right a {
+header section.right div#profile {
+  display: flex;
+  align-items: center;
+}
+header section.right div#profile a {
   margin: 0.5rem 0.5rem;
 }
-header section.right a img {
+header section.right div#profile a img {
   width: 4vw;
   border: 1px solid white;
   border-radius: 20px;
 }
-header section.right h1.user-name {
+header section.right div#profile h1.user-name {
   margin-left: 1rem;
 }
 
@@ -377,6 +381,15 @@ main section#current div#partner-info div#partner-name {
   font-weight: bold;
   margin: 0.5rem 0;
 }
+main section#current div#partner-info div#partner-sex-age {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+main section#current div#partner-info div#partner-sex-age img#partner-sex {
+  height: 20px;
+  margin-right: 0.2rem;
+}
 main section#current div#partner-info div#tags {
   display: flex;
   justify-content: space-around;
@@ -385,8 +398,10 @@ main section#current div#partner-info div#tags {
   margin: 0.3rem 0;
 }
 main section#current div#partner-info div#tags p.tag {
+  text-align: center;
+  font-size: 1rem;
   padding: 0.2rem 0.3rem;
-  margin: 0 0.3rem;
+  margin: 0.3rem 0.3rem;
   border: 1.5px solid #e3b04b;
   border-radius: 20px;
   background-color: transparent;
@@ -417,17 +432,20 @@ main section#current div#next-recommend-list div.next-recommend img.next-picture
 main section#current div#next-recommend-list div.next-recommend div#next-tags {
   display: flex;
   justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
 }
 main section#current div#next-recommend-list div.next-recommend div#next-tags p.candidate-tag {
-  font-size: 1.2rem;
+  text-align: center;
+  font-size: 1rem;
   padding: 0.2rem 0.3rem;
-  margin: 0 0.3rem;
+  margin: 0.3rem 0.3rem;
   border: 1.5px solid #e3b04b;
   border-radius: 20px;
   background-color: transparent;
 }
 main section#current div#next-recommend-list div.next-recommend h2.next-name {
-  margin-bottom: 1rem;
+  margin-bottom: 3rem;
   font-size: 3rem;
 }
 main section#current div.search-message {
