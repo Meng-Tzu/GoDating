@@ -81,14 +81,14 @@ header {
     div#profile {
       display: flex;
       align-items: center;
-      a {
+      cursor: pointer;
+
+      img {
+        // flex: 1 1 100px;
         margin: 0.5rem 0.5rem;
-        img {
-          // flex: 1 1 100px;
-          width: 4vw;
-          border: 1px solid white;
-          border-radius: 20px;
-        }
+        width: 50px;
+        border: 1px solid white;
+        clip-path: circle();
       }
 
       h1.user-name {

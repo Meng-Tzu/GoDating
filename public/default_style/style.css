@@ -61,14 +61,14 @@ header section.right {
 header section.right div#profile {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
-header section.right div#profile a {
+header section.right div#profile img {
   margin: 0.5rem 0.5rem;
-}
-header section.right div#profile a img {
-  width: 4vw;
+  width: 50px;
   border: 1px solid white;
-  border-radius: 20px;
+  -webkit-clip-path: circle();
+          clip-path: circle();
 }
 header section.right div#profile h1.user-name {
   margin-left: 1rem;

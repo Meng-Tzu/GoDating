@@ -184,11 +184,13 @@ const verify = async (req, res) => {
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
 
     // 拿token去DB撈profile
-    const { id, email, nick_name } = await getUserBasicInfo(decoded.email);
+    const { id, email, nick_name, main_image } = await getUserBasicInfo(
+      decoded.email
+    );
 
     // response JSON
     const response = {
-      data: { id, name: nick_name, email },
+      data: { id, name: nick_name, email, image: main_image },
     };
 
     res.json(response);

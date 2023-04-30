@@ -472,7 +472,8 @@ let fetchOption = {
     localStorage.removeItem("token");
     window.location.href = "/login.html";
   } else {
-    const { id, name, email } = userData;
+    const { id, name, email, image } = userData;
+    $("#profile-img").attr("src", `/${image}`);
     $(".user-name").text(name).attr("id", id);
 
     // 建立一個 io 物件(?)，並連上 SocketIO server
@@ -942,6 +943,11 @@ $(".logo").click(function (e) {
   $("#cross").css("display", "none");
 });
 
+// TODO: 點擊右上個人照人名跳轉到 profile page
+$("#profile").click(function () {
+  window.location.href = "/profile.html";
+});
+
 // 把想配對的 candidate 資訊送給 server 儲存
 $("#btn-like").click(function (e) {
   e.preventDefault();
@@ -980,7 +986,7 @@ $("#btn-like-too").click(function (e) {
   socket.emit("like-pursuer", messages);
 });
 
-// TODO: 不喜歡對方
+// 不喜歡對方
 $("#unlike").click(function (e) {
   e.preventDefault();
 
