@@ -132,9 +132,9 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
   for (const partnerId in partners) {
     const chatroomInfo = partners[partnerId];
 
-    const roomId = chatroomInfo[0];
-    const chatIndexId = chatroomInfo[1];
-    const partnerName = userIdNicknamePair[partnerId];
+    const partnerName = chatroomInfo[0];
+    const roomId = chatroomInfo[2];
+    const chatIndexId = chatroomInfo[3];
 
     // 大頭貼
     const $inner1ndDiv = $div.clone();
@@ -142,7 +142,7 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
     const $innerImg = $img.clone();
     $innerImg
       .attr("class", "partner-img h-12 object-cover rounded-full")
-      .attr("src", "https://source.unsplash.com/otT2199XwI8/600x600");
+      .attr("src", chatroomInfo[1]);
 
     $innerImg.appendTo($inner1ndDiv);
 

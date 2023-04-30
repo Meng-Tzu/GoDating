@@ -66,10 +66,22 @@ const saveNeverMatchOfUser = async (userId, candidateId) => {
 };
 
 // 儲存使用者的 "partners"
-const savePartnerOfUser = async (userId, partnerId, roomId, indexId) => {
+const savePartnerOfUser = async (
+  userId,
+  partnerId,
+  partnerName,
+  partneImage,
+  roomId,
+  indexId
+) => {
   try {
     if (Cache.ready) {
-      const chatroomInfo = JSON.stringify([roomId, indexId]);
+      const chatroomInfo = JSON.stringify([
+        partnerName,
+        partneImage,
+        roomId,
+        indexId,
+      ]);
       const result = await Cache.hset(
         `partners_of_userid#${userId}`,
         partnerId,
