@@ -15,6 +15,7 @@ body {
 }
 
 header {
+  padding: 8px 0;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -22,7 +23,6 @@ header {
   flex-wrap: wrap;
   align-items: center;
   margin: 0;
-  max-height: 300px;
 }
 header section.left {
   flex: 1 1 500px;
@@ -65,9 +65,9 @@ header section.right div#profile {
   align-items: center;
   cursor: pointer;
 }
-header section.right div#profile img {
-  margin: 0.5rem 0rem;
+header section.right div#profile img#profile-img {
   width: 50px;
+  height: 50px;
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 50%;
@@ -88,7 +88,7 @@ main {
 }
 main section#match {
   flex: 1 1 150px;
-  background-color: #ffede1;
+  background-color: #fbeff4;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -152,6 +152,8 @@ main section#chatroom div#current-recommend div#front-cover {
   background-image: url(../images/pikabu.png);
   background-size: cover;
   background-position: center;
+  border-top-right-radius: 0.5rem;
+  border-top-left-radius: 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -235,16 +237,18 @@ main section#chatroom div#current-recommend div#choose-btn button {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 main section#chatroom div#title {
-  background-color: #ffede1;
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
   flex-wrap: wrap;
   padding: 0.5rem 1rem;
-  border-radius: 7px;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
   background-color: rgb(255, 253, 248);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #c4984d;
+  margin-top: 8px;
 }
 main section#chatroom div#title h2.other-side {
   flex: 1 1 150px;
@@ -289,13 +293,14 @@ main section#chatroom div#title form#search-box button#btn-search {
 }
 main section#chatroom div#dialogue {
   background-color: white;
-  border: gray solid 2px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-height: 80vh;
-  margin: 0.5rem 0;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
 }
 main section#chatroom div#dialogue span.message-in-dialogue {
   display: flex;
@@ -408,7 +413,7 @@ main section#current div#partner-info {
   overflow-y: auto;
   gap: 2rem;
 }
-main section#current div#partner-info img {
+main section#current div#partner-info img#partner-img {
   height: 120px;
   width: 120px;
   margin: 0 auto;
@@ -449,10 +454,11 @@ main section#current div#partner-info div#tags p.tag {
   border: 1.5px solid #fff7ed;
   border-radius: 20px;
   background-color: transparent;
-  color: white;
+  color: rgb(66, 32, 6);
 }
 main section#current div#partner-info div#partner-intro {
-  padding: 2rem 1.5rem;
+  font-size: 1rem;
+  padding: 1.5rem 1.5rem;
   color: rgb(66, 32, 6);
 }
 main section#current div#next-recommend-list {
