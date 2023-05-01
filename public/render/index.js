@@ -238,8 +238,20 @@ const createMessageDiv = (msg, imgChunks) => {
   const $inner2ndDiv = $span.clone();
   $inner2ndDiv.attr("class", "timestamp").text(msg.timestamp);
 
-  if (msg.message.includes(".jpg")) {
-    // 如果是拿 ES 裡的照片檔名
+  if (msg.status) {
+    // 如果是即時傳送照片
+    $inner1stDiv.attr("class", "single-message").text(`${msg.userName}:`);
+    const $img = $("<img>");
+    $img
+      .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
+      .height(200);
+
+    $inner1stDiv.appendTo($outerDiv);
+    $img.appendTo($outerDiv);
+    $inner2ndDiv.appendTo($outerDiv);
+    $outerDiv.appendTo($parent);
+  } else if (msg.message.includes(".jpg")) {
+    // 如果是歷史訊息的照片
     $inner1stDiv
       .attr(
         "class",
@@ -254,24 +266,14 @@ const createMessageDiv = (msg, imgChunks) => {
     $img.appendTo($outerDiv);
     $inner2ndDiv.appendTo($outerDiv);
     $outerDiv.appendTo($parent);
-  } else if (!imgChunks) {
+  } else {
+    // 如果是純文字
     $inner1stDiv
       .attr("class", "single-message")
       .text(`${msg.userName}: ${msg.message}`);
 
     // // 把複製出來的 div 加入 parent element
     $inner1stDiv.appendTo($outerDiv);
-    $inner2ndDiv.appendTo($outerDiv);
-    $outerDiv.appendTo($parent);
-  } else {
-    $inner1stDiv.attr("class", "single-message").text(`${msg.userName}:`);
-    const $img = $("<img>");
-    $img
-      .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
-      .height(200);
-
-    $inner1stDiv.appendTo($outerDiv);
-    $img.appendTo($outerDiv);
     $inner2ndDiv.appendTo($outerDiv);
     $outerDiv.appendTo($parent);
   }
