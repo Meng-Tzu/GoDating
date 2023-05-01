@@ -645,7 +645,7 @@ io.on("connection", (socket) => {
 
     // 從快取的 "partner" 拿到 chat index
     const chatroomInfo = await getPartnerOfUser(userId, partnerId);
-    const chatIndexId = chatroomInfo[1];
+    const chatIndexId = chatroomInfo[3];
 
     const result = await searchKeywordFromES(chatIndexId, keyword);
     socket.emit("search-result", result);
