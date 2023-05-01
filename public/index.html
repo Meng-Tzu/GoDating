@@ -48,17 +48,14 @@
       </section>
     </header>
     <main class="min-h-screen flex flex-row justify-between bg-white">
-      <section
-        id="match"
-        class="flex flex-col w-2/5 border-r-2 overflow-y-auto"
-      >
+      <section id="match" class="flex flex-col w-2/5 border-r overflow-y-auto">
         <!-- <h3 class="text-xl font-bold">配對成功</h3> -->
         <!-- search compt -->
-        <div class="border-b-2 py-4 px-2">
+        <div class="py-4 px-2">
           <input
             type="text"
             placeholder="搜尋人名"
-            class="py-2 px-2 border-2 border-gray-200 rounded-2xl w-full"
+            class="py-2 px-2 border border-gray-200 rounded-2xl w-full"
           />
         </div>
         <!-- end search compt -->
@@ -128,33 +125,48 @@
           </div>
         </div>
 
-        <div id="title" style="display: none">
-          <h2 class="other-side text-yellow-950 text-2xl"></h2>
-          <form action="" id="search-box">
-            <input type="text" id="keyword" />
-            <button id="btn-search" type="submit"></button>
-          </form>
-        </div>
-        <div id="dialogue" style="display: none" class="flex-1 overflow-auto">
-          <div class="message-in-dialogue" style="display: none">
-            <div class="single-message"></div>
-            <div class="timestamp"></div>
+        <div id="chat-block">
+          <div id="title" style="display: none">
+            <h2 class="other-side text-yellow-950 text-2xl"></h2>
+            <form action="" id="search-box">
+              <input type="text" id="keyword" />
+              <button id="btn-search" type="submit"></button>
+            </form>
+          </div>
+          <div id="dialogue" style="display: none" class="flex-1 overflow-auto">
+            <div class="message-in-dialogue" style="display: none">
+              <div class="single-message"></div>
+              <div class="timestamp"></div>
+            </div>
+          </div>
+
+          <div id="pass-msg">
+            <form id="text-msg" action="" method="post" style="display: none">
+              <label for="picture-upload"></label>
+              <input
+                type="file"
+                id="picture-upload"
+                accept="image/*"
+                hidden
+                onchange=""
+              />
+              <input
+                type="text"
+                name="message"
+                id="message"
+                placeholder="訊息"
+              />
+              <button type="submit" id="btn-text"></button>
+            </form>
+
+            <!-- <form id="picture-msg" action="" method="post" style="display: none">
+              <input type="file" id="picture" accept="image/*" />
+              <button type="submit" id="btn-file">上傳圖片</button>
+            </form> -->
           </div>
         </div>
-
-        <div id="pass-msg">
-          <form id="text-msg" action="" method="post" style="display: none">
-            <input type="text" name="message" id="message" placeholder="訊息" />
-            <button type="submit" id="btn-text">傳送訊息</button>
-          </form>
-
-          <form id="picture-msg" action="" method="post" style="display: none">
-            <input type="file" id="picture" accept="image/*" />
-            <button type="submit" id="btn-file">上傳圖片</button>
-          </form>
-        </div>
       </section>
-      <section id="current" class="bg-yellow-100 w-2/5 border-l-2s">
+      <section id="current" class="bg-yellow-100 w-2/5 border-l-2s border-l">
         <div id="more-info">
           <h3 class="">猜你會喜歡...</h3>
           <div id="cross" style="display: none">
