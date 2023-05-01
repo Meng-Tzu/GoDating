@@ -360,13 +360,13 @@ const openChatroom = async function ($this) {
     $("#partner-cantainer img").attr("src", main_image).attr("alt", nick_name);
     if (sex == "女性") {
       $("#partner-sex")
-        .attr("src", "./images/female.svg")
+        .attr("src", "./images/female.png")
         .attr("alt", sex)
         .css("fill", "#FA76AD");
       $("#partner-age").text(age).css("color", "#FA76AD");
     } else if (sex == "男性") {
       $("#partner-sex")
-        .attr("src", "./images/male.svg")
+        .attr("src", "./images/male.png")
         .attr("alt", sex)
         .css("fill", "#0086DE");
       $("#partner-age").text(age).css("color", "#0086DE");
@@ -504,13 +504,13 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
-          .attr("src", "./images/female.svg")
+          .attr("src", "./images/female.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#FD0069");
         $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
-          .attr("src", "./images/male.svg")
+          .attr("src", "./images/male.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#0086DE");
         $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
@@ -583,13 +583,13 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
-          .attr("src", "./images/female.svg")
+          .attr("src", "./images/female.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#FD0069");
         $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
-          .attr("src", "./images/male.svg")
+          .attr("src", "./images/male.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#0086DE");
         $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
@@ -664,13 +664,13 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
-          .attr("src", "./images/female.svg")
+          .attr("src", "./images/female.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#FD0069");
         $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
-          .attr("src", "./images/male.svg")
+          .attr("src", "./images/male.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#0086DE");
         $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
@@ -721,13 +721,13 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
-          .attr("src", "./images/female.svg")
+          .attr("src", "./images/female.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#FD0069");
         $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
-          .attr("src", "./images/male.svg")
+          .attr("src", "./images/male.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#0086DE");
         $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
@@ -765,13 +765,13 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
-          .attr("src", "./images/female.svg")
+          .attr("src", "./images/female.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#FD0069");
         $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
-          .attr("src", "./images/male.svg")
+          .attr("src", "./images/male.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#0086DE");
         $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
@@ -805,13 +805,13 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
-          .attr("src", "./images/female.svg")
+          .attr("src", "./images/female.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#FD0069");
         $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
-          .attr("src", "./images/male.svg")
+          .attr("src", "./images/male.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#0086DE");
         $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
@@ -853,13 +853,13 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
-          .attr("src", "./images/female.svg")
+          .attr("src", "./images/female.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#FD0069");
         $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
       } else if (currentRecommend.sex == "男性") {
         $("#candidate-sex")
-          .attr("src", "./images/male.svg")
+          .attr("src", "./images/male.png")
           .attr("alt", currentRecommend.sex)
           .css("fill", "#0086DE");
         $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
