@@ -114,21 +114,6 @@ io.on("connection", (socket) => {
 
     console.log(`user id #${id} successfully connect.`);
 
-    // TODO: 傳送候選人的詳細資訊給使用者 (串接 sursuer & candidate list)
-    // const candidateList = await getAllCandidateFromCache(id);
-    // const candidateIdList = Object.keys(candidateList);
-
-    // const testCandidateInfo = await getCandidateInfoFromCache(
-    //   candidateIdList[0]
-    // );
-
-    // const candidateInfoList = [];
-    // for (const candidateId of candidateIdList) {
-    //   const candidateInfo = await getCandidateInfoFromCache(candidateId);
-
-    //   candidateInfoList.push(candidateInfo);
-    // }
-
     // 更新自己的 pursuer + candidate list
     const candidateListOfSelf = await getAllCandidateFromCache(id);
     const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
@@ -175,6 +160,8 @@ io.on("connection", (socket) => {
     const potentialInfoListOfSelf = [];
     for (const potentialId of integratedIdListOfSelf) {
       const potentialInfo = await getCandidateInfoFromCache(potentialId);
+      const tags = await getMatchTagTitles(potentialId);
+      potentialInfo.tags = tags;
       potentialInfoListOfSelf.push(potentialInfo);
     }
 
