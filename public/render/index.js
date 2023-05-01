@@ -657,7 +657,7 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
-      $("#current-recommend").css("display", "block");
+      $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
       $(".candidate-name")
         .text(currentRecommend.nick_name)
@@ -714,7 +714,7 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
-      $("#current-recommend").css("display", "block");
+      $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
       $(".candidate-name")
         .text(currentRecommend.nick_name)
@@ -758,7 +758,7 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = msg.candidateInfoList[0];
-      $("#current-recommend").css("display", "block");
+      $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
       $(".candidate-name")
         .text(currentRecommend.nick_name)
@@ -798,7 +798,7 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
-      $("#current-recommend").css("display", "block");
+      $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
       $(".candidate-name")
         .text(currentRecommend.nick_name)
@@ -846,7 +846,7 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
-      $("#current-recommend").css("display", "block");
+      $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
       $(".candidate-name")
         .text(currentRecommend.nick_name)
