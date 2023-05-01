@@ -87,7 +87,7 @@ main {
 }
 main section#match {
   flex: 1 1 150px;
-  background-color: #fbeff4;
+  background-color: rgba(255, 209, 209, 0.5294117647);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -99,6 +99,7 @@ main section#match h3 {
 main section#match div.partner {
   width: 100%;
   padding: 16px 16px;
+  border-bottom-width: 1.5px;
   cursor: pointer;
 }
 main section#match div.partner .partner-img {
@@ -235,7 +236,15 @@ main section#chatroom div#current-recommend div#choose-btn button {
   color: rgb(66, 32, 6);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-main section#chatroom div#title {
+main section#chatroom div#chat-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 95%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+}
+main section#chatroom div#chat-block div#title {
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -246,10 +255,9 @@ main section#chatroom div#title {
   border-top-left-radius: 8px;
   background-color: rgb(255, 253, 248);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid #c4984d;
-  margin-top: 8px;
+  border-bottom-width: 1px;
 }
-main section#chatroom div#title h2.other-side {
+main section#chatroom div#chat-block div#title h2.other-side {
   flex: 1 1 150px;
   width: 20%;
   margin-left: 2rem;
@@ -257,7 +265,7 @@ main section#chatroom div#title h2.other-side {
   letter-spacing: 2px;
   color: rgb(66, 32, 6);
 }
-main section#chatroom div#title form#search-box {
+main section#chatroom div#chat-block div#title form#search-box {
   flex: 2 1 250px;
   width: 50%;
   display: flex;
@@ -267,7 +275,7 @@ main section#chatroom div#title form#search-box {
   border-radius: 20px;
   background-color: rgb(255, 253, 248);
 }
-main section#chatroom div#title form#search-box input#keyword {
+main section#chatroom div#chat-block div#title form#search-box input#keyword {
   display: block;
   width: 300px;
   padding: 10px;
@@ -276,10 +284,10 @@ main section#chatroom div#title form#search-box input#keyword {
   border: none;
   background-color: rgb(255, 253, 248);
 }
-main section#chatroom div#title form#search-box input#keyword:focus {
+main section#chatroom div#chat-block div#title form#search-box input#keyword:focus {
   outline: none;
 }
-main section#chatroom div#title form#search-box button#btn-search {
+main section#chatroom div#chat-block div#title form#search-box button#btn-search {
   height: 30px;
   width: 30px;
   background-color: rgb(255, 253, 248);
@@ -290,18 +298,17 @@ main section#chatroom div#title form#search-box button#btn-search {
   margin: 0 10px;
   cursor: pointer;
 }
-main section#chatroom div#dialogue {
-  background-color: white;
+main section#chatroom div#chat-block div#dialogue {
+  background-color: rgb(255, 253, 248);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-height: 80vh;
+  max-height: 70vh;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  border-bottom-right-radius: 8px;
-  border-bottom-left-radius: 8px;
+  border-bottom-width: 1px;
 }
-main section#chatroom div#dialogue span.message-in-dialogue {
+main section#chatroom div#chat-block div#dialogue span.message-in-dialogue {
   display: flex;
   flex-direction: column;
   background-color: rgb(250, 238, 214);
@@ -310,55 +317,79 @@ main section#chatroom div#dialogue span.message-in-dialogue {
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-main section#chatroom div#dialogue span.message-in-dialogue span.single-message {
+main section#chatroom div#chat-block div#dialogue span.message-in-dialogue span.single-message {
   display: inline;
   padding: 0.5rem;
 }
-main section#chatroom div#dialogue span.message-in-dialogue span.timestamp {
+main section#chatroom div#chat-block div#dialogue span.message-in-dialogue span.timestamp {
   color: gray;
   font-size: 0.5rem;
 }
-main section#chatroom div#pass-msg {
+main section#chatroom div#chat-block div#pass-msg {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-}
-main section#chatroom div#pass-msg form#text-msg {
   width: 100%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-main section#chatroom div#pass-msg form#text-msg input#message {
-  flex: 3 1 300px;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-main section#chatroom div#pass-msg form#text-msg button {
-  flex: 1 1 200px;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
   background-color: rgb(255, 253, 248);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 0.3rem 0.5rem;
 }
-main section#chatroom div#pass-msg form#picture-msg {
+main section#chatroom div#chat-block div#pass-msg form#text-msg {
   width: 100%;
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
-main section#chatroom div#pass-msg form#picture-msg input#picture {
+main section#chatroom div#chat-block div#pass-msg form#text-msg input#message {
+  flex: 3 1 300px;
+  padding: 10px;
+  border-radius: 4px;
+}
+main section#chatroom div#chat-block div#pass-msg form#text-msg input#message:focus {
+  outline: none;
+}
+main section#chatroom div#chat-block div#pass-msg form#text-msg button {
+  height: 40px;
+  width: 40px;
+  background-color: transparent;
+  background-image: url(../images/send.png);
+  background-size: cover;
+  background-position: center;
+  border: none;
+  padding: 0 10px;
+  cursor: pointer;
+}
+main section#chatroom div#chat-block div#pass-msg form#text-msg label {
+  border: none;
+  height: 40px;
+  width: 40px;
+  background-color: transparent;
+  background-image: url(../images/upload.png);
+  background-size: cover;
+  background-position: center;
+  border: none;
+  padding: 0 10px;
+  cursor: pointer;
+}
+main section#chatroom div#chat-block div#pass-msg form#text-msg input#picture-upload:focus {
+  outline: none;
+}
+main section#chatroom div#chat-block div#pass-msg form#picture-msg {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+main section#chatroom div#chat-block div#pass-msg form#picture-msg input#picture {
   flex: 3 1 300px;
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-main section#chatroom div#pass-msg form#picture-msg button {
+main section#chatroom div#chat-block div#pass-msg form#picture-msg button {
   flex: 1 1 200px;
   padding: 10px;
   margin-top: 5px;
@@ -368,7 +399,7 @@ main section#chatroom div#pass-msg form#picture-msg button {
 }
 main section#current {
   flex: 1 1 150px;
-  background-color: rgba(247, 201, 111, 0.7019607843);
+  background-color: #ffd1d1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -452,7 +483,7 @@ main section#current div#partner-info div#tags p.tag {
   margin: 0.3rem 0.3rem;
   border: 1.5px solid #fff7ed;
   border-radius: 20px;
-  background-color: transparent;
+  background-color: #fff7ed;
   color: rgb(66, 32, 6);
 }
 main section#current div#partner-info div#partner-intro {
@@ -506,7 +537,7 @@ main section#current div#next-recommend-list div.next-recommend div#next-tags p.
   margin: 0.3rem 0.3rem;
   border: 1.5px solid #fff7ed;
   border-radius: 20px;
-  background-color: transparent;
+  background-color: #fff7ed;
   color: rgb(66, 32, 6);
 }
 main section#current div.search-message {

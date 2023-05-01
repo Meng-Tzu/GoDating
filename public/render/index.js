@@ -1035,12 +1035,35 @@ $("#btn-text").click(function (e) {
   $("#message").val("");
 });
 
-// FIXME: 上傳圖片 (改成上傳到 S3)
-const $picture = $("#picture");
+// FIXME: (舊的)上傳圖片 (改成上傳到 S3)
+// const $picture = $("#picture");
 
-$("#btn-file").click(function (e) {
-  e.preventDefault();
+// $("#btn-file").click(function (e) {
+//   e.preventDefault();
 
+//   if (socket === null) {
+//     alert("Please connect first");
+//     return;
+//   }
+
+//   // 取得網址的 params
+//   const params = new URLSearchParams(window.location.search);
+//   const roomId = params.get("room");
+
+//   if (!roomId) {
+//     alert("You have to get a chatroom id");
+//     return;
+//   }
+
+//   const partnerId = +$(".other-side").attr("id");
+
+//   console.log("$picture[0]", $picture[0]);
+
+// upload(roomId, partnerId, $picture[0]);
+// });
+
+// 只要一選擇照片就上傳
+$("#picture-upload").on("change", function (e) {
   if (socket === null) {
     alert("Please connect first");
     return;
@@ -1057,7 +1080,7 @@ $("#btn-file").click(function (e) {
 
   const partnerId = +$(".other-side").attr("id");
 
-  upload(roomId, partnerId, $picture[0]);
+  upload(roomId, partnerId, e.target);
 });
 
 // 搜尋對話的關鍵字 (使用 socketIO 直接下 ES 指令??)
@@ -1093,3 +1116,19 @@ $("#cross").click(function () {
   // 隱藏取消圖示
   $("#cross").css("display", "none");
 });
+
+// TODO: 按圖示上傳照片
+const uploadPicture = async () => {
+  // 取得網址的 params
+  const params = new URLSearchParams(window.location.search);
+  const roomId = params.get("room");
+
+  if (!roomId) {
+    alert("You have to get a chatroom id");
+    return;
+  }
+
+  const partnerId = +$(".other-side").attr("id");
+
+  upload(roomId, partnerId, $picture[0]);
+};

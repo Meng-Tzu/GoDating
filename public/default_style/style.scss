@@ -128,7 +128,7 @@ main {
     flex: 1 1 150px;
     // border: 2px solid red;
     // background-color: #ffede1;
-    background-color: #fbeff4;
+    background-color: #ffd1d187;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -142,6 +142,7 @@ main {
       width: 100%;
       padding: 16px 16px;
       // border: 1px solid blue;
+      border-bottom-width: 1.5px;
 
       .partner-img {
         // clip-path: circle();
@@ -336,178 +337,195 @@ main {
       }
     }
 
-    div#title {
+    div#chat-block {
       display: flex;
-      justify-content: space-around;
-      align-items: center;
-      width: 100%;
-      flex-wrap: wrap;
-      padding: 0.5rem 1rem;
-      border-top-right-radius: 8px;
-      border-top-left-radius: 8px;
-      background-color: rgb(255, 253, 248);
+      flex-direction: column;
+      justify-content: center;
+      width: 95%;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      border-bottom: 1px solid #c4984d;
       margin-top: 8px;
 
-      h2.other-side {
-        flex: 1 1 150px;
-        width: 20%;
-        // flex: 1 1 auto;
-        // flex-basis: 20%;
-        margin-left: 2rem;
-        font-weight: bolder;
-        letter-spacing: 2px;
-        color: rgb(66 32 6);
-      }
-
-      form#search-box {
-        flex: 2 1 250px;
-        width: 50%;
-        // flex: 2 1 auto;
-        // flex-basis: 50%;
+      div#title {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         align-items: center;
-        border: 1px solid gray;
-        border-radius: 20px;
+        width: 100%;
+        flex-wrap: wrap;
+        padding: 0.5rem 1rem;
+        border-top-right-radius: 8px;
+        border-top-left-radius: 8px;
         background-color: rgb(255, 253, 248);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border-bottom-width: 1px;
 
-        input#keyword {
-          display: block;
-          width: 300px;
-          padding: 10px;
-          margin: 0 2rem;
-          border-radius: 0;
-          border: none;
-          background-color: rgb(255, 253, 248);
-
-          // margin-top: 10px;
-          // background-color: rgb(244, 255, 184);
-          // color: #313538;
-          // border: none;
-          // border-radius: 4px;
-          // padding: 10px;
-          // cursor: pointer;
-          // font-size: 1.2rem;
-          // box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        h2.other-side {
+          flex: 1 1 150px;
+          width: 20%;
+          // flex: 1 1 auto;
+          // flex-basis: 20%;
+          margin-left: 2rem;
+          font-weight: bolder;
+          letter-spacing: 2px;
+          color: rgb(66 32 6);
         }
 
-        input#keyword:focus {
-          outline: none;
-        }
-
-        button#btn-search {
-          height: 30px;
-          width: 30px;
+        form#search-box {
+          flex: 2 1 250px;
+          width: 50%;
+          // flex: 2 1 auto;
+          // flex-basis: 50%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border: 1px solid gray;
+          border-radius: 20px;
           background-color: rgb(255, 253, 248);
-          background-image: url(../images/search.png);
-          background-size: cover;
-          background-position: center;
-          border: none;
-          margin: 0 10px;
-          cursor: pointer;
+
+          input#keyword {
+            display: block;
+            width: 300px;
+            padding: 10px;
+            margin: 0 2rem;
+            border-radius: 0;
+            border: none;
+            background-color: rgb(255, 253, 248);
+          }
+
+          input#keyword:focus {
+            outline: none;
+          }
+
+          button#btn-search {
+            height: 30px;
+            width: 30px;
+            background-color: rgb(255, 253, 248);
+            background-image: url(../images/search.png);
+            background-size: cover;
+            background-position: center;
+            border: none;
+            margin: 0 10px;
+            cursor: pointer;
+          }
         }
       }
-    }
 
-    div#dialogue {
-      background-color: white;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      // border: gray solid 2px;
-      width: 100%;
-      max-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      border-bottom-right-radius: 8px;
-      border-bottom-left-radius: 8px;
-
-      span.message-in-dialogue {
+      div#dialogue {
+        background-color: rgb(255, 253, 248);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-height: 70vh;
         display: flex;
         flex-direction: column;
-        // flex: 1 1 100px;
-        // display: inline;
-        background-color: rgb(250, 238, 214);
-        margin: 1rem 0.5rem;
-        margin-right: auto;
-        border-radius: 4px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        border-bottom-width: 1px;
 
-        span.single-message {
-          display: inline;
-          padding: 0.5rem;
-        }
-
-        span.timestamp {
-          // display: inline;
-          color: gray;
-          font-size: 0.5rem;
-          // display: inline-block;
-          // color: gray;
-          // font-size: 0.5rem;
-          // width: 4rem;
-          // margin-left: 0.5rem;
-        }
-      }
-    }
-
-    div#pass-msg {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      align-items: center;
-
-      // div#pass-msg form {
-      //   display: inline-block;
-      // }
-
-      form#text-msg {
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-
-        input#message {
-          flex: 3 1 300px;
-          padding: 10px;
-          margin-top: 5px;
-          border: 1px solid #ccc;
+        span.message-in-dialogue {
+          display: flex;
+          flex-direction: column;
+          background-color: rgb(250, 238, 214);
+          margin: 1rem 0.5rem;
+          margin-right: auto;
           border-radius: 4px;
-        }
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 
-        button {
-          flex: 1 1 200px;
-          padding: 10px;
-          margin-top: 5px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          background-color: rgb(255, 253, 248);
+          span.single-message {
+            display: inline;
+            padding: 0.5rem;
+          }
+
+          span.timestamp {
+            color: gray;
+            font-size: 0.5rem;
+          }
         }
       }
 
-      form#picture-msg {
-        width: 100%;
+      div#pass-msg {
         display: flex;
+        flex-direction: column;
         justify-content: space-around;
         align-items: center;
-        // border: 1px solid red;
+        width: 100%;
+        background-color: rgb(255, 253, 248);
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        padding: 0.3rem 0.5rem;
 
-        input#picture {
-          flex: 3 1 300px;
-          padding: 10px;
-          margin-top: 5px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
+        // div#pass-msg form {
+        //   display: inline-block;
+        // }
+
+        form#text-msg {
+          width: 100%;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+
+          input#message {
+            flex: 3 1 300px;
+            padding: 10px;
+            // margin-top: 5px;
+            // border: 1px solid #ccc;
+            border-radius: 4px;
+          }
+
+          input#message:focus {
+            outline: none;
+          }
+
+          button {
+            height: 40px;
+            width: 40px;
+            background-color: transparent;
+            background-image: url(../images/send.png);
+            background-size: cover;
+            background-position: center;
+            border: none;
+            padding: 0 10px;
+            cursor: pointer;
+          }
+
+          label {
+            border: none;
+            height: 40px;
+            width: 40px;
+            background-color: transparent;
+            background-image: url(../images/upload.png);
+            background-size: cover;
+            background-position: center;
+            border: none;
+            padding: 0 10px;
+            cursor: pointer;
+          }
+
+          input#picture-upload:focus {
+            outline: none;
+          }
         }
 
-        button {
-          flex: 1 1 200px;
-          padding: 10px;
-          margin-top: 5px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          background-color: rgb(255, 253, 248);
+        form#picture-msg {
+          width: 100%;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          // border: 1px solid red;
+
+          input#picture {
+            flex: 3 1 300px;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+          }
+
+          button {
+            flex: 1 1 200px;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: rgb(255, 253, 248);
+          }
         }
       }
     }
@@ -515,7 +533,7 @@ main {
   section#current {
     flex: 1 1 150px;
     // border: 2px solid red;
-    background-color: #f7c96fb3;
+    background-color: #ffd1d1;
     // text-align: center;
     display: flex;
     flex-direction: column;
@@ -618,7 +636,7 @@ main {
           margin: 0.3rem 0.3rem;
           border: 1.5px solid #fff7ed;
           border-radius: 20px;
-          background-color: transparent;
+          background-color: #fff7ed;
           color: rgb(66 32 6);
         }
       }
@@ -686,7 +704,7 @@ main {
             margin: 0.3rem 0.3rem;
             border: 1.5px solid #fff7ed;
             border-radius: 20px;
-            background-color: transparent;
+            background-color: #fff7ed;
             color: rgb(66 32 6);
           }
         }
