@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 
 // 導入 Cache function
 import {
+  getUserDetailInfo,
   getMatchTagTitles,
   getAllCandidateFromCache,
   getCandidateInfoFromCache,
@@ -265,9 +266,25 @@ io.on("connection", (socket) => {
     const indexId = `chatrecord-${userId}-${pursuerId}`;
     await initChatIndexOfES(indexId);
 
-    // 加入 roomId, indexId 到 cache 的 "partners"
-    await savePartnerOfUser(userId, pursuerId, roomId, indexId);
-    await savePartnerOfUser(pursuerId, userId, roomId, indexId);
+    // 加入 roomId, indexId, image 到 cache 的 "partners"
+    const userDetailInfo = await getUserDetailInfo(userId);
+    const partnerDetailInfo = await getUserDetailInfo(pursuerId);
+    await savePartnerOfUser(
+      userId,
+      pursuerId,
+      partnerDetailInfo.nick_name,
+      partnerDetailInfo.main_image,
+      roomId,
+      indexId
+    );
+    await savePartnerOfUser(
+      pursuerId,
+      userId,
+      userDetailInfo.nick_name,
+      userDetailInfo.main_image,
+      roomId,
+      indexId
+    );
 
     // 更新自己的 potential list
     const candidateListOfSelf = await getAllCandidateFromCache(userId);

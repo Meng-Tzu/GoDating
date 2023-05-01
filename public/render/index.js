@@ -124,33 +124,71 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#match");
 
+  // 新建 button element
+  const $div = $("<div>");
+  const $img = $("<img>");
+  const $span = $("<span>");
+
   for (const partnerId in partners) {
     const chatroomInfo = partners[partnerId];
 
-    const roomId = chatroomInfo[0];
-    const chatIndexId = chatroomInfo[1];
-    const partnerName = userIdNicknamePair[partnerId];
+    const partnerName = chatroomInfo[0];
+    const roomId = chatroomInfo[2];
+    const chatIndexId = chatroomInfo[3];
 
-    // 新建 button element
-    const $div = $("<div>");
+    // 大頭貼
+    const $inner1ndDiv = $div.clone();
+    // $inner1ndDiv.attr("class", "partner-img-container w-1/4");
+    const $innerImg = $img.clone();
+    $innerImg
+      .attr("class", "partner-img h-12 object-cover rounded-full")
+      .attr("src", chatroomInfo[1]);
 
-    $div
-      .addClass(
-        `partner ${partnerId} ${chatIndexId} text-xl text-center shadow-md`
-      )
+    // $innerImg.appendTo($inner1ndDiv);
+
+    // 名字 + 最後訊息框
+    const $inner2ndDiv = $div.clone();
+    $inner2ndDiv.attr(
+      "class",
+      "name-msg-container w-full text-lg font-semibold"
+    );
+
+    // 名字
+    const $innerNameDiv = $div.clone();
+    $innerNameDiv
       .attr("id", roomId)
-      .attr("onClick", `openChatroom($(this))`)
+      .attr("class", "text-lg font-semibold")
       .text(partnerName);
 
+    // 最後訊息
+    const $innerMsg = $span.clone();
+    $innerMsg.attr("class", "text-gray-500").text("哈囉，今天好嗎？");
+
+    $innerNameDiv.appendTo($inner2ndDiv);
+    $innerMsg.appendTo($inner2ndDiv);
+
+    // 最外框
+    const $outerDiv = $div.clone();
+    $outerDiv
+      .attr(
+        "class",
+        `partner ${partnerId} ${chatIndexId} flex flex-row py-4 px-2 items-center border-b-2`
+      )
+      .attr("id", roomId)
+      .attr("onClick", `openChatroom($(this))`);
+
     // 把新的 div 加入 parant element
-    $div.appendTo($parent);
+    $innerImg.appendTo($outerDiv);
+    $inner2ndDiv.appendTo($outerDiv);
+    $outerDiv.appendTo($parent);
   }
 };
 
 // Function8: 動態製造 DOM 物件 (create div for next-recommend)
 const createNextRecommendDiv = (candidateInfoList) => {
   // 選取要被插入 child 的 parant element
-  const $parent = $("#current");
+  const $parent = $("#next-recommend-list");
+  $parent.css("display", "flex");
 
   const $templete = $(".templete-next-recommend");
   candidateInfoList.forEach((candidateInfo, index) => {
@@ -161,7 +199,7 @@ const createNextRecommendDiv = (candidateInfoList) => {
 
     $div.addClass("next-recommend text-xl");
     $img.addClass("next-picture").attr("src", candidateInfo.main_image);
-    $h2.addClass(".next-name text-center").text(candidateInfo.nick_name);
+    $h2.addClass("next-name text-center").text(candidateInfo.nick_name);
 
     // 增加 tags
     const $tags = $("<div>");
@@ -189,15 +227,26 @@ const createMessageDiv = (msg, imgChunks) => {
 
   // 新建 div
   const $div = $("<div>");
-  const $outerDiv = $div.clone();
-  $outerDiv.attr("class", `message-in-dialogue ${msg.userId}`);
-  const $inner1stDiv = $div.clone();
-  const $inner2ndDiv = $div.clone();
+  const $span = $("<span>");
+  const $outerDiv = $span.clone();
+  $outerDiv.attr(
+    "class",
+    // `message-in-dialogue ${msg.userId} flex justify-start mb-4`
+    `message-in-dialogue ${msg.userId}`
+  );
+  const $inner1stDiv = $span.clone();
+  const $inner2ndDiv = $span.clone();
   $inner2ndDiv.attr("class", "timestamp").text(msg.timestamp);
 
   if (msg.message.includes(".jpg")) {
     // 如果是拿 ES 裡的照片檔名
-    $inner1stDiv.attr("class", "single-message").text(`${msg.userName}:`);
+    $inner1stDiv
+      .attr(
+        "class",
+        // "single-message ml-2 py-3 px-4 rounded-br-3xl rounded-tr-3xl rounded-tl-xl"
+        "single-message"
+      )
+      .text(`${msg.userName}:`);
     const $img = $("<img>");
     $img.attr("src", `/${msg.message}`).height(200);
 
@@ -232,8 +281,7 @@ const createMessageDiv = (msg, imgChunks) => {
 const createSearchResultDiv = (result) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#current");
-  const $ul = $("<ul>");
-  $ul.addClass("search-message");
+  const $div = $("<div>");
 
   // 更換標題
   $("#current #more-info h3").text("搜尋結果");
@@ -243,18 +291,30 @@ const createSearchResultDiv = (result) => {
   $("#partner-info").css("display", "none");
 
   if (!result.length) {
-    const $li = $("<li>");
-    $li.text("沒有搜尋結果");
-    $li.appendTo($ul);
-  } else {
-    result.forEach((message) => {
-      // 新建 li element
-      const $li = $("<li>");
-      $li.text(
-        `${message.userName}: ${message.message} ----- ${message.timestamp}`
-      );
+    const $outerDiv = $div.clone();
+    $outerDiv.attr("class", "search-message text-xl text-center shadow-md");
 
-      $li.appendTo($ul);
+    const $p = $("<p>");
+    $p.text("沒有搜尋結果");
+    $p.appendTo($outerDiv);
+    $outerDiv.appendTo($parent);
+  } else {
+    result.forEach((msg) => {
+      // 新建搜尋筆數
+      const $outerDiv = $div.clone();
+      $outerDiv.attr("class", "search-message text-xl text-center shadow-md");
+      const $inner1stDiv = $div.clone();
+      $inner1stDiv
+        .attr("class", "single-message")
+        .text(`${msg.userName}: ${msg.message}`);
+
+      const $inner2ndDiv = $div.clone();
+      $inner2ndDiv.attr("class", "timestamp").text(msg.timestamp);
+
+      // // 把複製出來的 div 加入 parent element
+      $inner1stDiv.appendTo($outerDiv);
+      $inner2ndDiv.appendTo($outerDiv);
+      $outerDiv.appendTo($parent);
     });
   }
 
@@ -263,7 +323,9 @@ const createSearchResultDiv = (result) => {
 // Function11: 點擊特定 partner 開啟聊天室
 const openChatroom = async function ($this) {
   const roomId = $this.attr("id");
-  const partnerName = $this.text();
+
+  const $nameDiv = $this.children("div").last();
+  const partnerName = $nameDiv.children("div").first().text();
   const classNames = $this.attr("class");
   // console.log("classNames", classNames, typeof classNames);
   const partnerId = classNames.split(" ")[1];
@@ -294,8 +356,20 @@ const openChatroom = async function ($this) {
 
     $("#partner-name").text(nick_name);
     $("#partner-cantainer img").attr("src", main_image).attr("alt", nick_name);
-    $("#partner-sex").text(sex);
-    $("#partner-age").text(age);
+    if (sex == "女性") {
+      $("#partner-sex")
+        .attr("src", "./images/female.svg")
+        .attr("alt", sex)
+        .css("fill", "#FA76AD");
+      $("#partner-age").text(age).css("color", "#FA76AD");
+    } else if (sex == "男性") {
+      $("#partner-sex")
+        .attr("src", "./images/male.svg")
+        .attr("alt", sex)
+        .css("fill", "#0086DE");
+      $("#partner-age").text(age).css("color", "#0086DE");
+    }
+
     $("#partner-intro").text(self_intro);
 
     // render tag title
@@ -309,7 +383,7 @@ const openChatroom = async function ($this) {
   $("#current-recommend").css("display", "none");
   $(".next-recommend").css("display", "none");
   $("#title").css("display", "flex");
-  $("#dialogue").css("display", "block");
+  $("#dialogue").css("display", "flex");
   $("#partner-info").css("display", "block");
   $(".other-side").text(partnerName).attr("id", partnerId);
   $("#text-msg").css("display", "flex");
@@ -398,7 +472,8 @@ let fetchOption = {
     localStorage.removeItem("token");
     window.location.href = "/login.html";
   } else {
-    const { id, name, email } = userData;
+    const { id, name, email, image } = userData;
+    $("#profile-img").attr("src", `/${image}`);
     $(".user-name").text(name).attr("id", id);
 
     // 建立一個 io 物件(?)，並連上 SocketIO server
@@ -424,8 +499,19 @@ let fetchOption = {
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
-      $("#candidate-sex").text(currentRecommend.sex);
-      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      if (currentRecommend.sex == "女性") {
+        $("#candidate-sex")
+          .attr("src", "./images/female.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
+      } else if (currentRecommend.sex == "男性") {
+        $("#candidate-sex")
+          .attr("src", "./images/male.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
+      }
 
       // 創造 tags
       const tagList = currentRecommend.tags;
@@ -492,8 +578,20 @@ let fetchOption = {
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
-      $("#candidate-sex").text(currentRecommend.sex);
-      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      if (currentRecommend.sex == "女性") {
+        $("#candidate-sex")
+          .attr("src", "./images/female.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
+      } else if (currentRecommend.sex == "男性") {
+        $("#candidate-sex")
+          .attr("src", "./images/male.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
+      }
+
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       // 更新後續的推薦人選
@@ -561,8 +659,20 @@ let fetchOption = {
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
-      $("#candidate-sex").text(currentRecommend.sex);
-      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      if (currentRecommend.sex == "女性") {
+        $("#candidate-sex")
+          .attr("src", "./images/female.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
+      } else if (currentRecommend.sex == "男性") {
+        $("#candidate-sex")
+          .attr("src", "./images/male.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
+      }
+
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       if (pursuerIdList.includes(currentRecommend.id)) {
@@ -606,8 +716,20 @@ let fetchOption = {
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
-      $("#candidate-sex").text(currentRecommend.sex);
-      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      if (currentRecommend.sex == "女性") {
+        $("#candidate-sex")
+          .attr("src", "./images/female.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
+      } else if (currentRecommend.sex == "男性") {
+        $("#candidate-sex")
+          .attr("src", "./images/male.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
+      }
+
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       if (pursuerIdList.includes(currentRecommend.id)) {
@@ -638,8 +760,20 @@ let fetchOption = {
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
-      $("#candidate-sex").text(currentRecommend.sex);
-      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      if (currentRecommend.sex == "女性") {
+        $("#candidate-sex")
+          .attr("src", "./images/female.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
+      } else if (currentRecommend.sex == "男性") {
+        $("#candidate-sex")
+          .attr("src", "./images/male.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
+      }
+
       $("#candidate-intro").text(currentRecommend.self_intro);
       $("#btn-like-too").css("pointer-events", "none");
 
@@ -666,8 +800,20 @@ let fetchOption = {
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
-      $("#candidate-sex").text(currentRecommend.sex);
-      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      if (currentRecommend.sex == "女性") {
+        $("#candidate-sex")
+          .attr("src", "./images/female.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
+      } else if (currentRecommend.sex == "男性") {
+        $("#candidate-sex")
+          .attr("src", "./images/male.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
+      }
+
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       // 如果還有 pursuer
@@ -702,8 +848,20 @@ let fetchOption = {
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
-      $("#candidate-sex").text(currentRecommend.sex);
-      $("#candidate-age").text(`${currentRecommend.age} 歲`);
+      if (currentRecommend.sex == "女性") {
+        $("#candidate-sex")
+          .attr("src", "./images/female.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#FD0069");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#FD0069");
+      } else if (currentRecommend.sex == "男性") {
+        $("#candidate-sex")
+          .attr("src", "./images/male.svg")
+          .attr("alt", currentRecommend.sex)
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(currentRecommend.age).css("color", "#0086DE");
+      }
+
       $("#candidate-intro").text(currentRecommend.self_intro);
 
       // 如果還有 pursuer
@@ -785,6 +943,11 @@ $(".logo").click(function (e) {
   $("#cross").css("display", "none");
 });
 
+// TODO: 點擊右上個人照人名跳轉到 profile page
+$("#profile").click(function () {
+  window.location.href = "/profile.html";
+});
+
 // 把想配對的 candidate 資訊送給 server 儲存
 $("#btn-like").click(function (e) {
   e.preventDefault();
@@ -823,7 +986,7 @@ $("#btn-like-too").click(function (e) {
   socket.emit("like-pursuer", messages);
 });
 
-// TODO: 不喜歡對方
+// 不喜歡對方
 $("#unlike").click(function (e) {
   e.preventDefault();
 

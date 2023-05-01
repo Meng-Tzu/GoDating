@@ -95,7 +95,7 @@ const getAllUserIds = async () => {
 // 取得使用者 id, email, password, nick_name
 const getUserBasicInfo = async (email) => {
   const queryStr = `
-  SELECT id, email, password, nick_name
+  SELECT id, email, password, nick_name, main_image
   FROM user
   WHERE email = ?
   `;
