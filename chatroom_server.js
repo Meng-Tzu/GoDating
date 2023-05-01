@@ -515,7 +515,11 @@ io.on("connection", (socket) => {
 
     // 把 user 和 partner 都加到這個 room id
     socket.join(roomId);
-    connections[partnerId].socket.join(roomId);
+
+    // 如果對方有在線上，才把對方加入房間
+    if (partnerId in connections) {
+      connections[partnerId].socket.join(roomId);
+    }
 
     // 傳送訊息時間
     const msOfTime = Date.now();
@@ -526,17 +530,21 @@ io.on("connection", (socket) => {
 
     // 從快取的 "partner" 拿到 chat index
     const chatroomInfo = await getPartnerOfUser(userId, partnerId);
-    const chatIndexId = chatroomInfo[1];
+    const chatIndexId = chatroomInfo[3];
 
-    // 把訊息存入 ES
-    await saveChatRecordToES(
-      chatIndexId,
-      userId,
-      userName,
-      message,
-      timestamp,
-      msOfTime
-    );
+    try {
+      // 把訊息存入 ES
+      await saveChatRecordToES(
+        chatIndexId,
+        userId,
+        userName,
+        message,
+        timestamp,
+        msOfTime
+      );
+    } catch (error) {
+      console.error("cannot save message into ES:", error);
+    }
 
     const response = { userId, roomId, userName, message, timestamp };
 
@@ -579,7 +587,11 @@ io.on("connection", (socket) => {
 
         // 把 user 和 partner 都加到這個 room id
         socket.join(roomId);
-        connections[partnerId].socket.join(roomId);
+
+        // 如果對方有在線上，才把對方加入房間
+        if (partnerId in connections) {
+          connections[partnerId].socket.join(roomId);
+        }
 
         // 對聊天室傳送圖片
         readStream.on("readable", () => {
@@ -607,7 +619,7 @@ io.on("connection", (socket) => {
 
           // 從快取的 "partner" 拿到 chat index
           const chatroomInfo = await getPartnerOfUser(userId, partnerId);
-          const chatIndexId = chatroomInfo[1];
+          const chatIndexId = chatroomInfo[3];
 
           // 把照片檔名存進 ES
           await saveChatRecordToES(
