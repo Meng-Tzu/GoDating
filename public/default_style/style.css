@@ -84,7 +84,6 @@ main {
   display: flex;
   flex-wrap: wrap;
   max-height: calc(100vh - 300px); /* adjust this value based on the height of your header */
-  overflow-y: auto;
 }
 main section#match {
   flex: 1 1 150px;
