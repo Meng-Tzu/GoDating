@@ -299,10 +299,12 @@ io.on("connection", (socket) => {
       potentialInfoListOfSelf.push(potentialInfo);
     }
 
+    // TODO: 拿到 partner-detail-info
+    const partnerInfo = await getCandidateInfoFromCache(pursuerId);
+
     const responseForSelf = {
       userId,
-      partnerId: pursuerId,
-      partnerName: pursuerName,
+      partnerInfo,
       roomId,
       potentialInfoList: potentialInfoListOfSelf,
       pursuerIdList: pursuerIdListOfSelf,
@@ -311,12 +313,13 @@ io.on("connection", (socket) => {
     // 傳給自己
     socket.emit("success-match", responseForSelf);
 
-    // TODO: 當對方在線上，才立即傳送資訊給對方
+    // 當對方在線上，才立即傳送資訊給對方
     if (pursuerId in connections) {
+      // TODO: 給對方自己的 detail-info
+      const selfInfo = await getCandidateInfoFromCache(userId);
       const responseForOtherSide = {
         userId: pursuerId,
-        partnerId: userId,
-        partnerName: userName,
+        partnerInfo: selfInfo,
         roomId,
       };
 

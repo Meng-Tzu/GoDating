@@ -102,21 +102,48 @@ const deleteCandidateOption = (candidateId) => {
   $(`.condidate[value="${candidateId}"]`).remove();
 };
 
-// Function6: 動態製造 DOM 物件 (create div for partner)
-const createPartnerDiv = (roomId, candidateId, candidateName) => {
+// TODO: Function6: 動態製造 DOM 物件 (create div for partner)
+const createPartnerDiv = (roomId, partnerInfo) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#match");
 
   // 新建 button element
   const $div = $("<div>");
-  $div
-    .addClass(`partner ${candidateId} text-xl text-center shadow-md`)
+  const $img = $("<img>");
+
+  // 大頭貼
+  const $innerImg = $img.clone();
+  $innerImg
+    .attr("class", "partner-img h-12 object-cover rounded-full")
+    .attr("src", partnerInfo.main_image);
+
+  // 名字 + 最後訊息框
+  const $inner2ndDiv = $div.clone();
+  $inner2ndDiv.attr("class", "name-msg-container w-full text-lg font-semibold");
+
+  // 名字
+  const $innerNameDiv = $div.clone();
+  $innerNameDiv
     .attr("id", roomId)
-    .attr("onClick", `openChatroom($(this))`)
-    .text(candidateName);
+    .attr("class", "text-lg font-semibold")
+    .text(partnerInfo.nick_name);
+
+  $innerNameDiv.appendTo($inner2ndDiv);
+
+  // 最外框
+  const $outerDiv = $div.clone();
+  $outerDiv
+    .attr(
+      "class",
+      `partner ${partnerInfo.id} flex flex-row py-4 px-2 items-center border-b-2`
+    )
+    .attr("id", roomId)
+    .attr("onClick", `openChatroom($(this))`);
 
   // 把新的 div 加入 parant element
-  $div.appendTo($parent);
+  $innerImg.appendTo($outerDiv);
+  $inner2ndDiv.appendTo($outerDiv);
+  $outerDiv.appendTo($parent);
 };
 
 // FIXME: Function7: 動態製造 DOM 物件 (create div for all partners) (chatIndexId 沒有用??)
@@ -623,17 +650,11 @@ let fetchOption = {
       imgChunks = [];
     });
 
-    // 主動配對成功
+    // TODO: 主動配對成功
     socket.on("success-match", async (msg) => {
-      const {
-        userId,
-        partnerId,
-        partnerName,
-        roomId,
-        potentialInfoList,
-        pursuerIdList,
-      } = msg;
-      createPartnerDiv(roomId, partnerId, partnerName);
+      const { userId, partnerInfo, roomId, potentialInfoList, pursuerIdList } =
+        msg;
+      createPartnerDiv(roomId, partnerInfo);
 
       // 重新產生有人喜歡你的下拉選單
       const pursuersUrl = `/api/1.0/user/pursuer`;
@@ -694,10 +715,10 @@ let fetchOption = {
       alert(`與 ${partnerName} 成功配對！`);
     });
 
-    // 被動配對成功
+    // TODO: 被動配對成功
     socket.on("success-be-matched", (msg) => {
-      const { userId, partnerId, partnerName, roomId } = msg;
-      createPartnerDiv(roomId, partnerId, partnerName);
+      const { userId, partnerInfo, roomId } = msg;
+      createPartnerDiv(roomId, partnerInfo);
     });
 
     // 新增誰喜歡我的下拉選單
