@@ -383,7 +383,8 @@ const openChatroom = async function ($this) {
   $("#short-list").css("display", "none");
   $("#who-like-me").css("display", "none");
   $("#current-recommend").css("display", "none");
-  $(".next-recommend").css("display", "none");
+  $("#next-recommend-list").css("display", "none");
+  $(".next-recommend").remove();
   $("#title").css("display", "flex");
   $("#dialogue").css("display", "flex");
   $("#partner-info").css("display", "block");
@@ -945,7 +946,7 @@ $(".logo").click(function (e) {
   $("#cross").css("display", "none");
 });
 
-// TODO: 點擊右上個人照人名跳轉到 profile page
+// 點擊右上個人照人名跳轉到 profile page
 $("#profile").click(function () {
   window.location.href = "/profile.html";
 });
