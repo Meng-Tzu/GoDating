@@ -712,7 +712,7 @@ let fetchOption = {
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
 
-      alert(`與 ${partnerName} 成功配對！`);
+      alert(`與 ${partnerInfo.nick_name} 成功配對！`);
     });
 
     // TODO: 被動配對成功
