@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GoDating</title>
+    <title>Document</title>
     <meta name="author" content="Meng-Tzu Tsai" />
 
     <!-- google font setting -->
@@ -15,17 +15,45 @@
       rel="stylesheet"
     />
 
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+
+    <!-- jQuery UI css -->
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css"
+    />
+
+    <!-- 生日設定 -->
+    <link
+      href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://cdn.rawgit.com/mdehoog/Semantic-UI/6e6d051d47b598ebab05857545f242caf2b4b48c/dist/semantic.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
     <link rel="stylesheet" href="./default_style/style.css" />
-    <link rel="stylesheet" href="./profile_style/style.css" />
+
+    <link rel="stylesheet" href="./profile_style/survey_style.css" />
   </head>
   <body>
-    <!-- header -->
-    <header>
+    <header class="bg-yellow-200 shadow-md">
       <section class="left">
-        <a href="/" class="logo"><img src="/logo.png" alt="Logo" /></a>
+        <a href="#" class="logo"><img src="/logo.png" alt="Logo" /></a>
 
         <nav>
-          <ul>
+          <ul class="text-2xl text-yellow-950">
             <li class="chatroom">
               <a href="/chatroom.html">聊天室</a>
             </li>
@@ -36,99 +64,241 @@
       </section>
 
       <section class="right">
-        <a href="/profile.html"><img src="/profile.jpg" alt="profile" /></a>
-        <h1 class="user-name"></h1>
+        <div id="profile">
+          <img id="profile-img" src="/user_upload.png" alt="profile" style="border: 2px solid
+           black;"/>
+          <h1
+            class="user-name text-lime-600 text-yellow-950 text-center text-2xl"
+          ></h1>
+        </div>
       </section>
     </header>
-    <main>
-      <section id="survey">
-        <form
-          action="/api/1.0/user/profile"
-          method="post"
-          enctype="multipart/form-data"
-          id="detail-info"
+
+    <div id="survey-container">
+      <div id="survey-form">
+        <h1 id="title">讓我們多了解你/妳 . . .</h1>
+        <!-- 上傳照片 -->
+        <div class="container">
+          <label id="email-label" class="row-label" for="email">個人照上傳</label>
+          <div class="avatar-upload">
+            <div class="avatar-edit">
+                <input type='file' id="picture" accept=".png, .jpg, .jpeg" required/>
+                <label for="picture"></label>
+            </div>
+            <div class="avatar-preview">
+                <div id="imagePreview" style="background-image: url(/user_upload.png);">
+                </div>
+            </div>
+        </div>
+        </div>
+        
+        <!-- 生日 -->
+        <label id="birthday-label" class="row-label" for="birthday"
+          >生日</label
         >
-          <label for="picture">上傳個人照：</label>
-          <input type="file" name="picture" id="picture" />
-
-          <label for="birthday">生日：</label>
-          <input type="date" id="birthday" name="birthday" />
-
-          <label for="sex-id">性別：</label>
-          <select name="sex-id" id="sex-id">
-            <option value="1">男性</option>
-            <option value="2">女性</option>
-          </select>
-
-          <label for="sexual-orientation-id">性傾向：</label>
-          <select name="sexual-orientation-id" id="sexual-orientation-id">
-            <option value="1">異性戀</option>
-            <option value="2">同性戀</option>
-            <option value="3">雙性戀</option>
-            <option value="4">摸索中</option>
-          </select>
-
-          <div id="seek-age-range">
-            <h3>尋找年齡區間：</h3>
-            <label for="seek-age-min">最小年齡：</label>
-            <input
-              type="number"
-              name="seek-age-min"
-              id="seek-age-min"
-              min="18"
-              max="55"
-              value="18"
-            />
-            <label for="seek-age-max">最大年齡：</label>
-            <input
-              type="number"
-              name="seek-age-max"
-              id="seek-age-max"
-              min="18"
-              max="55"
-              value="26"
-            />
+        <div class="ui calendar" id="example2">
+          <div class="ui input left icon">
+            <i class="calendar icon"></i>
+            <input id="birthday" type="text" placeholder="日期" required/>
           </div>
+        </div>
 
-          <label for="self-intro">自我簡介：</label>
-          <textarea name="self-intro" id="self-intro" cols="30" rows="10">
-大家好，我是</textarea
-          >
-          <button id="match-info" type="submit">Submit</button>
+        <!-- 性別 -->
+        <form>
+          <div class="container sex">
+            <h2 class="row-label">性別</h2>
+
+            <ul>
+              <li>
+                <input type="radio" id="male-option" name="sex" value="1"/>
+                <label for="male-option">男性</label>
+
+                <div class="check"><div class="inside"></div></div>
+              </li>
+
+              <li>
+                <input type="radio" id="female-option" name="sex" value="2"/>
+                <label for="female-option">女性</label>
+
+                <div class="check"><div class="inside"></div></div>
+              </li>
+            </ul>
+          </div>
         </form>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-        <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
-        <link
-          href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css"
-          rel="stylesheet"
-        />
-        <form action="" method="get">
-          <label for="multiple-select"> 什麼標籤最能形容你‧‧‧？ </label>
-          <select
-            data-placeholdes="選擇標籤"
-            name="multiple-select"
-            id="multiple-select"
-            multiple
-          >
-            <option class="tag" value="1">吃貨</option>
-            <option class="tag" value="2">只想躺一整天</option>
-            <option class="tag" value="3">寫 code</option>
-            <option class="tag" value="9">裝文青</option>
-            <option class="tag" value="16">運動仔</option>
-            <option class="tag" value="17">看電影</option>
+        <!-- 性傾向 -->
+        <form>
+          <div class="container sexual-orientation">
+            <h2 class="row-label">性傾向</h2>
+
+            <ul>
+              <li>
+                <input type="radio" id="hetro-option" name="sexual-orientation" value="1"/>
+                <label for="hetro-option">異性戀</label>
+
+                <div class="check"><div class="inside"></div></div>
+              </li>
+
+              <li>
+                <input type="radio" id="homo-option" name="sexual-orientation" value="2"/>
+                <label for="homo-option">同性戀</label>
+
+                <div class="check"><div class="inside"></div></div>
+              </li>
+
+              <li>
+                <input type="radio" id="bio-option" name="sexual-orientation" value="3"/>
+                <label for="bio-option">雙性戀</label>
+
+                <div class="check"><div class="inside"></div></div>
+              </li>
+
+              <li>
+                <input type="radio" id="explore-option" name="sexual-orientation" value="4"/>
+                <label for="explore-option">摸索中</label>
+
+                <div class="check"><div class="inside"></div></div>
+              </li>
+            </ul>
+          </div>
+        </form>
+
+        <!-- 尋找的年齡 -->
+        <div class="age-range-slider container">
+          <label id="seek-age-label" class="row-label" for="email">想要尋找的年齡範圍</label>
+          <p class="range-value">
+            <input type="text" id="amount" readonly required/>
+          </p>
+          <div id="slider-range" class="range-bar"></div>
+        </div>
+
+        <!-- 個性化標籤 -->
+        <div>
+      
+
+          <style>
+              [x-cloak] {
+                  display: none;
+              }
+          </style>
+          <label id="tag-label" class="row-label" for="tags-select">選擇符合自己的個性化標籤吧！</label>
+          <select x-cloak id="tags-select" multiple>
+              <option value="1">吃貨</option>
+              <option value="2">貓奴</option>
+              <option value="3">寫 code</option>
+              <option value="9">裝文青</option>
+              <option value="16">運動仔</option>
+              <option value="17">看電影</option>
           </select>
-          <input type="submit" id="tags-select" />
-        </form>
-      </section>
-    </main>
+    
+     <div x-data="dropdown()" x-init="loadOptions()" class="w-full md:w-1/2 flex flex-col items-center h-64 mx-auto">
+        <form>
+            <input id="tags-selected" name="values" type="hidden" x-bind:value="selectedValues()">
+            <div class="inline-block relative w-64">
+                <div class="flex flex-col items-center relative">
+                    <div x-on:click="open" class="w-full  svelte-1l8159u">
+                        <div class="my-2 p-1 flex border border-gray-200 bg-white rounded svelte-1l8159u">
+                            <div class="flex flex-auto flex-wrap">
+                                <template x-for="(option,index) in selected" :key="options[option].value">
+                                    <div
+                                        class="flex justify-center items-center m-1 font-medium py-1 px-2 bg-white rounded-full text-teal-700 bg-teal-100 border border-teal-300 ">
+                                        <div class="text-xs font-normal leading-none max-w-full flex-initial" x-model="
+                                            options[option]" x-text="options[option].text"></div>
+                                        <div class="flex flex-auto flex-row-reverse">
+                                            <div x-on:click="remove(index,option)">
+                                                <svg class="fill-current h-6 w-6 " role="button" viewBox="0 0 20 20">
+                                                    <path d="M14.348,14.849c-0.469,0.469-1.229,0.469-1.697,0L10,11.819l-2.651,3.029c-0.469,0.469-1.229,0.469-1.697,0
+                                               c-0.469-0.469-0.469-1.229,0-1.697l2.758-3.15L5.651,6.849c-0.469-0.469-0.469-1.228,0-1.697s1.228-0.469,1.697,0L10,8.183
+                                               l2.651-3.031c0.469-0.469,1.228-0.469,1.697,0s0.469,1.229,0,1.697l-2.758,3.152l2.758,3.15
+                                               C14.817,13.62,14.817,14.38,14.348,14.849z" />
+                                                </svg>
+    
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div x-show="selected.length    == 0" class="flex-1">
+                                    <input id="tags" placeholder="選擇個性化標籤"
+                                        class="bg-transparent p-1 px-2 appearance-none outline-none h-full w-full text-gray-800"
+                                        x-bind:value="selectedValues()"
+                                    >
+                                </div>
+                            </div>
+                            <div
+                                class="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200 svelte-1l8159u">
+    
+                                <button type="button" x-show="isOpen() === true" x-on:click="open"
+                                    class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none">
+                                    <svg version="1.1" class="fill-current h-4 w-4" viewBox="0 0 20 20">
+                                        <path d="M17.418,6.109c0.272-0.268,0.709-0.268,0.979,0s0.271,0.701,0,0.969l-7.908,7.83
+      c-0.27,0.268-0.707,0.268-0.979,0l-7.908-7.83c-0.27-0.268-0.27-0.701,0-0.969c0.271-0.268,0.709-0.268,0.979,0L10,13.25
+      L17.418,6.109z" />
+                                    </svg>
+    
+                                </button>
+                                <button type="button" x-show="isOpen() === false" @click="close"
+                                    class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none">
+                                    <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
+                                        <path d="M2.582,13.891c-0.272,0.268-0.709,0.268-0.979,0s-0.271-0.701,0-0.969l7.908-7.83
+      c0.27-0.268,0.707-0.268,0.979,0l7.908,7.83c0.27,0.268,0.27,0.701,0,0.969c-0.271,0.268-0.709,0.268-0.978,0L10,6.75L2.582,13.891z
+      " />
+                                    </svg>
+    
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full px-4">
+                        <div x-show.transition.origin.top="isOpen()"
+                            class="absolute shadow top-100 bg-white z-40 w-full lef-0 rounded max-h-select overflow-y-auto svelte-5uyqqj"
+                            x-on:click.away="close">
+                            <div class="flex flex-col w-full">
+                                <template x-for="(option,index) in options" :key="option">
+                                    <div>
+                                        <div class="cursor-pointer w-full border-gray-100 rounded-t border-b hover:bg-teal-100"
+                                            @click="select(index,$event)">
+                                            <div x-bind:class="option.selected ? 'border-teal-600' : ''"
+                                                class="flex w-full items-center p-2 pl-2 border-transparent border-l-2 relative">
+                                                <div class="w-full items-center flex">
+                                                    <div class="mx-2 leading-6" x-model="option" x-text="option.text"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            </div>
+            
+    
+            
+      </div>
+
+        <!-- comments textarea -->
+        <label class="row-label" for="comments">自我介紹</label>
+        <textarea
+          id="self-intro"
+          placeholder="讓大家更認識你！"
+        ></textarea>
+
+        <!-- submit button -->
+        <button id="match-info" type="submit">提交</button>
+      </div>
+    </div>
   </body>
   <script
     src="https://code.jquery.com/jquery-3.6.3.min.js"
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
     crossorigin="anonymous"
   ></script>
-  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.rawgit.com/mdehoog/Semantic-UI/6e6d051d47b598ebab05857545f242caf2b4b48c/dist/semantic.min.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine-ie11.min.js" defer></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+  <script src="./render/survey_style.js"></script>
   <script src="./render/profile.js"></script>
 </html>
