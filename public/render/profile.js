@@ -31,9 +31,7 @@ let fetchOption = {
   }
 })();
 
-$("#match-info").click(async function (e) {
-  e.preventDefault();
-
+$("#match-info").click(async function () {
   // 送出表單時再次驗證
   const userData = await getApi(userApi, fetchOption);
   if (!userData) {
@@ -47,13 +45,14 @@ $("#match-info").click(async function (e) {
   formData.append("userId", $(".user-name").attr("id"));
   formData.append("picture", $("#picture")[0].files[0]);
   formData.append("birthday", $("#birthday").val());
-  formData.append("sexId", $("#sex-id option:selected").val());
+  formData.append("sexId", $("input[name='sex']:checked").val());
   formData.append(
     "orientationId",
-    $("#sexual-orientation-id option:selected").val()
+    $("input[name='sexual-orientation']:checked").val()
   );
-  formData.append("seekAgeMin", $("#seek-age-min").val());
-  formData.append("seekAgeMax", $("#seek-age-max").val());
+  formData.append("seekAgeMin", $("#slider-range").slider("values", 0));
+  formData.append("seekAgeMax", $("#slider-range").slider("values", 1));
+  formData.append("tags", $("#tags-selected").val());
   formData.append("selfIntro", $("#self-intro").val());
 
   // 把新註冊者詳細資訊存進 DB
