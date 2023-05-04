@@ -18,7 +18,7 @@ const getAge = (dateString) => {
 // 設定圖片儲存目的地&檔名
 const storagePicture = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/uploads/");
+    cb(null, "public/images/");
   },
   filename: (req, file, cb) => {
     const filename = uuidv4();
