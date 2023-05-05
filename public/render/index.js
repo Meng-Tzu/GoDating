@@ -1149,6 +1149,12 @@ $("#cross").click(function () {
   $("#cross").css("display", "none");
 });
 
+// 登出
+$("#logout").click(function () {
+  localStorage.removeItem("token");
+  window.location.href = "/";
+});
+
 // FIXME: 按圖示上傳照片 (改用 multer 上傳)
 const uploadPicture = async () => {
   // 取得網址的 params

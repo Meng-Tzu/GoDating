@@ -114,3 +114,9 @@ $("#match-info").click(async function () {
 $("#profile").click(function () {
   window.location.href = "/profile.html";
 });
+
+// 登出
+$("#logout").click(function () {
+  localStorage.removeItem("token");
+  window.location.href = "/profile.html";
+});
