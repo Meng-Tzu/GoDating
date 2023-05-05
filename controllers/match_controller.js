@@ -482,7 +482,7 @@ const suggestCandidateToNewOne = async (req, res) => {
   const candidateBirthday = `${newUserInfo.birth_year}/${newUserInfo.birth_month}/${newUserInfo.birth_date}`;
   const age = getAge(candidateBirthday);
   const sex = sexType[newUserInfo.sex_id];
-  const imageUrl = `${process.env.IP}/${newUserInfo.main_image}`;
+  const imageUrl = newUserInfo.main_image;
   newUserInfo.age = age;
   newUserInfo.sex = sex;
   newUserInfo.main_image = imageUrl;
