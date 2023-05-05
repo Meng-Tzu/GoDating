@@ -58,7 +58,7 @@ header section.right {
   display: flex;
   justify-content: right;
   align-items: center;
-  margin-right: 100px;
+  margin-right: 1.8rem;
 }
 header section.right div#profile {
   display: flex;
@@ -78,6 +78,13 @@ header section.right div#profile h1.user-name {
   font-size: 1.3rem;
   font-weight: bolder;
   letter-spacing: 2px;
+}
+header section.right div#logout {
+  padding: 0 1rem;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  color: rgb(66, 32, 6);
+  cursor: pointer;
 }
 
 main {
