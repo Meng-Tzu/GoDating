@@ -102,7 +102,7 @@ const deleteCandidateOption = (candidateId) => {
   $(`.condidate[value="${candidateId}"]`).remove();
 };
 
-// TODO: Function6: 動態製造 DOM 物件 (create div for partner)
+// Function6: 動態製造 DOM 物件 (create div for partner)
 const createPartnerDiv = (roomId, partnerInfo) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#match");
@@ -492,7 +492,7 @@ let fetchOption = {
   headers: { Authorization: `Bearer ${token}` },
 };
 
-// 立即執行函式
+// 立即執行函式 (取出 localstorage 的 update key-value)
 (async () => {
   const userData = await getApi(userApi, fetchOption);
 
@@ -511,6 +511,16 @@ let fetchOption = {
 
     // 傳送連線者資訊給 server
     const user = { id, name };
+
+    // 如果該用戶是新註冊者，會傳送自己的資訊給其他使用者
+    let update;
+    if (localStorage.getItem("update")) {
+      update = JSON.parse(localStorage.getItem("update"));
+      user.update = update;
+
+      localStorage.removeItem("update");
+    }
+
     socket.emit("online", user);
 
     // FIXME: 連線建立後 (加上追求者的詳細資訊) (從 socketIO 拿完整 candidate & pursuer list)
@@ -650,7 +660,7 @@ let fetchOption = {
       imgChunks = [];
     });
 
-    // TODO: 主動配對成功
+    // 主動配對成功
     socket.on("success-match", async (msg) => {
       const { userId, partnerInfo, roomId, potentialInfoList, pursuerIdList } =
         msg;
@@ -715,7 +725,7 @@ let fetchOption = {
       alert(`與 ${partnerInfo.nick_name} 成功配對！`);
     });
 
-    // TODO: 被動配對成功
+    // 被動配對成功
     socket.on("success-be-matched", (msg) => {
       const { userId, partnerInfo, roomId } = msg;
       createPartnerDiv(roomId, partnerInfo);
@@ -906,6 +916,7 @@ let fetchOption = {
     // 新增新註冊者到右方推薦欄
     socket.on("new-user-added", (msg) => {
       const { userId, newUserId, potentialInfoList } = msg;
+      // console.log("potentialInfoList", potentialInfoList);
 
       // 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
@@ -1138,7 +1149,7 @@ $("#cross").click(function () {
   $("#cross").css("display", "none");
 });
 
-// TODO: 按圖示上傳照片
+// FIXME: 按圖示上傳照片 (改用 multer 上傳)
 const uploadPicture = async () => {
   // 取得網址的 params
   const params = new URLSearchParams(window.location.search);

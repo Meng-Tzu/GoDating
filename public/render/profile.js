@@ -78,7 +78,7 @@ $("#match-info").click(async function () {
   fetchOption.body = JSON.stringify(tags);
   const saveTagsStatus = await getApi(tagApi, fetchOption);
 
-  // TODO: 取得新註冊者的 candidate list (沒有拿到)
+  // 取得新註冊者的 candidate list
   const data = { newuserid: $(".user-name").attr("id") };
   fetchOption = {
     method: "POST",
@@ -99,16 +99,15 @@ $("#match-info").click(async function () {
     return;
   }
 
-  // 以 socketIO 即時更新其他使用者的 candidate list
-  const socket = io();
+  // 新註冊者的資料存到 localstorage
   const update = {
     newUserId: candidateListOfNewUser.userId,
     otherUserIdsList: candidateListOfNewUser.potentialListOfCertainUser,
   };
-  socket.emit("new-user-sign-up", update);
+  localStorage.setItem("update", JSON.stringify(update));
 
   alert(`${response} \n ${saveTagsStatus} \n 感謝您填寫問卷！`);
-  location.reload();
+  window.location.href = "/";
 });
 
 // 點擊右上個人照人名跳重整 profile page
