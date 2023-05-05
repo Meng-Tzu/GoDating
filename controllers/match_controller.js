@@ -453,7 +453,7 @@ const suggestCandidateToNewOne = async (req, res) => {
     // potentialList 改回原本的格式
     potentialList[userId] = candidateIdList;
   }
-  console.log("step3-3 potentialList", potentialList);
+  // console.log("step3-3 potentialList", potentialList);
   // ------------------------- 篩選結束 -------------------------
 
   // TODO: 驗證 token 是否正確
