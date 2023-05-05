@@ -213,9 +213,27 @@ const saveDetailInfo = async (req, res) => {
     selfIntro,
   } = req.body;
 
-  const birthYear = birthday.split("-")[0];
-  const birthMonth = birthday.split("-")[1];
-  const birthDate = birthday.split("-")[2];
+  // 處理生日日期
+  const month = {
+    January: 1,
+    February: 2,
+    March: 3,
+    April: 4,
+    May: 5,
+    June: 6,
+    July: 7,
+    August: 8,
+    September: 9,
+    October: 10,
+    November: 11,
+    December: 12,
+  };
+
+  const birthdayAry = birthday.split(" ");
+
+  const birthYear = +birthdayAry[2];
+  const birthMonth = month[birthdayAry[0]];
+  const birthDate = +birthdayAry[1].slice(0, -1);
 
   // 取得圖片檔名
   const picture = req.files.picture;
@@ -230,18 +248,18 @@ const saveDetailInfo = async (req, res) => {
     try {
       // 存入 DB
       await saveUserDetailInfo(
-        userId,
+        +userId,
         birthYear,
         birthMonth,
         birthDate,
-        sexId,
-        orientationId,
-        seekAgeMin,
-        seekAgeMax,
+        +sexId,
+        +orientationId,
+        +seekAgeMin,
+        +seekAgeMax,
         selfIntro,
         pictureName
       );
-      res.json({ data: "儲存成功！" });
+      res.json({ data: "成功儲存配對資訊！" });
       return;
     } catch (error) {
       console.error("cannot save user detail info into DB");
@@ -250,21 +268,23 @@ const saveDetailInfo = async (req, res) => {
   }
 };
 
-// TODO:
+// 儲存 tags
 const saveTags = async (req, res) => {
   const { userid, tags } = req.body;
 
-  if (!tags.length) {
+  if (!tags) {
     res.json({
       data: "您尚未選擇任何標籤，選擇標籤可以讓我們幫您找到更適合您的人喔！",
     });
     return;
   }
 
+  const tagsAry = tags.split(",");
+
   try {
     // 存入 DB
-    await saveMatchTagIds(userid, tags);
-    res.json({ data: "儲存標籤成功！" });
+    await saveMatchTagIds(userid, tagsAry);
+    res.json({ data: "成功儲存配對標籤！" });
     return;
   } catch (error) {
     console.error("cannot save user's tags info into DB", error);

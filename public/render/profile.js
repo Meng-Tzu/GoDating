@@ -31,9 +31,7 @@ let fetchOption = {
   }
 })();
 
-$("#match-info").click(async function (e) {
-  e.preventDefault();
-
+$("#match-info").click(async function () {
   // 送出表單時再次驗證
   const userData = await getApi(userApi, fetchOption);
   if (!userData) {
@@ -47,13 +45,13 @@ $("#match-info").click(async function (e) {
   formData.append("userId", $(".user-name").attr("id"));
   formData.append("picture", $("#picture")[0].files[0]);
   formData.append("birthday", $("#birthday").val());
-  formData.append("sexId", $("#sex-id option:selected").val());
+  formData.append("sexId", $("input[name='sex']:checked").val());
   formData.append(
     "orientationId",
-    $("#sexual-orientation-id option:selected").val()
+    $("input[name='sexual-orientation']:checked").val()
   );
-  formData.append("seekAgeMin", $("#seek-age-min").val());
-  formData.append("seekAgeMax", $("#seek-age-max").val());
+  formData.append("seekAgeMin", $("#slider-range").slider("values", 0));
+  formData.append("seekAgeMax", $("#slider-range").slider("values", 1));
   formData.append("selfIntro", $("#self-intro").val());
 
   // 把新註冊者詳細資訊存進 DB
@@ -61,7 +59,24 @@ $("#match-info").click(async function (e) {
   userApi = "/api/1.0/user/profile";
 
   const response = await getApi(userApi, fetchOption);
-  alert(response);
+
+  // 選擇標籤 (與詳細資訊表單合併)
+  const tagApi = "/api/1.0/user/tags";
+  fetchOption = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: "",
+  };
+
+  const tags = {
+    userid: $(".user-name").attr("id"),
+    tags: $("#tags-selected").val(),
+  };
+  fetchOption.body = JSON.stringify(tags);
+  const saveTagsStatus = await getApi(tagApi, fetchOption);
 
   // 取得新註冊者的 candidate list
   const data = { newuserid: $(".user-name").attr("id") };
@@ -84,50 +99,18 @@ $("#match-info").click(async function (e) {
     return;
   }
 
-  // 以 socketIO 即時更新其他使用者的 candidate list
-  const socket = io();
+  // 新註冊者的資料存到 localstorage
   const update = {
     newUserId: candidateListOfNewUser.userId,
     otherUserIdsList: candidateListOfNewUser.potentialListOfCertainUser,
   };
-  socket.emit("new-user-sign-up", update);
+  localStorage.setItem("update", JSON.stringify(update));
 
-  alert("儲存成功，感謝您填寫問卷！");
-  location.reload();
+  alert(`${response} \n ${saveTagsStatus} \n 感謝您填寫問卷！`);
+  window.location.href = "/";
 });
 
-// TODO: 選擇標籤 (與詳細資訊表單合併)
-// $("#multiple-select").chosen({
-//   no_results_text: "Oops, nothing found!",
-// });
-
-$("#tags-select").click(async function (e) {
-  e.preventDefault();
-
-  // 送出表單時再次驗證
-  const userData = await getApi(userApi, fetchOption);
-  if (!userData) {
-    // token 錯誤
-    alert("Sorry, you need to sign up / sign in again.");
-    localStorage.removeItem("token");
-    window.location.href = "/login.html";
-  }
-
-  const tagApi = "/api/1.0/user/tags";
-  fetchOption = {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: "",
-  };
-
-  const data = {
-    userid: $(".user-name").attr("id"),
-    tags: $("#multiple-select").val(),
-  };
-  fetchOption.body = JSON.stringify(data);
-  const response = await getApi(tagApi, fetchOption);
-  alert(response);
+// 點擊右上個人照人名跳重整 profile page
+$("#profile").click(function () {
+  window.location.href = "/profile.html";
 });

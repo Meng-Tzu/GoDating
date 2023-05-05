@@ -104,10 +104,9 @@ io.on("connection", (socket) => {
   count++;
   console.log(`One client has connected. 目前連線數: ${count}`);
 
-  // FIXME: 儲存連線者 (需要儲存嗎???)
+  // 儲存連線者
   socket.on("online", async (user) => {
-    const id = user.id;
-    const name = user.name;
+    const { id, name, update } = user;
 
     connections[id] = { name, socket };
     // console.log("connections", connections);
@@ -139,6 +138,53 @@ io.on("connection", (socket) => {
       potentialInfoList: potentialInfoListOfSelf,
       pursuerIdList: pursuerIdListOfSelf,
     };
+
+    // 新註冊者資訊，渲染到符合條件的其他使用者的「猜你會喜歡」
+    if (update) {
+      const { newUserId, otherUserIdsList } = update;
+
+      for (const otherUserId of otherUserIdsList) {
+        if (!(otherUserId in connections)) {
+          continue;
+        }
+
+        // 更新對方的 pursuer + candidate list
+        const candidateListOfOtherSide = await getAllCandidateFromCache(
+          otherUserId
+        );
+        const candidateIdListOfOtherSide = Object.keys(
+          candidateListOfOtherSide
+        );
+
+        const pursuerListOfOtherSide = await getAllPursuerFromCache(
+          otherUserId
+        );
+        const pursuerIdListOfOtherSide = Object.keys(pursuerListOfOtherSide);
+
+        const integratedIdListOfOtherSide = pursuerIdListOfOtherSide.concat(
+          candidateIdListOfOtherSide
+        );
+
+        const potentialInfoListOfOtherSide = [];
+        for (const potentialId of integratedIdListOfOtherSide) {
+          const potentialInfo = await getCandidateInfoFromCache(potentialId);
+          const tags = await getMatchTagTitles(potentialId);
+          potentialInfo.tags = tags;
+          potentialInfoListOfOtherSide.push(potentialInfo);
+        }
+
+        // 把新註冊者的資訊送回對方的前端
+        const responseForOtherSide = {
+          userId: otherUserId,
+          newUserId,
+          potentialInfoList: potentialInfoListOfOtherSide,
+        };
+        connections[otherUserId].socket.emit(
+          "new-user-added",
+          responseForOtherSide
+        );
+      }
+    }
 
     // 告知使用者已成功連線
     socket.emit("user-connect", response);
@@ -208,7 +254,7 @@ io.on("connection", (socket) => {
     };
     socket.emit("success-send-like-signal", responseForSelf);
 
-    // TODO: 當對方在線上，再傳送到對方前端
+    // 當對方在線上，再傳送到對方前端
     if (candidateId in connections) {
       // 更新對方的 pursuer + candidate list
       const candidateListOfOtherSide = await getAllCandidateFromCache(
@@ -299,7 +345,7 @@ io.on("connection", (socket) => {
       potentialInfoListOfSelf.push(potentialInfo);
     }
 
-    // TODO: 拿到 partner-detail-info
+    // 拿到 partner-detail-info
     const partnerInfo = await getCandidateInfoFromCache(pursuerId);
 
     const responseForSelf = {
@@ -315,7 +361,7 @@ io.on("connection", (socket) => {
 
     // 當對方在線上，才立即傳送資訊給對方
     if (pursuerId in connections) {
-      // TODO: 給對方自己的 detail-info
+      // 給對方自己的 detail-info
       const selfInfo = await getCandidateInfoFromCache(userId);
       const responseForOtherSide = {
         userId: pursuerId,
@@ -423,7 +469,7 @@ io.on("connection", (socket) => {
         `userId#${userId}(${userName}) unlike userId#${unlikeId}(${unlikeName})`
       );
 
-      // TODO: 如果對方在線上，才立即傳送資訊給對方
+      // 如果對方在線上，才立即傳送資訊給對方
       if (unlikeId in connections) {
         // 更新對方的 pursuer + candidate list
         const candidateListOfOtherSide = await getAllCandidateFromCache(
@@ -474,48 +520,6 @@ io.on("connection", (socket) => {
           responseForOtherSide
         );
       }
-    }
-  });
-
-  // 監聽到有新註冊者填完問卷，加入符合條件的其他使用者的「猜你會喜歡」
-  socket.on("new-user-sign-up", async (msg) => {
-    const { newUserId, otherUserIdsList } = msg;
-
-    for (const otherUserId of otherUserIdsList) {
-      if (!(otherUserId in connections)) {
-        continue;
-      }
-      // 更新對方的 pursuer + candidate list
-      const candidateListOfOtherSide = await getAllCandidateFromCache(
-        otherUserId
-      );
-      const candidateIdListOfOtherSide = Object.keys(candidateListOfOtherSide);
-
-      const pursuerListOfOtherSide = await getAllPursuerFromCache(otherUserId);
-      const pursuerIdListOfOtherSide = Object.keys(pursuerListOfOtherSide);
-
-      const integratedIdListOfOtherSide = pursuerIdListOfOtherSide.concat(
-        candidateIdListOfOtherSide
-      );
-
-      const potentialInfoListOfOtherSide = [];
-      for (const potentialId of integratedIdListOfOtherSide) {
-        const potentialInfo = await getCandidateInfoFromCache(potentialId);
-        const tags = await getMatchTagTitles(potentialId);
-        potentialInfo.tags = tags;
-        potentialInfoListOfOtherSide.push(potentialInfo);
-      }
-
-      // 把新註冊者的資訊送回對方的前端
-      const responseForOtherSide = {
-        userId: otherUserId,
-        newUserId,
-        potentialInfoList: potentialInfoListOfOtherSide,
-      };
-      connections[otherUserId].socket.emit(
-        "new-user-added",
-        responseForOtherSide
-      );
     }
   });
 
