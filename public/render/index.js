@@ -130,12 +130,12 @@ const createPartnerDiv = (roomId, partnerInfo) => {
 
   $innerNameDiv.appendTo($inner2ndDiv);
 
-  // 最外框
+  // 最外框 (少了 chatIndexId)
   const $outerDiv = $div.clone();
   $outerDiv
     .attr(
       "class",
-      `partner ${partnerInfo.id} flex flex-row py-4 px-2 items-center border-b-2`
+      `partner ${partnerInfo.id} ${partnerInfo.indexId} flex flex-row py-4 px-2 items-center border-b-2`
     )
     .attr("id", roomId)
     .attr("onClick", `openChatroom($(this))`);

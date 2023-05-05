@@ -351,8 +351,9 @@ io.on("connection", (socket) => {
         potentialInfoListOfSelf.push(potentialInfo);
       }
 
-      // 拿到 partner-detail-info
+      // 拿到 partner-detail-info (加上 indexId key)
       const partnerInfo = await getCandidateInfoFromCache(candidateId);
+      partnerInfo.indexId = indexId;
 
       const responseForSelf = {
         userId,
@@ -367,8 +368,10 @@ io.on("connection", (socket) => {
 
       // 當對方在線上，才立即傳送資訊給對方
       if (candidateId in connections) {
-        // 給對方自己的 detail-info
+        // 給對方自己的 detail-info (加上 indexId key)
         const selfInfo = await getCandidateInfoFromCache(userId);
+        selfInfo.indexId = indexId;
+
         const responseForOtherSide = {
           userId: candidateId,
           partnerInfo: selfInfo,
