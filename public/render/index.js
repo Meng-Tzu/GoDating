@@ -30,29 +30,29 @@ const createUserOption = (users, elementName) => {
 };
 
 // Function3: 動態製造 DOM 物件 (create options for candidate)
-const createCandidateOption = (candidates, elementName) => {
-  // 選擇要當模板的 element tag
-  const $userTemplete = $(`.templete-${elementName}`);
+// const createCandidateOption = (candidates, elementName) => {
+//   // 選擇要當模板的 element tag
+//   const $userTemplete = $(`.templete-${elementName}`);
 
-  // 選取要被插入 child 的 parant element
-  const $parent = $(`#${elementName}s`);
+//   // 選取要被插入 child 的 parant element
+//   const $parent = $(`#${elementName}s`);
 
-  // 依據 candidates array 的長度，產生多少個選項
-  for (const candidateId in candidates) {
-    // 複製出一個下拉式選單的 option element tag
-    const $newDom = $userTemplete.clone();
+//   // 依據 candidates array 的長度，產生多少個選項
+//   for (const candidateId in candidates) {
+//     // 複製出一個下拉式選單的 option element tag
+//     const $newDom = $userTemplete.clone();
 
-    // 把新的 option 的 value 和 text 改掉
-    $newDom
-      .addClass(`${elementName}`)
-      .attr("value", candidateId)
-      .text(candidates[candidateId])
-      .css("display", "inline");
+//     // 把新的 option 的 value 和 text 改掉
+//     $newDom
+//       .addClass(`${elementName}`)
+//       .attr("value", candidateId)
+//       .text(candidates[candidateId])
+//       .css("display", "inline");
 
-    // 把新的 option 加入 parant element
-    $newDom.appendTo($parent);
-  }
-};
+//     // 把新的 option 加入 parant element
+//     $newDom.appendTo($parent);
+//   }
+// };
 
 // Function3: 動態製造 DOM 物件 (create p element for tags)
 const createTags = (tagList, elementName) => {
@@ -79,28 +79,28 @@ const createTags = (tagList, elementName) => {
 };
 
 // Function4: 動態製造 DOM 物件 (create option for pursuer)
-const createPursuerOption = (pursuerId, pursuerName) => {
-  // 選取要被插入 child 的 parant element
-  const $parent = $("#pursuers");
+// const createPursuerOption = (pursuerId, pursuerName) => {
+//   // 選取要被插入 child 的 parant element
+//   const $parent = $("#pursuers");
 
-  // 新建 option element
-  const $option = $("<option>");
+//   // 新建 option element
+//   const $option = $("<option>");
 
-  // 把新的 option 的 value 和 text 改掉
-  $option
-    .addClass("pursuer")
-    .attr("value", pursuerId)
-    .text(pursuerName)
-    .css("display", "inline");
+//   // 把新的 option 的 value 和 text 改掉
+//   $option
+//     .addClass("pursuer")
+//     .attr("value", pursuerId)
+//     .text(pursuerName)
+//     .css("display", "inline");
 
-  // 把新的 button 加入 parant element
-  $option.appendTo($parent);
-};
+//   // 把新的 button 加入 parant element
+//   $option.appendTo($parent);
+// };
 
 // Function5: 動態刪除 DOM 物件 (delete option for candidate)
-const deleteCandidateOption = (candidateId) => {
-  $(`.condidate[value="${candidateId}"]`).remove();
-};
+// const deleteCandidateOption = (candidateId) => {
+//   $(`.condidate[value="${candidateId}"]`).remove();
+// };
 
 // Function6: 動態製造 DOM 物件 (create div for partner)
 const createPartnerDiv = (roomId, partnerInfo) => {
@@ -130,12 +130,12 @@ const createPartnerDiv = (roomId, partnerInfo) => {
 
   $innerNameDiv.appendTo($inner2ndDiv);
 
-  // 最外框
+  // 最外框 (少了 chatIndexId)
   const $outerDiv = $div.clone();
   $outerDiv
     .attr(
       "class",
-      `partner ${partnerInfo.id} flex flex-row py-4 px-2 items-center border-b-2`
+      `partner ${partnerInfo.id} ${partnerInfo.indexId} flex flex-row py-4 px-2 items-center border-b-2`
     )
     .attr("id", roomId)
     .attr("onClick", `openChatroom($(this))`);
@@ -559,14 +559,6 @@ let fetchOption = {
 
       $("#candidate-intro").text(currentRecommend.self_intro);
 
-      if (pursuerIdList.includes(currentRecommend.id)) {
-        $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
-        $("#btn-like-too").css("cursor", "pointer").css("opacity", "1");
-      } else {
-        $("#btn-like").css("cursor", "pointer").css("opacity", "1");
-        $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
-      }
-
       // 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
@@ -593,12 +585,6 @@ let fetchOption = {
         const certainCandidateList = userCandidateList[0][msg.id];
         const certainPursuerList = userPursuerList[0][msg.id];
         const certainPartnerList = userPartnerList[0];
-
-        // 產生想跟誰配對的下拉選單
-        createCandidateOption(certainCandidateList, "condidate");
-
-        // 產生有人喜歡你的下拉選單
-        createCandidateOption(certainPursuerList, "pursuer");
 
         // 產生已配對成功的 partner 有誰
         createAllPartnerDiv(certainPartnerList, userIdNicknamePair);
@@ -666,26 +652,6 @@ let fetchOption = {
         msg;
       createPartnerDiv(roomId, partnerInfo);
 
-      // 重新產生有人喜歡你的下拉選單
-      const pursuersUrl = `/api/1.0/user/pursuer`;
-      let fetchOption = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: "",
-      };
-      fetchOption.body = JSON.stringify({ userid: userId });
-
-      const userPursuerList = await getApi(pursuersUrl, fetchOption);
-      const certainPursuerList = userPursuerList[0][id];
-      if (!certainPursuerList) {
-        // 如果使用者目前沒有追求者，清空下拉選單
-        $(".pursuer").remove();
-      } else {
-        // 如果使用者目前還有追求者，更新下拉選單
-        $(".pursuer").remove();
-        createCandidateOption(certainPursuerList, "pursuer");
-      }
-
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
       $("#current-recommend").css("display", "flex");
@@ -708,14 +674,6 @@ let fetchOption = {
       }
 
       $("#candidate-intro").text(currentRecommend.self_intro);
-
-      if (pursuerIdList.includes(currentRecommend.id)) {
-        $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
-        $("#btn-like-too").css("cursor", "pointer").css("opacity", "1");
-      } else {
-        $("#btn-like").css("cursor", "pointer").css("opacity", "1");
-        $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
-      }
 
       // 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
@@ -729,6 +687,8 @@ let fetchOption = {
     socket.on("success-be-matched", (msg) => {
       const { userId, partnerInfo, roomId } = msg;
       createPartnerDiv(roomId, partnerInfo);
+
+      alert(`與 ${partnerInfo.nick_name} 成功配對！`);
     });
 
     // 新增誰喜歡我的下拉選單
@@ -740,8 +700,6 @@ let fetchOption = {
         potentialInfoList,
         pursuerIdList,
       } = msg;
-      createPursuerOption(pursuerId, pursuerName);
-      deleteCandidateOption(pursuerId);
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
@@ -766,14 +724,6 @@ let fetchOption = {
 
       $("#candidate-intro").text(currentRecommend.self_intro);
 
-      if (pursuerIdList.includes(currentRecommend.id)) {
-        $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
-        $("#btn-like-too").css("cursor", "pointer").css("opacity", "1");
-      } else {
-        $("#btn-like").css("cursor", "pointer").css("opacity", "1");
-        $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
-      }
-
       // 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
@@ -785,7 +735,6 @@ let fetchOption = {
     // 喜歡後，刪除已選擇過的候選人
     socket.on("success-send-like-signal", (msg) => {
       const { userId, candidateId, candidateName } = msg;
-      deleteCandidateOption(candidateId);
 
       // 更新目前推薦人選
       const currentRecommend = msg.candidateInfoList[0];
@@ -809,7 +758,6 @@ let fetchOption = {
       }
 
       $("#candidate-intro").text(currentRecommend.self_intro);
-      $("#btn-like-too").css("pointer-events", "none");
 
       // 更新後續的推薦人選
       const nextRecommend = msg.candidateInfoList.slice(1);
@@ -850,15 +798,6 @@ let fetchOption = {
 
       $("#candidate-intro").text(currentRecommend.self_intro);
 
-      // 如果還有 pursuer
-      if (isPusrsuerexist) {
-        $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
-        $("#btn-like-too").css("cursor", "pointer").css("opacity", "1");
-      } else {
-        $("#btn-like").css("cursor", "pointer").css("opacity", "1");
-        $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
-      }
-
       // 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
@@ -897,15 +836,6 @@ let fetchOption = {
       }
 
       $("#candidate-intro").text(currentRecommend.self_intro);
-
-      // 如果還有 pursuer
-      if (isPusrsuerexist) {
-        $("#btn-like").css("cursor", "not-allowed").css("opacity", "0.25");
-        $("#btn-like-too").css("cursor", "pointer").css("opacity", "1");
-      } else {
-        $("#btn-like").css("cursor", "pointer").css("opacity", "1");
-        $("#btn-like-too").css("cursor", "not-allowed").css("opacity", "0.25");
-      }
 
       // 更新後續的推薦人選
       const nextRecommend = potentialInfoList.slice(1);
@@ -1000,25 +930,6 @@ $("#btn-like").click(function (e) {
   const messages = { userId, userName, candidateId, candidateName };
 
   socket.emit("desired-candidate", messages);
-});
-
-// 也喜歡對方
-$("#btn-like-too").click(function (e) {
-  e.preventDefault();
-
-  if (socket === null) {
-    alert("Please connect first");
-    return;
-  }
-
-  const userId = $(".user-name").attr("id");
-  const userName = $(".user-name").text();
-  const pursuerId = $(".candidate-name").attr("id");
-  const pursuerName = $(".candidate-name").text();
-
-  const messages = { userId, userName, pursuerId, pursuerName };
-
-  socket.emit("like-pursuer", messages);
 });
 
 // 不喜歡對方

@@ -219,164 +219,176 @@ io.on("connection", (socket) => {
     socket.emit("response-all-potential", response);
   });
 
-  // 監聽到使用者喜歡候選人
+  // 監聽到使用者喜歡候選人 (和配對成功的 socket.emit 合併)
   socket.on("desired-candidate", async (msg) => {
     const { userId, userName, candidateId, candidateName } = msg;
 
-    // 對方尚未喜歡自己，把自己儲存到對方的 "who_like_me" 快取
-    await saveWhoLikeMeOfOtherSide(candidateId, userId, userName);
+    // 確認目前推薦者是否為使用者的 pursuer
+    const isPursuer = await getWhoLikeMeOfSelf(userId, candidateId);
+    if (!isPursuer) {
+      // 對方尚未喜歡自己，把自己儲存到對方的 "who_like_me" 快取
+      await saveWhoLikeMeOfOtherSide(candidateId, userId, userName);
 
-    // 從快取把雙方的 "candidate" 刪除彼此
-    await deleteCandidateOfUser(userId, candidateId);
-    await deleteCandidateOfUser(candidateId, userId);
+      // 從快取把雙方的 "candidate" 刪除彼此
+      await deleteCandidateOfUser(userId, candidateId);
+      await deleteCandidateOfUser(candidateId, userId);
 
-    // 存進雙方的 "never_match" 到快取
-    await saveNeverMatchOfUser(userId, candidateId);
-    await saveNeverMatchOfUser(candidateId, userId);
+      // 存進雙方的 "never_match" 到快取
+      await saveNeverMatchOfUser(userId, candidateId);
+      await saveNeverMatchOfUser(candidateId, userId);
 
-    // 更新自己的 candidate list
-    const candidateListOfSelf = await getAllCandidateFromCache(userId);
-    const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
-    const candidateInfoListOfSelf = [];
-    for (const candidateId of candidateIdListOfSelf) {
-      const candidateInfo = await getCandidateInfoFromCache(candidateId);
-      const tags = await getMatchTagTitles(candidateId);
-      candidateInfo.tags = tags;
-      candidateInfoListOfSelf.push(candidateInfo);
-    }
+      // 更新自己的 candidate list
+      const candidateListOfSelf = await getAllCandidateFromCache(userId);
+      const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
+      const candidateInfoListOfSelf = [];
+      for (const candidateId of candidateIdListOfSelf) {
+        const candidateInfo = await getCandidateInfoFromCache(candidateId);
+        const tags = await getMatchTagTitles(candidateId);
+        candidateInfo.tags = tags;
+        candidateInfoListOfSelf.push(candidateInfo);
+      }
 
-    // 把重新整理的名單再次送回給自己的前端
-    const responseForSelf = {
-      userId,
-      candidateId,
-      candidateName,
-      candidateInfoList: candidateInfoListOfSelf,
-    };
-    socket.emit("success-send-like-signal", responseForSelf);
+      // 把重新整理的名單再次送回給自己的前端
+      const responseForSelf = {
+        userId,
+        candidateId,
+        candidateName,
+        candidateInfoList: candidateInfoListOfSelf,
+      };
+      socket.emit("success-send-like-signal", responseForSelf);
 
-    // 當對方在線上，再傳送到對方前端
-    if (candidateId in connections) {
-      // 更新對方的 pursuer + candidate list
-      const candidateListOfOtherSide = await getAllCandidateFromCache(
-        candidateId
+      // 當對方在線上，再傳送到對方前端
+      if (candidateId in connections) {
+        // 更新對方的 pursuer + candidate list
+        const candidateListOfOtherSide = await getAllCandidateFromCache(
+          candidateId
+        );
+        const candidateIdListOfOtherSide = Object.keys(
+          candidateListOfOtherSide
+        );
+
+        const pursuerListOfOtherSide = await getAllPursuerFromCache(
+          candidateId
+        );
+        const pursuerIdListOfOtherSide = Object.keys(pursuerListOfOtherSide);
+
+        const integratedIdListOfOtherSide = pursuerIdListOfOtherSide.concat(
+          candidateIdListOfOtherSide
+        );
+
+        const potentialInfoListOfOtherSide = [];
+        for (const potentialId of integratedIdListOfOtherSide) {
+          const potentialInfo = await getCandidateInfoFromCache(potentialId);
+          const tags = await getMatchTagTitles(potentialId);
+          potentialInfo.tags = tags;
+          potentialInfoListOfOtherSide.push(potentialInfo);
+        }
+
+        // 把重新整理的名單送到對方的前端
+        const responseForOtherSide = {
+          userId: candidateId,
+          pursuerId: userId,
+          pursuerName: userName,
+          potentialInfoList: potentialInfoListOfOtherSide,
+          pursuerIdList: pursuerIdListOfOtherSide,
+        };
+        connections[candidateId].socket.emit(
+          "who-like-me",
+          responseForOtherSide
+        );
+      }
+
+      console.log(
+        `userId#${userId}(${userName}) like userId#${candidateId}(${candidateName})`
       );
-      const candidateIdListOfOtherSide = Object.keys(candidateListOfOtherSide);
+    } else {
+      // 從 cache 把對方從自己的 "who_like_me" 刪除
+      await deletePursuerOfUser(userId, candidateId);
 
-      const pursuerListOfOtherSide = await getAllPursuerFromCache(candidateId);
-      const pursuerIdListOfOtherSide = Object.keys(pursuerListOfOtherSide);
+      // 建立房間編號
+      const roomId = uuidv4();
 
-      const integratedIdListOfOtherSide = pursuerIdListOfOtherSide.concat(
-        candidateIdListOfOtherSide
+      // 在 ElasticSearch 建立對話紀錄 index
+      const indexId = `chatrecord-${userId}-${candidateId}`;
+      await initChatIndexOfES(indexId);
+
+      // 加入 roomId, indexId, image 到 cache 的 "partners"
+      const userDetailInfo = await getUserDetailInfo(userId);
+      const partnerDetailInfo = await getUserDetailInfo(candidateId);
+      await savePartnerOfUser(
+        userId,
+        candidateId,
+        partnerDetailInfo.nick_name,
+        partnerDetailInfo.main_image,
+        roomId,
+        indexId
+      );
+      await savePartnerOfUser(
+        candidateId,
+        userId,
+        userDetailInfo.nick_name,
+        userDetailInfo.main_image,
+        roomId,
+        indexId
       );
 
-      const potentialInfoListOfOtherSide = [];
-      for (const potentialId of integratedIdListOfOtherSide) {
+      // 更新自己的 potential list
+      const candidateListOfSelf = await getAllCandidateFromCache(userId);
+      const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
+
+      const pursuerListOfSelf = await getAllPursuerFromCache(userId);
+      const pursuerIdListOfSelf = Object.keys(pursuerListOfSelf);
+
+      const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
+        candidateIdListOfSelf
+      );
+
+      const potentialInfoListOfSelf = [];
+      for (const potentialId of integratedIdListOfSelf) {
         const potentialInfo = await getCandidateInfoFromCache(potentialId);
         const tags = await getMatchTagTitles(potentialId);
         potentialInfo.tags = tags;
-        potentialInfoListOfOtherSide.push(potentialInfo);
+        potentialInfoListOfSelf.push(potentialInfo);
       }
 
-      // 把重新整理的名單送到對方的前端
-      const responseForOtherSide = {
-        userId: candidateId,
-        pursuerId: userId,
-        pursuerName: userName,
-        potentialInfoList: potentialInfoListOfOtherSide,
-        pursuerIdList: pursuerIdListOfOtherSide,
-      };
-      connections[candidateId].socket.emit("who-like-me", responseForOtherSide);
-    }
+      // 拿到 partner-detail-info (加上 indexId key)
+      const partnerInfo = await getCandidateInfoFromCache(candidateId);
+      partnerInfo.indexId = indexId;
 
-    console.log(
-      `userId#${userId}(${userName}) like userId#${candidateId}(${candidateName})`
-    );
-  });
-
-  // 監聽到使用者喜歡追求者
-  socket.on("like-pursuer", async (msg) => {
-    const { userId, userName, pursuerId, pursuerName } = msg;
-
-    const roomId = uuidv4();
-
-    // 從 cache 把對方從自己的 "who_like_me" 刪除
-    await deletePursuerOfUser(userId, pursuerId);
-
-    // 在 ElasticSearch 建立對話紀錄 index
-    const indexId = `chatrecord-${userId}-${pursuerId}`;
-    await initChatIndexOfES(indexId);
-
-    // 加入 roomId, indexId, image 到 cache 的 "partners"
-    const userDetailInfo = await getUserDetailInfo(userId);
-    const partnerDetailInfo = await getUserDetailInfo(pursuerId);
-    await savePartnerOfUser(
-      userId,
-      pursuerId,
-      partnerDetailInfo.nick_name,
-      partnerDetailInfo.main_image,
-      roomId,
-      indexId
-    );
-    await savePartnerOfUser(
-      pursuerId,
-      userId,
-      userDetailInfo.nick_name,
-      userDetailInfo.main_image,
-      roomId,
-      indexId
-    );
-
-    // 更新自己的 potential list
-    const candidateListOfSelf = await getAllCandidateFromCache(userId);
-    const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
-
-    const pursuerListOfSelf = await getAllPursuerFromCache(userId);
-    const pursuerIdListOfSelf = Object.keys(pursuerListOfSelf);
-
-    const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
-      candidateIdListOfSelf
-    );
-
-    const potentialInfoListOfSelf = [];
-    for (const potentialId of integratedIdListOfSelf) {
-      const potentialInfo = await getCandidateInfoFromCache(potentialId);
-      const tags = await getMatchTagTitles(potentialId);
-      potentialInfo.tags = tags;
-      potentialInfoListOfSelf.push(potentialInfo);
-    }
-
-    // 拿到 partner-detail-info
-    const partnerInfo = await getCandidateInfoFromCache(pursuerId);
-
-    const responseForSelf = {
-      userId,
-      partnerInfo,
-      roomId,
-      potentialInfoList: potentialInfoListOfSelf,
-      pursuerIdList: pursuerIdListOfSelf,
-    };
-
-    // 傳給自己
-    socket.emit("success-match", responseForSelf);
-
-    // 當對方在線上，才立即傳送資訊給對方
-    if (pursuerId in connections) {
-      // 給對方自己的 detail-info
-      const selfInfo = await getCandidateInfoFromCache(userId);
-      const responseForOtherSide = {
-        userId: pursuerId,
-        partnerInfo: selfInfo,
+      const responseForSelf = {
+        userId,
+        partnerInfo,
         roomId,
+        potentialInfoList: potentialInfoListOfSelf,
+        pursuerIdList: pursuerIdListOfSelf,
       };
 
-      // 傳給對方
-      connections[pursuerId].socket.emit(
-        "success-be-matched",
-        responseForOtherSide
+      // 傳給自己
+      socket.emit("success-match", responseForSelf);
+
+      // 當對方在線上，才立即傳送資訊給對方
+      if (candidateId in connections) {
+        // 給對方自己的 detail-info (加上 indexId key)
+        const selfInfo = await getCandidateInfoFromCache(userId);
+        selfInfo.indexId = indexId;
+
+        const responseForOtherSide = {
+          userId: candidateId,
+          partnerInfo: selfInfo,
+          roomId,
+        };
+
+        // 傳給對方
+        connections[candidateId].socket.emit(
+          "success-be-matched",
+          responseForOtherSide
+        );
+      }
+
+      console.log(
+        `Successfully match userId#${userId} with userId#${candidateId}`
       );
     }
-
-    console.log(`Successfully match userId#${userId} with userId#${pursuerId}`);
   });
 
   // 監聽到使用者不喜歡被推薦的人
