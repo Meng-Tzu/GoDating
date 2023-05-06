@@ -447,6 +447,17 @@ const openChatroom = async function ($this) {
       const { userName, message, timestamp } = record;
       createMessageDiv(record);
     });
+
+    // 將聊天室窗滑到最底部的最新訊息
+    const $dialogue = $("#dialogue");
+    const dialogueHeight = $dialogue[0].scrollHeight;
+
+    $dialogue.animate(
+      {
+        scrollTop: dialogueHeight,
+      },
+      "slow"
+    );
   }
 };
 
@@ -632,6 +643,17 @@ let fetchOption = {
     socket.on("room-broadcast", (msg) => {
       console.log(msg);
       createMessageDiv(msg);
+
+      // 將聊天室窗滑到最底部的最新訊息
+      const $dialogue = $("#dialogue");
+      const dialogueHeight = $dialogue[0].scrollHeight;
+
+      $dialogue.animate(
+        {
+          scrollTop: dialogueHeight,
+        },
+        "slow"
+      );
     });
 
     // 接收圖片
@@ -645,6 +667,18 @@ let fetchOption = {
     socket.on("wholeFile", (msg) => {
       console.log(msg);
       createMessageDiv(msg, imgChunks);
+
+      // 將聊天室窗滑到最底部的最新訊息
+      const $dialogue = $("#dialogue");
+      const dialogueHeight = $dialogue[0].scrollHeight;
+
+      $dialogue.animate(
+        {
+          scrollTop: dialogueHeight,
+        },
+        "slow"
+      );
+
       imgChunks = [];
     });
 
