@@ -278,7 +278,7 @@ main section#chatroom div#chat-block div#title form#search-box {
 main section#chatroom div#chat-block div#title form#search-box input#keyword {
   display: block;
   width: 300px;
-  padding: 10px;
+  padding: 5px 0;
   margin: 0 2rem;
   border-radius: 0;
   border: none;
@@ -345,15 +345,15 @@ main section#chatroom div#chat-block div#pass-msg form#text-msg {
 }
 main section#chatroom div#chat-block div#pass-msg form#text-msg input#message {
   flex: 3 1 300px;
-  padding: 10px;
+  padding: 0 10px;
   border-radius: 4px;
 }
 main section#chatroom div#chat-block div#pass-msg form#text-msg input#message:focus {
   outline: none;
 }
 main section#chatroom div#chat-block div#pass-msg form#text-msg button {
-  height: 40px;
-  width: 40px;
+  height: 35px;
+  width: 35px;
   background-color: transparent;
   background-image: url(../images/send.png);
   background-size: cover;
@@ -364,8 +364,8 @@ main section#chatroom div#chat-block div#pass-msg form#text-msg button {
 }
 main section#chatroom div#chat-block div#pass-msg form#text-msg label {
   border: none;
-  height: 40px;
-  width: 40px;
+  height: 35px;
+  width: 35px;
   background-color: transparent;
   background-image: url(../images/upload.png);
   background-size: cover;
