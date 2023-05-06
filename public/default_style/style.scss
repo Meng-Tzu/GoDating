@@ -42,32 +42,32 @@ header {
       }
     }
 
-    nav {
-      flex: 1 1 100px;
-      align-items: center;
+    // nav {
+    //   flex: 1 1 100px;
+    //   align-items: center;
 
-      ul {
-        display: flex;
-        list-style-type: none;
-        align-items: center;
-        justify-content: space-around;
+    //   ul {
+    //     display: flex;
+    //     list-style-type: none;
+    //     align-items: center;
+    //     justify-content: space-around;
 
-        li {
-          a {
-            // color: #3f3a3a;
-            text-decoration: none;
-            font-size: 1.3rem;
-            letter-spacing: 2px;
-          }
-        }
+    //     li {
+    //       a {
+    //         // color: #3f3a3a;
+    //         text-decoration: none;
+    //         font-size: 1.3rem;
+    //         letter-spacing: 2px;
+    //       }
+    //     }
 
-        li.line {
-          // color: #3f3a3a;
-          font-size: 2rem;
-          // font-weight: bold;
-        }
-      }
-    }
+    //     li.line {
+    //       // color: #3f3a3a;
+    //       font-size: 2rem;
+    //       // font-weight: bold;
+    //     }
+    //   }
+    // }
   }
 
   section.right {
@@ -145,8 +145,14 @@ main {
     align-items: center;
 
     h3 {
-      padding: 1rem 0;
-      letter-spacing: 0.5em;
+      // flex: 2 1 100px;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: bolder;
+      letter-spacing: 2px;
+      color: rgb(66 32 6);
+      padding-bottom: 8px;
+      padding-top: 16px;
     }
 
     div.partner {
