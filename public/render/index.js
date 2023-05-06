@@ -311,6 +311,8 @@ const createSearchResultDiv = (result) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#current");
   const $div = $("<div>");
+  const $searchResultDiv = $div.clone();
+  $searchResultDiv.css("display", "flex").css("flex-direction", "column");
 
   // 更換標題
   $("#current #more-info h3").text("搜尋結果");
@@ -326,7 +328,7 @@ const createSearchResultDiv = (result) => {
     const $p = $("<p>");
     $p.text("沒有搜尋結果");
     $p.appendTo($outerDiv);
-    $outerDiv.appendTo($parent);
+    $outerDiv.appendTo($searchResultDiv);
   } else {
     result.forEach((msg) => {
       // 新建搜尋筆數
@@ -343,11 +345,11 @@ const createSearchResultDiv = (result) => {
       // // 把複製出來的 div 加入 parent element
       $inner1stDiv.appendTo($outerDiv);
       $inner2ndDiv.appendTo($outerDiv);
-      $outerDiv.appendTo($parent);
+      $outerDiv.appendTo($searchResultDiv);
     });
   }
 
-  $ul.appendTo($parent);
+  $searchResultDiv.appendTo($parent);
 };
 // Function11: 點擊特定 partner 開啟聊天室
 const openChatroom = async function ($this) {
@@ -418,7 +420,7 @@ const openChatroom = async function ($this) {
   $(".other-side").text(partnerName).attr("id", partnerId);
   $("#text-msg").css("display", "flex");
   $("#picture-msg").css("display", "flex");
-  $("#current").css("display", "block");
+  $("#current").css("display", "flex");
   $("#current #more-info h3").text("目前聊天者資訊");
 
   // 移除搜尋結果

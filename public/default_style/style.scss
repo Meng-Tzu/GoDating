@@ -460,6 +460,7 @@ main {
           span.timestamp {
             color: gray;
             font-size: 0.5rem;
+            padding-left: 0.5rem;
           }
         }
       }
@@ -610,6 +611,7 @@ main {
       // justify-content: space-around;
       justify-content: center;
       align-items: center;
+      max-height: 80vh;
       overflow-y: auto;
       gap: 2rem;
 
@@ -736,21 +738,28 @@ main {
     }
 
     div.search-message {
-      background-color: rgb(250, 238, 223);
-      margin: 0.5rem 0;
+      background-color: #ffeaea;
+      margin: 0.5rem;
       border-radius: 10px;
       p {
         text-align: center;
+        font-size: 1rem;
+        padding: 0.5rem;
       }
 
       div.single-message {
         border: none;
+        font-size: 1rem;
+        text-align: start;
+        padding-left: 0.5rem;
       }
 
       div.timestamp {
         border: none;
         color: gray;
         font-size: 0.5rem;
+        text-align: start;
+        padding-left: 0.5rem;
       }
     }
   }

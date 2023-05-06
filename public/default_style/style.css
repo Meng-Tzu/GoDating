@@ -325,6 +325,7 @@ main section#chatroom div#chat-block div#dialogue span.message-in-dialogue span.
 main section#chatroom div#chat-block div#dialogue span.message-in-dialogue span.timestamp {
   color: gray;
   font-size: 0.5rem;
+  padding-left: 0.5rem;
 }
 main section#chatroom div#chat-block div#pass-msg {
   display: flex;
@@ -441,6 +442,7 @@ main section#current div#partner-info {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-height: 80vh;
   overflow-y: auto;
   gap: 2rem;
 }
@@ -542,18 +544,25 @@ main section#current div#next-recommend-list div.next-recommend div#next-tags p.
   color: rgb(66, 32, 6);
 }
 main section#current div.search-message {
-  background-color: rgb(250, 238, 223);
-  margin: 0.5rem 0;
+  background-color: #ffeaea;
+  margin: 0.5rem;
   border-radius: 10px;
 }
 main section#current div.search-message p {
   text-align: center;
+  font-size: 1rem;
+  padding: 0.5rem;
 }
 main section#current div.search-message div.single-message {
   border: none;
+  font-size: 1rem;
+  text-align: start;
+  padding-left: 0.5rem;
 }
 main section#current div.search-message div.timestamp {
   border: none;
   color: gray;
   font-size: 0.5rem;
+  text-align: start;
+  padding-left: 0.5rem;
 }/*# sourceMappingURL=style.css.map */
