@@ -463,6 +463,15 @@ main {
             padding-left: 0.5rem;
           }
         }
+
+        // TODO: 新的 chat bubble
+        div.wrap {
+          padding: 0.5rem;
+          div.message-in-dialogue {
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          }
+        }
       }
 
       div#pass-msg {

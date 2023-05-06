@@ -247,8 +247,8 @@ const createNextRecommendDiv = (candidateInfoList) => {
   });
 };
 
-// Function9: 動態製造 DOM 物件 (create div for next-recommend)
-const createMessageDiv = (msg, imgChunks) => {
+// TODO: Function9: 動態製造 DOM 物件 (訊息分左右)
+const createMessageDiv = (msg, ownerId, imgChunks) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#dialogue");
 
@@ -259,7 +259,7 @@ const createMessageDiv = (msg, imgChunks) => {
   $outerDiv.attr(
     "class",
     // `message-in-dialogue ${msg.userId} flex justify-start mb-4`
-    `message-in-dialogue ${msg.userId}`
+    `message-in-dialogue ${msg.userId} chat-bubble`
   );
   const $inner1stDiv = $span.clone();
   const $inner2ndDiv = $span.clone();
@@ -276,7 +276,6 @@ const createMessageDiv = (msg, imgChunks) => {
     $inner1stDiv.appendTo($outerDiv);
     $img.appendTo($outerDiv);
     $inner2ndDiv.appendTo($outerDiv);
-    $outerDiv.appendTo($parent);
   } else if (msg.message.includes(".jpg")) {
     // 如果是歷史訊息的照片
     $inner1stDiv
@@ -292,7 +291,6 @@ const createMessageDiv = (msg, imgChunks) => {
     $inner1stDiv.appendTo($outerDiv);
     $img.appendTo($outerDiv);
     $inner2ndDiv.appendTo($outerDiv);
-    $outerDiv.appendTo($parent);
   } else {
     // 如果是純文字
     $inner1stDiv
@@ -302,7 +300,112 @@ const createMessageDiv = (msg, imgChunks) => {
     // // 把複製出來的 div 加入 parent element
     $inner1stDiv.appendTo($outerDiv);
     $inner2ndDiv.appendTo($outerDiv);
-    $outerDiv.appendTo($parent);
+  }
+
+  // TODO: 依照傳訊息的人是誰，訊息分左右
+  const $wrapDiv = $span.clone();
+  if (msg.userId == ownerId) {
+    console.log("msg.userId", msg.userId);
+    console.log("ownerId", ownerId);
+    console.log("chat-end");
+    $wrapDiv.attr("class", "chat chat-end");
+  } else {
+    console.log("msg.userId", msg.userId);
+    console.log("ownerId", ownerId);
+    console.log("chat-start");
+    $wrapDiv.attr("class", "chat chat-start");
+  }
+
+  $outerDiv.appendTo($wrapDiv);
+  $wrapDiv.appendTo($parent);
+};
+
+// TODO: test for tailwindcss chat bubble
+const createMessageBubble = (msg, ownerId, imgChunks) => {
+  // 選取要被插入 child 的 parant element
+  const $parent = $("#dialogue");
+
+  // 新建 div & p
+  const $div = $("<div>");
+  const $p = $("<p>");
+  // TODO: 依照傳訊息的人是誰，訊息分左右
+  if (msg.userId == ownerId) {
+    const $timestamp = $p.clone();
+    $timestamp
+      .attr("class", "text-right text-xs text-grey-dark mt-1")
+      .text(msg.timestamp);
+
+    // 包在外層的 div
+    const $singleMsg = $div.clone();
+    $singleMsg
+      .attr("class", "rounded py-2 px-3 message-in-dialogue")
+      .css("background-color", "#e2f7cb");
+    const $wrapMsg = $div.clone();
+    $wrapMsg.attr("class", "flex justify-end mb-2 wrap");
+
+    if (msg.status) {
+      // 如果是即時傳送照片
+      const $img = $("<img>");
+      $img
+        .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
+        .height(200);
+
+      $singleMsg.append($img).append($timestamp);
+    } else if (msg.message.includes(".jpg")) {
+      // 如果是歷史訊息的照片
+      const $img = $("<img>");
+      $img.attr("src", `/${msg.message}`).height(200);
+
+      $singleMsg.append($img).append($timestamp);
+    } else {
+      // 如果是純文字
+      const $message = $p.clone();
+      $message.attr("class", "text-sm mt-1").text(msg.message);
+
+      $singleMsg.append($message).append($timestamp);
+    }
+
+    $wrapMsg.append($singleMsg);
+    $wrapMsg.appendTo($parent);
+  } else {
+    const $name = $p.clone();
+    $name.attr("class", "text-sm text-teal").text(msg.userName);
+    const $timestamp = $p.clone();
+    $timestamp
+      .attr("class", "text-right text-xs text-grey-dark mt-1")
+      .text(msg.timestamp);
+
+    // 包在外層的 div
+    const $singleMsg = $div.clone();
+    $singleMsg
+      .attr("class", "rounded py-2 px-3 message-in-dialogue")
+      .css("background-color", "rgb(250, 238, 214)");
+    const $wrapMsg = $div.clone();
+    $wrapMsg.attr("class", "flex mb-2 wrap");
+
+    if (msg.status) {
+      // 如果是即時傳送照片
+      const $img = $("<img>");
+      $img
+        .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
+        .height(200);
+
+      $singleMsg.append($name).append($img).append($timestamp);
+    } else if (msg.message.includes(".jpg")) {
+      // 如果是歷史訊息的照片
+      const $img = $("<img>");
+      $img.attr("src", `/${msg.message}`).height(200);
+
+      $singleMsg.append($name).append($img).append($timestamp);
+    } else {
+      // 如果是純文字
+      const $message = $p.clone();
+      $message.attr("class", "text-sm mt-1").text(msg.message);
+
+      $singleMsg.append($name).append($message).append($timestamp);
+    }
+    $wrapMsg.append($singleMsg);
+    $wrapMsg.appendTo($parent);
   }
 };
 
@@ -445,7 +548,9 @@ const openChatroom = async function ($this) {
   if (chatRecord) {
     chatRecord.forEach((record) => {
       const { userName, message, timestamp } = record;
-      createMessageDiv(record);
+      // 取得目前登入者是誰
+      const ownerId = $(".user-name").attr("id");
+      createMessageBubble(record, ownerId);
     });
 
     // 將聊天室窗滑到最底部的最新訊息
@@ -639,10 +744,13 @@ let fetchOption = {
       createNextRecommendDiv(nextRecommend);
     });
 
-    // 對話呈現純文字
+    // TODO: 對話呈現純文字 (訊息分左右)
     socket.on("room-broadcast", (msg) => {
       console.log(msg);
-      createMessageDiv(msg);
+
+      // 取得目前登入者是誰
+      const ownerId = $(".user-name").attr("id");
+      createMessageBubble(msg, ownerId);
 
       // 將聊天室窗滑到最底部的最新訊息
       const $dialogue = $("#dialogue");
@@ -663,10 +771,10 @@ let fetchOption = {
       imgChunks.push(chunk);
     });
 
-    // 呈現圖片
+    // TODO: 呈現圖片 (訊息分左右)
     socket.on("wholeFile", (msg) => {
       console.log(msg);
-      createMessageDiv(msg, imgChunks);
+      createMessageBubble(msg, imgChunks);
 
       // 將聊天室窗滑到最底部的最新訊息
       const $dialogue = $("#dialogue");

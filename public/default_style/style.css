@@ -327,6 +327,13 @@ main section#chatroom div#chat-block div#dialogue span.message-in-dialogue span.
   font-size: 0.5rem;
   padding-left: 0.5rem;
 }
+main section#chatroom div#chat-block div#dialogue div.wrap {
+  padding: 0.5rem;
+}
+main section#chatroom div#chat-block div#dialogue div.wrap div.message-in-dialogue {
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 main section#chatroom div#chat-block div#pass-msg {
   display: flex;
   flex-direction: column;
