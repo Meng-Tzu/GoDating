@@ -247,62 +247,92 @@ const createNextRecommendDiv = (candidateInfoList) => {
   });
 };
 
-// Function9: 動態製造 DOM 物件 (create div for next-recommend)
-const createMessageDiv = (msg, imgChunks) => {
+// Function9: 動態製造 DOM 物件 (訊息分左右)
+const createMessageBubble = (msg, ownerId, imgChunks) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#dialogue");
 
-  // 新建 div
+  // 新建 div & p
   const $div = $("<div>");
-  const $span = $("<span>");
-  const $outerDiv = $span.clone();
-  $outerDiv.attr(
-    "class",
-    // `message-in-dialogue ${msg.userId} flex justify-start mb-4`
-    `message-in-dialogue ${msg.userId}`
-  );
-  const $inner1stDiv = $span.clone();
-  const $inner2ndDiv = $span.clone();
-  $inner2ndDiv.attr("class", "timestamp").text(msg.timestamp);
+  const $p = $("<p>");
+  // 依照傳訊息的人是誰，訊息分左右
+  if (msg.userId == ownerId) {
+    const $timestamp = $p.clone();
+    $timestamp
+      .attr("class", "text-right text-xs text-grey-dark mt-1")
+      .text(msg.timestamp);
 
-  if (msg.status) {
-    // 如果是即時傳送照片
-    $inner1stDiv.attr("class", "single-message").text(`${msg.userName}:`);
-    const $img = $("<img>");
-    $img
-      .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
-      .height(200);
+    // 包在外層的 div
+    const $singleMsg = $div.clone();
+    $singleMsg
+      .attr("class", "rounded py-2 px-3 message-in-dialogue")
+      .css("background-color", "#e2f7cb");
+    const $wrapMsg = $div.clone();
+    $wrapMsg.attr("class", "flex justify-end mb-2 wrap");
 
-    $inner1stDiv.appendTo($outerDiv);
-    $img.appendTo($outerDiv);
-    $inner2ndDiv.appendTo($outerDiv);
-    $outerDiv.appendTo($parent);
-  } else if (msg.message.includes(".jpg")) {
-    // 如果是歷史訊息的照片
-    $inner1stDiv
-      .attr(
-        "class",
-        // "single-message ml-2 py-3 px-4 rounded-br-3xl rounded-tr-3xl rounded-tl-xl"
-        "single-message"
-      )
-      .text(`${msg.userName}:`);
-    const $img = $("<img>");
-    $img.attr("src", `/${msg.message}`).height(200);
+    if (msg.status) {
+      // 如果是即時傳送照片
+      const $img = $("<img>");
+      $img
+        .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
+        .height(200);
 
-    $inner1stDiv.appendTo($outerDiv);
-    $img.appendTo($outerDiv);
-    $inner2ndDiv.appendTo($outerDiv);
-    $outerDiv.appendTo($parent);
+      $singleMsg.append($img).append($timestamp);
+    } else if (msg.message.includes(".jpg")) {
+      // 如果是歷史訊息的照片
+      const $img = $("<img>");
+      $img.attr("src", `/${msg.message}`).height(200);
+
+      $singleMsg.append($img).append($timestamp);
+    } else {
+      // 如果是純文字
+      const $message = $p.clone();
+      $message.attr("class", "text-sm mt-1").text(msg.message);
+
+      $singleMsg.append($message).append($timestamp);
+    }
+
+    $wrapMsg.append($singleMsg);
+    $wrapMsg.appendTo($parent);
   } else {
-    // 如果是純文字
-    $inner1stDiv
-      .attr("class", "single-message")
-      .text(`${msg.userName}: ${msg.message}`);
+    const $name = $p.clone();
+    $name.attr("class", "text-sm text-teal").text(msg.userName);
+    const $timestamp = $p.clone();
+    $timestamp
+      .attr("class", "text-right text-xs text-grey-dark mt-1")
+      .text(msg.timestamp);
 
-    // // 把複製出來的 div 加入 parent element
-    $inner1stDiv.appendTo($outerDiv);
-    $inner2ndDiv.appendTo($outerDiv);
-    $outerDiv.appendTo($parent);
+    // 包在外層的 div
+    const $singleMsg = $div.clone();
+    $singleMsg
+      .attr("class", "rounded py-2 px-3 message-in-dialogue")
+      .css("background-color", "rgb(250, 238, 214)");
+    const $wrapMsg = $div.clone();
+    $wrapMsg.attr("class", "flex mb-2 wrap");
+
+    if (msg.status) {
+      // 如果是即時傳送照片
+      const $img = $("<img>");
+      $img
+        .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
+        .height(200);
+
+      $singleMsg.append($name).append($img).append($timestamp);
+    } else if (msg.message.includes(".jpg")) {
+      // 如果是歷史訊息的照片
+      const $img = $("<img>");
+      $img.attr("src", `/${msg.message}`).height(200);
+
+      $singleMsg.append($name).append($img).append($timestamp);
+    } else {
+      // 如果是純文字
+      const $message = $p.clone();
+      $message.attr("class", "text-sm mt-1").text(msg.message);
+
+      $singleMsg.append($name).append($message).append($timestamp);
+    }
+    $wrapMsg.append($singleMsg);
+    $wrapMsg.appendTo($parent);
   }
 };
 
@@ -311,6 +341,8 @@ const createSearchResultDiv = (result) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#current");
   const $div = $("<div>");
+  const $searchResultDiv = $div.clone();
+  $searchResultDiv.css("display", "flex").css("flex-direction", "column");
 
   // 更換標題
   $("#current #more-info h3").text("搜尋結果");
@@ -326,7 +358,7 @@ const createSearchResultDiv = (result) => {
     const $p = $("<p>");
     $p.text("沒有搜尋結果");
     $p.appendTo($outerDiv);
-    $outerDiv.appendTo($parent);
+    $outerDiv.appendTo($searchResultDiv);
   } else {
     result.forEach((msg) => {
       // 新建搜尋筆數
@@ -343,11 +375,11 @@ const createSearchResultDiv = (result) => {
       // // 把複製出來的 div 加入 parent element
       $inner1stDiv.appendTo($outerDiv);
       $inner2ndDiv.appendTo($outerDiv);
-      $outerDiv.appendTo($parent);
+      $outerDiv.appendTo($searchResultDiv);
     });
   }
 
-  $ul.appendTo($parent);
+  $searchResultDiv.appendTo($parent);
 };
 // Function11: 點擊特定 partner 開啟聊天室
 const openChatroom = async function ($this) {
@@ -418,7 +450,7 @@ const openChatroom = async function ($this) {
   $(".other-side").text(partnerName).attr("id", partnerId);
   $("#text-msg").css("display", "flex");
   $("#picture-msg").css("display", "flex");
-  $("#current").css("display", "block");
+  $("#current").css("display", "flex");
   $("#current #more-info h3").text("目前聊天者資訊");
 
   // 移除搜尋結果
@@ -443,8 +475,21 @@ const openChatroom = async function ($this) {
   if (chatRecord) {
     chatRecord.forEach((record) => {
       const { userName, message, timestamp } = record;
-      createMessageDiv(record);
+      // 取得目前登入者是誰
+      const ownerId = $(".user-name").attr("id");
+      createMessageBubble(record, ownerId);
     });
+
+    // 將聊天室窗滑到最底部的最新訊息
+    const $dialogue = $("#dialogue");
+    const dialogueHeight = $dialogue[0].scrollHeight;
+
+    $dialogue.animate(
+      {
+        scrollTop: dialogueHeight,
+      },
+      "slow"
+    );
   }
 };
 
@@ -626,10 +671,24 @@ let fetchOption = {
       createNextRecommendDiv(nextRecommend);
     });
 
-    // 對話呈現純文字
+    // 對話呈現純文字 (訊息分左右)
     socket.on("room-broadcast", (msg) => {
       console.log(msg);
-      createMessageDiv(msg);
+
+      // 取得目前登入者是誰
+      const ownerId = $(".user-name").attr("id");
+      createMessageBubble(msg, ownerId);
+
+      // 將聊天室窗滑到最底部的最新訊息
+      const $dialogue = $("#dialogue");
+      const dialogueHeight = $dialogue[0].scrollHeight;
+
+      $dialogue.animate(
+        {
+          scrollTop: dialogueHeight,
+        },
+        "slow"
+      );
     });
 
     // 接收圖片
@@ -639,10 +698,24 @@ let fetchOption = {
       imgChunks.push(chunk);
     });
 
-    // 呈現圖片
+    // 呈現圖片 (訊息分左右)
     socket.on("wholeFile", (msg) => {
       console.log(msg);
-      createMessageDiv(msg, imgChunks);
+      // 取得目前登入者是誰
+      const ownerId = $(".user-name").attr("id");
+      createMessageBubble(msg, ownerId, imgChunks);
+
+      // 將聊天室窗滑到最底部的最新訊息
+      const $dialogue = $("#dialogue");
+      const dialogueHeight = $dialogue[0].scrollHeight;
+
+      $dialogue.animate(
+        {
+          scrollTop: dialogueHeight,
+        },
+        "slow"
+      );
+
       imgChunks = [];
     });
 

@@ -407,7 +407,7 @@ main {
           input#keyword {
             display: block;
             width: 300px;
-            padding: 10px;
+            padding: 5px 0;
             margin: 0 2rem;
             border-radius: 0;
             border: none;
@@ -460,6 +460,16 @@ main {
           span.timestamp {
             color: gray;
             font-size: 0.5rem;
+            padding-left: 0.5rem;
+          }
+        }
+
+        // TODO: 新的 chat bubble
+        div.wrap {
+          padding: 0.5rem;
+          div.message-in-dialogue {
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
           }
         }
       }
@@ -487,7 +497,7 @@ main {
 
           input#message {
             flex: 3 1 300px;
-            padding: 10px;
+            padding: 0 10px;
             // margin-top: 5px;
             // border: 1px solid #ccc;
             border-radius: 4px;
@@ -498,8 +508,8 @@ main {
           }
 
           button {
-            height: 40px;
-            width: 40px;
+            height: 35px;
+            width: 35px;
             background-color: transparent;
             background-image: url(../images/send.png);
             background-size: cover;
@@ -511,8 +521,8 @@ main {
 
           label {
             border: none;
-            height: 40px;
-            width: 40px;
+            height: 35px;
+            width: 35px;
             background-color: transparent;
             background-image: url(../images/upload.png);
             background-size: cover;
@@ -610,6 +620,7 @@ main {
       // justify-content: space-around;
       justify-content: center;
       align-items: center;
+      max-height: 80vh;
       overflow-y: auto;
       gap: 2rem;
 
@@ -736,21 +747,28 @@ main {
     }
 
     div.search-message {
-      background-color: rgb(250, 238, 223);
-      margin: 0.5rem 0;
+      background-color: #ffeaea;
+      margin: 0.5rem;
       border-radius: 10px;
       p {
         text-align: center;
+        font-size: 1rem;
+        padding: 0.5rem;
       }
 
       div.single-message {
         border: none;
+        font-size: 1rem;
+        text-align: start;
+        padding-left: 0.5rem;
       }
 
       div.timestamp {
         border: none;
         color: gray;
         font-size: 0.5rem;
+        text-align: start;
+        padding-left: 0.5rem;
       }
     }
   }
