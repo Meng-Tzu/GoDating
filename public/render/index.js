@@ -247,80 +247,7 @@ const createNextRecommendDiv = (candidateInfoList) => {
   });
 };
 
-// TODO: Function9: 動態製造 DOM 物件 (訊息分左右)
-const createMessageDiv = (msg, ownerId, imgChunks) => {
-  // 選取要被插入 child 的 parant element
-  const $parent = $("#dialogue");
-
-  // 新建 div
-  const $div = $("<div>");
-  const $span = $("<span>");
-  const $outerDiv = $span.clone();
-  $outerDiv.attr(
-    "class",
-    // `message-in-dialogue ${msg.userId} flex justify-start mb-4`
-    `message-in-dialogue ${msg.userId} chat-bubble`
-  );
-  const $inner1stDiv = $span.clone();
-  const $inner2ndDiv = $span.clone();
-  $inner2ndDiv.attr("class", "timestamp").text(msg.timestamp);
-
-  if (msg.status) {
-    // 如果是即時傳送照片
-    $inner1stDiv.attr("class", "single-message").text(`${msg.userName}:`);
-    const $img = $("<img>");
-    $img
-      .attr("src", "data:image/jpeg;base64," + window.btoa(imgChunks))
-      .height(200);
-
-    $inner1stDiv.appendTo($outerDiv);
-    $img.appendTo($outerDiv);
-    $inner2ndDiv.appendTo($outerDiv);
-  } else if (msg.message.includes(".jpg")) {
-    // 如果是歷史訊息的照片
-    $inner1stDiv
-      .attr(
-        "class",
-        // "single-message ml-2 py-3 px-4 rounded-br-3xl rounded-tr-3xl rounded-tl-xl"
-        "single-message"
-      )
-      .text(`${msg.userName}:`);
-    const $img = $("<img>");
-    $img.attr("src", `/${msg.message}`).height(200);
-
-    $inner1stDiv.appendTo($outerDiv);
-    $img.appendTo($outerDiv);
-    $inner2ndDiv.appendTo($outerDiv);
-  } else {
-    // 如果是純文字
-    $inner1stDiv
-      .attr("class", "single-message")
-      .text(`${msg.userName}: ${msg.message}`);
-
-    // // 把複製出來的 div 加入 parent element
-    $inner1stDiv.appendTo($outerDiv);
-    $inner2ndDiv.appendTo($outerDiv);
-  }
-
-  // TODO: 依照傳訊息的人是誰，訊息分左右
-  const $wrapDiv = $span.clone();
-  if (msg.userId == ownerId) {
-    console.log("msg.userId", msg.userId);
-    console.log("ownerId", ownerId);
-    console.log("chat-end");
-    $wrapDiv.attr("class", "chat chat-end");
-  } else {
-    console.log("msg.userId", msg.userId);
-    console.log("ownerId", ownerId);
-    console.log("chat-start");
-    $wrapDiv.attr("class", "chat chat-start");
-  }
-
-  $outerDiv.appendTo($wrapDiv);
-  $wrapDiv.appendTo($parent);
-};
-
-// TODO: test for tailwindcss chat bubble
+// Function9: 動態製造 DOM 物件 (訊息分左右)
 const createMessageBubble = (msg, ownerId, imgChunks) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#dialogue");
@@ -328,7 +255,7 @@ const createMessageBubble = (msg, ownerId, imgChunks) => {
   // 新建 div & p
   const $div = $("<div>");
   const $p = $("<p>");
-  // TODO: 依照傳訊息的人是誰，訊息分左右
+  // 依照傳訊息的人是誰，訊息分左右
   if (msg.userId == ownerId) {
     const $timestamp = $p.clone();
     $timestamp
@@ -744,7 +671,7 @@ let fetchOption = {
       createNextRecommendDiv(nextRecommend);
     });
 
-    // TODO: 對話呈現純文字 (訊息分左右)
+    // 對話呈現純文字 (訊息分左右)
     socket.on("room-broadcast", (msg) => {
       console.log(msg);
 
@@ -771,10 +698,12 @@ let fetchOption = {
       imgChunks.push(chunk);
     });
 
-    // TODO: 呈現圖片 (訊息分左右)
+    // 呈現圖片 (訊息分左右)
     socket.on("wholeFile", (msg) => {
       console.log(msg);
-      createMessageBubble(msg, imgChunks);
+      // 取得目前登入者是誰
+      const ownerId = $(".user-name").attr("id");
+      createMessageBubble(msg, ownerId, imgChunks);
 
       // 將聊天室窗滑到最底部的最新訊息
       const $dialogue = $("#dialogue");
