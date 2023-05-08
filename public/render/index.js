@@ -719,7 +719,7 @@ let fetchOption = {
       imgChunks = [];
     });
 
-    // 主動配對成功
+    // TODO: 主動配對成功
     socket.on("success-match", async (msg) => {
       const { userId, partnerInfo, roomId, potentialInfoList, pursuerIdList } =
         msg;
@@ -753,18 +753,34 @@ let fetchOption = {
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
 
-      alert(`與 ${partnerInfo.nick_name} 成功配對！`);
+      // alert(`與 ${partnerInfo.nick_name} 成功配對！`);
+      Swal.fire({
+        position: "top",
+        icon: "success",
+        showCloseButton: true,
+        title: `與 ${partnerInfo.nick_name} 成功配對！`,
+        showConfirmButton: false,
+        timer: 3000,
+      });
     });
 
-    // 被動配對成功
+    // TODO: 被動配對成功
     socket.on("success-be-matched", (msg) => {
       const { userId, partnerInfo, roomId } = msg;
       createPartnerDiv(roomId, partnerInfo);
 
-      alert(`與 ${partnerInfo.nick_name} 成功配對！`);
+      // alert(`與 ${partnerInfo.nick_name} 成功配對！`);
+      Swal.fire({
+        position: "top",
+        icon: "success",
+        showCloseButton: true,
+        title: `與 ${partnerInfo.nick_name} 成功配對！`,
+        showConfirmButton: false,
+        timer: 3000,
+      });
     });
 
-    // 新增誰喜歡我的下拉選單
+    // TODO: 新增誰喜歡我的下拉選單
     socket.on("who-like-me", (msg) => {
       const {
         userId,
@@ -802,7 +818,37 @@ let fetchOption = {
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
 
-      alert(`${pursuerName} 喜歡你！`);
+      // alert(`${pursuerName} 喜歡你！`);
+      let timerInterval;
+      Swal.fire({
+        title: "<h5 style='margin: 0'>" + `${pursuerName} 喜歡你！` + "</h5>",
+        position: "top-end",
+        showCloseButton: true,
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: () => {
+          // Swal.showLoading();
+          const b = Swal.getHtmlContainer().querySelector("b");
+          timerInterval = setInterval(() => {
+            b.textContent = Swal.getTimerLeft();
+          }, 100);
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        },
+        customClass: {
+          title: "my-swal-title-class",
+          cancelButton: "my-swal-cancel-button-class",
+          container: "my-swal-container-class",
+          popup: "my-swal-popup-class",
+        },
+      }).then((result) => {
+        /* Read more about handling dismissals below */
+        if (result.dismiss === Swal.DismissReason.timer) {
+          console.log("I was closed by the timer");
+        }
+      });
     });
 
     // 喜歡後，刪除已選擇過的候選人
@@ -1133,7 +1179,7 @@ $("#cross").click(function () {
   $("#cross").css("display", "none");
 });
 
-// 登出
+// TODO: 登出
 $("#logout").click(function () {
   localStorage.removeItem("token");
   window.location.href = "/";

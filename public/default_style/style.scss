@@ -773,3 +773,25 @@ main {
     }
   }
 }
+
+// TODO: sweet alert
+.my-swal-title-class {
+  font-size: 1.2rem !important;
+  text-align: center !important;
+  color: #422006 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  letter-spacing: 2px !important;
+}
+
+.my-swal-cancel-button-class {
+  width: 20px !important;
+  height: 20px !important;
+  padding: 5px 10px !important;
+}
+
+.my-swal-popup-class {
+  width: 250px !important;
+  height: 100px !important;
+  margin: 0 !important;
+}
