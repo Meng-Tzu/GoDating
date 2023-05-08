@@ -93,21 +93,28 @@ $("#match-info").click(async function () {
   const matchApi = "/api/1.0/match/newone";
   const candidateListOfNewUser = await getApi(matchApi, fetchOption);
 
-  // 如果新註冊者的配對條件沒有任何人符合，會建議使用者更改條件
+  // TODO: 配對條件沒有任何人符合，建議更改條件 (沒有被觸發?) (sweet alert)
   if ("error" in candidateListOfNewUser) {
-    alert(candidateListOfNewUser.error);
+    // alert(candidateListOfNewUser.error);
+    Swal.fire({
+      icon: "error",
+      title: candidateListOfNewUser.error,
+      text: "是否要再更改配對條件？",
+    });
     return;
   }
 
-  // 新註冊者的資料存到 localstorage
+  // TODO: 新註冊者的資料存到 localstorage (sweet alert)
   const update = {
     newUserId: candidateListOfNewUser.userId,
     otherUserIdsList: candidateListOfNewUser.potentialListOfCertainUser,
   };
   localStorage.setItem("update", JSON.stringify(update));
 
-  alert(`${response} \n ${saveTagsStatus} \n 感謝您填寫問卷！`);
-  window.location.href = "/";
+  // alert(`${response} \n ${saveTagsStatus} \n 感謝您填寫問卷！`);
+  Swal.fire("感謝您填寫問卷！", "馬上進行探索吧！", "success").then(() => {
+    window.location.href = "/";
+  });
 });
 
 // 點擊右上個人照人名跳重整 profile page
