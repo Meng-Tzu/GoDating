@@ -66,7 +66,7 @@ $("#member").click(function (e) {
   $("#join").css("display", "inline");
 });
 
-// 當按下 login button
+// 當按下 login button (錯誤訊息顯示)
 $("#login").on("submit", function (e) {
   e.preventDefault();
 
@@ -83,13 +83,14 @@ $("#login").on("submit", function (e) {
     (async () => {
       const userData = await getApi(userApi, fetchOption);
       if (!userData) {
-        $(".signInErrorMsg")
-          .css("display", "inline")
-          .text("Sorry, your input is not correct.");
+        Swal.fire({
+          icon: "error",
+          title: "輸入錯誤",
+          text: "請確認帳號密碼輸入是否正確",
+        });
 
         userApi = "/api/1.0/user/";
       } else {
-        $(".signInErrorMsg").css("display", "none");
         localStorage.setItem("token", userData.access_token);
 
         // 跳轉到配對首頁
