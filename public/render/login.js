@@ -8,6 +8,22 @@ const getApi = async (url, option) => {
   return response.data;
 };
 
+// Function2: 是否有錯誤訊息
+const getError = async (url, option) => {
+  let response = await fetch(url, option);
+  response = await response.json();
+
+  // FIXME: 帳號已註冊過 (回覆的方式怪怪的)
+  if (response.error) {
+    return response.error;
+  }
+
+  // FIXME: 格式錯誤 (回覆的方式怪怪的)
+  if (response.errors.length) {
+    return "輸入格式錯誤";
+  }
+};
+
 // ------------------------------- 登入/註冊 ------------------------------
 
 let userApi = "/api/1.0/user/";
@@ -90,12 +106,13 @@ $("#login").on("submit", function (e) {
         });
 
         userApi = "/api/1.0/user/";
-      } else {
-        localStorage.setItem("token", userData.access_token);
-
-        // 跳轉到配對首頁
-        window.location.href = "/";
+        return;
       }
+
+      localStorage.setItem("token", userData.access_token);
+
+      // 跳轉到配對首頁
+      window.location.href = "/";
     })();
   } else {
     data.inputName = $("#loginName").val();
@@ -103,22 +120,34 @@ $("#login").on("submit", function (e) {
 
     userApi += "signup";
 
-    // 立即執行函式
+    // 立即執行函式 (顯示錯誤訊息)
     (async () => {
-      const userData = await getApi(userApi, fetchOption);
-      if (!userData) {
-        $(".signUpErrorMsg")
-          .css("display", "inline")
-          .text("Sorry, your input is not correct.");
+      const error = await getError(userApi, fetchOption);
+      if (error === "Email Already Exists.") {
+        Swal.fire({
+          icon: "error",
+          title: "已註冊過的帳號",
+          text: "請直接登入，或輸入新帳號重新註冊",
+        });
 
         userApi = "/api/1.0/user/";
-      } else {
-        $(".signUpErrorMsg").css("display", "none");
-        localStorage.setItem("token", userData.access_token);
+        return;
+      } else if (error === "輸入格式錯誤") {
+        Swal.fire({
+          icon: "error",
+          title: "格式輸入錯誤",
+          text: "請確認帳號密碼輸入格式是否正確",
+        });
 
-        // 跳轉到個人頁面填寫問卷
-        window.location.href = "/profile.html";
+        userApi = "/api/1.0/user/";
+        return;
       }
+
+      const userData = await getApi(userApi, fetchOption);
+      localStorage.setItem("token", userData.access_token);
+
+      // 跳轉到個人頁面填寫問卷
+      window.location.href = "/profile.html";
     })();
   }
 });

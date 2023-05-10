@@ -129,7 +129,7 @@ const signIn = async (req, res) => {
   }
 };
 
-// FIXME: 註冊
+// FIXME: 註冊 (如何檢查暱稱是否重複?)
 const signUp = async (req, res) => {
   // 取得使用者輸入的data
   const { inputEmail, inputPassword, inputName } = req.body;
