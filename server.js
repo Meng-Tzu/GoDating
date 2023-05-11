@@ -37,7 +37,29 @@ import {
   searchKeywordFromES,
 } from "./models/chat_record_model.js";
 
-// 建立 SocketIO function
+// ------------------- Function 區塊 ------------------------
+// potentialInfoList = pursuer + candidate list
+const getPotentialInfoList = async (id) => {
+  const candidateList = await getAllCandidateFromCache(id);
+  const candidateIdList = Object.keys(candidateList);
+
+  const pursuerList = await getAllPursuerFromCache(id);
+  const pursuerIdList = Object.keys(pursuerList);
+
+  const integratedIdList = pursuerIdList.concat(candidateIdList);
+
+  const potentialInfoList = [];
+  for (const potentialId of integratedIdList) {
+    const potentialInfo = await getCandidateInfoFromCache(potentialId);
+    const tags = await getMatchTagTitles(potentialId);
+    potentialInfo.tags = tags;
+    potentialInfoList.push(potentialInfo);
+  }
+
+  return potentialInfoList;
+};
+
+// ------------------- 建立 SocketIO function ----------------------
 const connectToSocketIO = (webSrv) => {
   const io = new Server(webSrv);
 
@@ -71,28 +93,11 @@ const connectToSocketIO = (webSrv) => {
       console.log(`user id #${id} successfully connect.`);
 
       // 更新自己的 pursuer + candidate list
-      const candidateListOfSelf = await getAllCandidateFromCache(id);
-      const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
+      const myPotentialInfoList = await getPotentialInfoList(id);
 
-      const pursuerListOfSelf = await getAllPursuerFromCache(id);
-      const pursuerIdListOfSelf = Object.keys(pursuerListOfSelf);
-
-      const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
-        candidateIdListOfSelf
-      );
-
-      const potentialInfoListOfSelf = [];
-      for (const potentialId of integratedIdListOfSelf) {
-        const potentialInfo = await getCandidateInfoFromCache(potentialId);
-        const tags = await getMatchTagTitles(potentialId);
-        potentialInfo.tags = tags;
-        potentialInfoListOfSelf.push(potentialInfo);
-      }
-
-      // const response = { id, testCandidateInfo };
       const response = {
         id,
-        potentialInfoList: potentialInfoListOfSelf,
+        potentialInfoList: myPotentialInfoList,
       };
 
       // 新註冊者資訊，渲染到符合條件的其他使用者的「猜你會喜歡」
@@ -149,26 +154,10 @@ const connectToSocketIO = (webSrv) => {
     // 監聽使用者按下 logo 並要求所有的 potential list
     socket.on("request-all-potential", async (userId) => {
       // 更新自己的 pursuer + candidate list
-      const candidateListOfSelf = await getAllCandidateFromCache(userId);
-      const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
-
-      const pursuerListOfSelf = await getAllPursuerFromCache(userId);
-      const pursuerIdListOfSelf = Object.keys(pursuerListOfSelf);
-
-      const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
-        candidateIdListOfSelf
-      );
-
-      const potentialInfoListOfSelf = [];
-      for (const potentialId of integratedIdListOfSelf) {
-        const potentialInfo = await getCandidateInfoFromCache(potentialId);
-        const tags = await getMatchTagTitles(potentialId);
-        potentialInfo.tags = tags;
-        potentialInfoListOfSelf.push(potentialInfo);
-      }
+      const myPotentialInfoList = await getPotentialInfoList(userId);
 
       const response = {
-        potentialInfoList: potentialInfoListOfSelf,
+        potentialInfoList: myPotentialInfoList,
       };
 
       socket.emit("response-all-potential", response);
@@ -355,31 +344,14 @@ const connectToSocketIO = (webSrv) => {
         await deletePursuerOfUser(userId, unlikeId);
 
         // 更新自己的 pursuer + candidate list
-        const candidateListOfSelf = await getAllCandidateFromCache(userId);
-        const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
-
-        const pursuerListOfSelf = await getPursuerFromCache(userId);
-        const pursuerIdListOfSelf = Object.keys(pursuerListOfSelf);
-
-        const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
-          candidateIdListOfSelf
-        );
-
-        const potentialInfoListOfSelf = [];
-
-        for (const potentialId of integratedIdListOfSelf) {
-          const potentialInfo = await getCandidateInfoFromCache(potentialId);
-          const tags = await getMatchTagTitles(potentialId);
-          potentialInfo.tags = tags;
-          potentialInfoListOfSelf.push(potentialInfo);
-        }
+        const myPotentialInfoList = await getPotentialInfoList(userId);
 
         // 把重新整理的名單再次送回給自己的前端
         const responseForSelf = {
           userId,
           unlikeId,
           unlikeName,
-          potentialInfoList: potentialInfoListOfSelf,
+          potentialInfoList: myPotentialInfoList,
         };
         socket.emit("send-unlike-signal", responseForSelf);
 
