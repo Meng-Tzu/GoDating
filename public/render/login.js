@@ -5,23 +5,17 @@ const getApi = async (url, option) => {
   let response = await fetch(url, option);
   response = await response.json();
 
-  return response.data;
-};
-
-// Function2: 是否有錯誤訊息
-const getError = async (url, option) => {
-  let response = await fetch(url, option);
-  response = await response.json();
-
   // FIXME: 帳號已註冊過 (回覆的方式怪怪的)
   if (response.error) {
     return response.error;
   }
 
   // FIXME: 格式錯誤 (回覆的方式怪怪的)
-  if (response.errors.length) {
+  if (response.errors) {
     return "輸入格式錯誤";
   }
+
+  return response.data;
 };
 
 // ------------------------------- 登入/註冊 ------------------------------
@@ -122,8 +116,9 @@ $("#login").on("submit", function (e) {
 
     // 立即執行函式 (顯示錯誤訊息)
     (async () => {
-      const error = await getError(userApi, fetchOption);
-      if (error === "Email Already Exists.") {
+      const userData = await getApi(userApi, fetchOption);
+
+      if (userData === "Email Already Exists.") {
         Swal.fire({
           icon: "error",
           title: "已註冊過的帳號",
@@ -132,7 +127,7 @@ $("#login").on("submit", function (e) {
 
         userApi = "/api/1.0/user/";
         return;
-      } else if (error === "輸入格式錯誤") {
+      } else if (userData === "輸入格式錯誤") {
         Swal.fire({
           icon: "error",
           title: "格式輸入錯誤",
@@ -143,7 +138,6 @@ $("#login").on("submit", function (e) {
         return;
       }
 
-      const userData = await getApi(userApi, fetchOption);
       localStorage.setItem("token", userData.access_token);
 
       // 跳轉到個人頁面填寫問卷
