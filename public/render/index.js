@@ -548,7 +548,7 @@ let fetchOption = {
     window.location.href = "/login.html";
   } else {
     const { id, name, email, image } = userData;
-    $("#profile-img").attr("src", `/${image}`);
+    $("#profile-img").attr("src", `images/${image}`);
     $(".user-name").text(name).attr("id", id);
 
     // 建立一個 io 物件(?)，並連上 SocketIO server

@@ -6,6 +6,21 @@ const getApi = async (url, option) => {
   return response.data;
 };
 
+// Function1: 取得 API 資料
+const getError = async (url, option) => {
+  let response = await fetch(url, option);
+  response = await response.json();
+
+  if (response.error) {
+    return response.error;
+  }
+
+  // FIXME: 格式錯誤 (回覆的方式怪怪的)
+  if (response.errors.length) {
+    return "尚未填寫完畢喔！";
+  }
+};
+
 // 從 JWT token 取得使用者 id 去做 socketIO 連線
 const token = localStorage.getItem("token");
 
@@ -26,13 +41,14 @@ let fetchOption = {
     localStorage.removeItem("token");
     window.location.href = "/login.html";
   } else {
-    const { id, name, email } = userData;
+    const { id, name } = userData;
     $(".user-name").text(name).attr("id", id);
   }
 })();
 
 $("#match-info").click(async function () {
-  // 送出表單時再次驗證
+  // TODO: 送出表單時再次驗證
+  console.log("userApi:verify", userApi);
   const userData = await getApi(userApi, fetchOption);
   if (!userData) {
     // token 錯誤
@@ -54,11 +70,39 @@ $("#match-info").click(async function () {
   formData.append("seekAgeMax", $("#slider-range").slider("values", 1));
   formData.append("selfIntro", $("#self-intro").val());
 
-  // 把新註冊者詳細資訊存進 DB
+  // TODO: 把新註冊者詳細資訊存進 DB (驗證是否有照片)
   fetchOption.body = formData;
   userApi = "/api/1.0/user/profile";
+  console.log("userApi:profile", userApi);
 
-  const response = await getApi(userApi, fetchOption);
+  const error = await getError(userApi, fetchOption);
+  if (error === "尚未填寫完畢喔！") {
+    Swal.fire({
+      icon: "error",
+      title: "尚未填寫完畢喔！",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (error === "Image is required") {
+    Swal.fire({
+      icon: "error",
+      title: "您沒有上傳個人照喔！",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (error === "File must be an image") {
+    Swal.fire({
+      icon: "error",
+      title: "個人照格式錯誤",
+      text: "僅限上傳 jpg, jpeg, png 格式的照片",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  }
+
+  // TODO: 無法成功提交
+  console.log("userApi", userApi);
+  await getApi(userApi, fetchOption);
 
   // 選擇標籤 (與詳細資訊表單合併)
   const tagApi = "/api/1.0/user/tags";
@@ -76,7 +120,7 @@ $("#match-info").click(async function () {
     tags: $("#tags-selected").val(),
   };
   fetchOption.body = JSON.stringify(tags);
-  const saveTagsStatus = await getApi(tagApi, fetchOption);
+  await getApi(tagApi, fetchOption);
 
   // 取得新註冊者的 candidate list
   const data = { newuserid: $(".user-name").attr("id") };

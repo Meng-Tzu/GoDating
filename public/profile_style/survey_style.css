@@ -21,7 +21,7 @@
 
 body {
   /* padding: 0 10px; */
-  background-image: url("/survey_background.jpg");
+  background-image: url("../images/survey_background.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -163,7 +163,7 @@ h1 small {
   border: 1px solid transparent;
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
   background-color: rgba(255, 255, 255, 0.9);
-  background-image: url(/edit.png);
+  background-image: url(../images/edit.png);
   background-size: contain;
   background-repeat: no-repeat;
   /* background-attachment: fixed; */

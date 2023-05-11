@@ -45,10 +45,7 @@ import {
 const app = express();
 
 // 取得 static html file
-app.use("/", express.static("public"));
-app.use("/", express.static("public/render"));
-app.use("/", express.static("public/images"));
-app.use("/", express.static("public/uploads"));
+app.use(express.static("public"));
 
 // 可使用的 request body 格式
 app.use(express.json());
@@ -318,7 +315,7 @@ io.on("connection", (socket) => {
         userId,
         candidateId,
         partnerDetailInfo.nick_name,
-        partnerDetailInfo.main_image,
+        `images/${partnerDetailInfo.main_image}`,
         roomId,
         indexId
       );
@@ -326,7 +323,7 @@ io.on("connection", (socket) => {
         candidateId,
         userId,
         userDetailInfo.nick_name,
-        userDetailInfo.main_image,
+        `images/${userDetailInfo.main_image}`,
         roomId,
         indexId
       );
@@ -663,7 +660,7 @@ io.on("connection", (socket) => {
             chatIndexId,
             userId,
             userName,
-            filename,
+            `uploads/${filename}`,
             timestamp,
             msOfTime
           );

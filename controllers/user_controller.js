@@ -55,7 +55,7 @@ const saveCandidateInfoFromDBtoCache = async (candidateIds) => {
     const candidateBirthday = `${candidate.birth_year}/${candidate.birth_month}/${candidate.birth_date}`;
     const age = getAge(candidateBirthday);
     const sex = sexType[candidate.sex_id];
-    const imageUrl = `/${candidate.main_image}`;
+    const imageUrl = `images/${candidate.main_image}`;
     candidate.age = age;
     candidate.sex = sex;
     candidate.main_image = imageUrl;
@@ -308,7 +308,7 @@ const getDetailInfo = async (userId) => {
     const candidateBirthday = `${detailInfoFromDB.birth_year}/${detailInfoFromDB.birth_month}/${detailInfoFromDB.birth_date}`;
     const age = getAge(candidateBirthday);
     const sex = sexType[detailInfoFromDB.sex_id];
-    const imageUrl = `/${detailInfoFromDB.main_image}`;
+    const imageUrl = `images/${detailInfoFromDB.main_image}`;
     detailInfoFromDB.age = age;
     detailInfoFromDB.sex = sex;
     detailInfoFromDB.main_image = imageUrl;

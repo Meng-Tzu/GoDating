@@ -4,13 +4,13 @@ import { Server } from "socket.io";
 import { writeFile, createReadStream } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { uniqueSuffix } from "./util/ramdom.js";
+import { uniqueSuffix } from "./util/random.js";
 
 const __filename = fileURLToPath(import.meta.url);
 // console.log(__filename);
 
 const __dirname = path.dirname(__filename);
-// console.log(__dirname);
+console.log(__dirname);
 
 //創建 express 的物件
 const app = express();
@@ -41,7 +41,7 @@ app.use((err, req, res, next) => {
 });
 
 // webserver 聽 3000 port
-let webSrv = app.listen(3000, () =>
+let webSrv = app.listen(3030, () =>
   console.log("Server is running on port 3000.")
 );
 
