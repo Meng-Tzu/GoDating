@@ -93,7 +93,6 @@ const connectToSocketIO = (webSrv) => {
       const response = {
         id,
         potentialInfoList: potentialInfoListOfSelf,
-        pursuerIdList: pursuerIdListOfSelf,
       };
 
       // 新註冊者資訊，渲染到符合條件的其他使用者的「猜你會喜歡」
@@ -170,7 +169,6 @@ const connectToSocketIO = (webSrv) => {
 
       const response = {
         potentialInfoList: potentialInfoListOfSelf,
-        pursuerIdList: pursuerIdListOfSelf,
       };
 
       socket.emit("response-all-potential", response);
@@ -247,7 +245,6 @@ const connectToSocketIO = (webSrv) => {
             pursuerId: userId,
             pursuerName: userName,
             potentialInfoList: potentialInfoListOfOtherSide,
-            pursuerIdList: pursuerIdListOfOtherSide,
           };
           connections[candidateId].socket.emit(
             "who-like-me",
@@ -317,7 +314,6 @@ const connectToSocketIO = (webSrv) => {
           partnerInfo,
           roomId,
           potentialInfoList: potentialInfoListOfSelf,
-          pursuerIdList: pursuerIdListOfSelf,
         };
 
         // 傳給自己
@@ -365,30 +361,17 @@ const connectToSocketIO = (webSrv) => {
         const pursuerListOfSelf = await getPursuerFromCache(userId);
         const pursuerIdListOfSelf = Object.keys(pursuerListOfSelf);
 
+        const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
+          candidateIdListOfSelf
+        );
+
         const potentialInfoListOfSelf = [];
-        let isPusrsuerexist = 0;
-        // 檢查使用者是否還有 pursuer
-        if (!pursuerIdListOfSelf.length) {
-          for (const potentialId of candidateIdListOfSelf) {
-            const potentialInfo = await getCandidateInfoFromCache(potentialId);
-            const tags = await getMatchTagTitles(potentialId);
-            potentialInfo.tags = tags;
-            potentialInfoListOfSelf.push(potentialInfo);
-          }
-        } else {
-          // 如果還有 pursuer，整合 pursuer + candidate list
-          const integratedIdListOfSelf = pursuerIdListOfSelf.concat(
-            candidateIdListOfSelf
-          );
 
-          for (const potentialId of integratedIdListOfSelf) {
-            const potentialInfo = await getCandidateInfoFromCache(potentialId);
-            const tags = await getMatchTagTitles(potentialId);
-            potentialInfo.tags = tags;
-            potentialInfoListOfSelf.push(potentialInfo);
-          }
-
-          isPusrsuerexist = 1;
+        for (const potentialId of integratedIdListOfSelf) {
+          const potentialInfo = await getCandidateInfoFromCache(potentialId);
+          const tags = await getMatchTagTitles(potentialId);
+          potentialInfo.tags = tags;
+          potentialInfoListOfSelf.push(potentialInfo);
         }
 
         // 把重新整理的名單再次送回給自己的前端
@@ -396,7 +379,6 @@ const connectToSocketIO = (webSrv) => {
           userId,
           unlikeId,
           unlikeName,
-          isPusrsuerexist,
           potentialInfoList: potentialInfoListOfSelf,
         };
         socket.emit("send-unlike-signal", responseForSelf);
@@ -429,7 +411,6 @@ const connectToSocketIO = (webSrv) => {
           userId,
           unlikeId,
           unlikeName,
-          isPusrsuerexist: 0,
           potentialInfoList: candidateInfoListOfSelf,
         };
         socket.emit("send-unlike-signal", responseForSelf);
@@ -452,7 +433,7 @@ const connectToSocketIO = (webSrv) => {
           const pursuerIdListOfOtherSide = Object.keys(pursuerListOfOtherSide);
 
           const potentialInfoListOfOtherSide = [];
-          let isPusrsuerexist = 0;
+
           // 檢查被不喜歡者是否還有 pursuer
           if (!pursuerIdListOfOtherSide.length) {
             for (const potentialId of candidateIdListOfOtherSide) {
@@ -476,8 +457,6 @@ const connectToSocketIO = (webSrv) => {
               potentialInfo.tags = tags;
               potentialInfoListOfOtherSide.push(potentialInfo);
             }
-
-            isPusrsuerexist = 1;
           }
 
           // 把重新整理的名單送到對方的前端
@@ -485,7 +464,6 @@ const connectToSocketIO = (webSrv) => {
             userId: unlikeId,
             unlikeId: userId,
             unlikeName: userName,
-            isPusrsuerexist,
             potentialInfoList: potentialInfoListOfOtherSide,
           };
           connections[unlikeId].socket.emit(

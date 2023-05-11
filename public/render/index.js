@@ -572,7 +572,7 @@ let fetchOption = {
     socket.on("user-connect", async (msg) => {
       console.log("open connection to server");
 
-      const { potentialInfoList, pursuerIdList } = msg;
+      const { potentialInfoList } = msg;
 
       // 顯示目前推薦人選
       const currentRecommend = potentialInfoList[0];
@@ -719,10 +719,9 @@ let fetchOption = {
       imgChunks = [];
     });
 
-    // TODO: 主動配對成功
+    // 主動配對成功
     socket.on("success-match", async (msg) => {
-      const { userId, partnerInfo, roomId, potentialInfoList, pursuerIdList } =
-        msg;
+      const { userId, partnerInfo, roomId, potentialInfoList } = msg;
       createPartnerDiv(roomId, partnerInfo);
 
       // 更新目前推薦人選
@@ -764,7 +763,7 @@ let fetchOption = {
       });
     });
 
-    // TODO: 被動配對成功
+    // 被動配對成功
     socket.on("success-be-matched", (msg) => {
       const { userId, partnerInfo, roomId } = msg;
       createPartnerDiv(roomId, partnerInfo);
@@ -780,15 +779,9 @@ let fetchOption = {
       });
     });
 
-    // TODO: 新增誰喜歡我的下拉選單
+    // 新增誰喜歡我的下拉選單
     socket.on("who-like-me", (msg) => {
-      const {
-        userId,
-        pursuerId,
-        pursuerName,
-        potentialInfoList,
-        pursuerIdList,
-      } = msg;
+      const { userId, pursuerId, pursuerName, potentialInfoList } = msg;
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
@@ -890,7 +883,7 @@ let fetchOption = {
         userId,
         unlikeId,
         unlikeName,
-        isPusrsuerexist,
+        isPursuerExist,
         potentialInfoList,
       } = msg;
 
@@ -929,7 +922,7 @@ let fetchOption = {
         userId,
         unlikeId,
         unlikeName,
-        isPusrsuerexist,
+        isPursuerExist,
         potentialInfoList,
       } = msg;
 
@@ -1179,7 +1172,7 @@ $("#cross").click(function () {
   $("#cross").css("display", "none");
 });
 
-// TODO: 登出
+// 登出
 $("#logout").click(function () {
   localStorage.removeItem("token");
   window.location.href = "/";
