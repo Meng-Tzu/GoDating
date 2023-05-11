@@ -8,6 +8,10 @@ import {
   saveDetailInfo,
   saveTags,
 } from "../controllers/user_controller.js";
+
+import signInValidator from "../middlewares/sign_in_validator.js";
+import signUpValidator from "../middlewares/sign_up_validator.js";
+
 import { signIn, signUp, verify } from "../controllers/user_controller.js";
 
 import {
@@ -25,10 +29,10 @@ const pictureUpload = upload.fields([{ name: "picture", maxCount: 1 }]);
 userRouter.use(express.json());
 
 // 登入
-userRouter.post("/user/signin", signIn);
+userRouter.post("/user/signin", signInValidator, signIn);
 
-// FIXME: 註冊 (必須有 middleware 去驗證 input 格式是正確的)
-userRouter.post("/user/signup", signUp);
+// 註冊 (必須有 middleware 去驗證 input 格式是正確的)
+userRouter.post("/user/signup", signUpValidator, signUp);
 
 // 使用者資料驗證
 userRouter.post("/user/verify", verify);

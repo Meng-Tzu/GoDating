@@ -83,13 +83,15 @@ const saveCandidateInfoFromDBtoCache = async (candidateIds) => {
 const signIn = async (req, res) => {
   const { inputEmail, inputPassword } = req.body;
 
-  const { id, password, nick_name } = await getUserBasicInfo(inputEmail);
+  const userBasicInfo = await getUserBasicInfo(inputEmail);
 
-  if (!id) {
-    // id 為空, 表示 email 不存在
+  // userBasicInfo 為空, 表示使用者未註冊過不存在
+  if (!userBasicInfo) {
     res.status(403).json({ error: "Sorry, your input is not correct." });
     return;
   }
+
+  const { id, password, nick_name } = userBasicInfo;
 
   // 使用 argon2 解密碼
   try {
@@ -127,7 +129,7 @@ const signIn = async (req, res) => {
   }
 };
 
-// FIXME: 註冊
+// FIXME: 註冊 (如何檢查暱稱是否重複?)
 const signUp = async (req, res) => {
   // 取得使用者輸入的data
   const { inputEmail, inputPassword, inputName } = req.body;
