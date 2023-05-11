@@ -1,10 +1,13 @@
 // 導入模組
-import express, { response } from "express";
+import express from "express";
 import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import { writeFile, createReadStream } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+dotenv.config();
+const { API_VERSION } = process.env;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,15 +55,11 @@ app.use(express.json());
 // for content-type: application/x-www-form-urlencoded
 matchRouter.use(express.urlencoded({ extended: false }));
 
-// FIXME: API routes (可否共用前面的 path ??)
-import { userRouter } from "./routes/user_route.js";
-app.use("/api/1.0", [userRouter]);
-
-import { chatRouter } from "./routes/chat_record_route.js";
-app.use("/api/1.0", [chatRouter]);
-
-import { matchRouter } from "./routes/match_route.js";
-app.use("/api/1.0", [matchRouter]);
+// API routes
+import userRouter from "./routes/user_route.js";
+import chatRouter from "./routes/chat_record_route.js";
+import matchRouter from "./routes/match_route.js";
+app.use(`/api/${API_VERSION}`, [userRouter, chatRouter, matchRouter]);
 
 // 當使用者輸入錯的路徑，會直接掉進這個 middle ware
 app.use((req, res) => {
@@ -612,6 +611,7 @@ io.on("connection", (socket) => {
         console.log("writeFile fail, error:", err);
       } else {
         // FIXME: 讀取硬碟中的圖片 (解析度跑掉)
+        console.log("__dirname", __dirname);
         const readStream = createReadStream(
           path.join(__dirname, `/public/uploads/${filename}`),
           {

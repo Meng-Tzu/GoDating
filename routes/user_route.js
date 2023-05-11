@@ -59,4 +59,4 @@ userRouter.post("/user/pursuer", certainUserPursuerList);
 userRouter.post("/user/partner", certainUserPartnerList);
 
 // 輸出路由
-export { userRouter };
+export default userRouter;
