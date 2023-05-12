@@ -82,6 +82,36 @@ const ifYouAreCandidate = async (userId, candidateId) => {
   return candidateInfoList;
 };
 
+// Function3: save message and create timestamp
+const saveMsgReturnTime = async (userId, userName, partnerId, message) => {
+  // 傳送訊息時間
+  const msOfTime = Date.now();
+  const time = new Date();
+  const timestamp = time.toLocaleString("en-US", {
+    timeZone: "Asia/Taipei",
+  });
+
+  // 從快取的 "partner" 拿到 chat index
+  const chatroomInfo = await getPartnerOfUser(userId, partnerId);
+  const chatIndexId = chatroomInfo[3];
+
+  try {
+    // 把訊息存入 ES
+    await saveChatRecordToES(
+      chatIndexId,
+      userId,
+      userName,
+      message,
+      timestamp,
+      msOfTime
+    );
+  } catch (error) {
+    console.error("cannot save message into ES:", error);
+  }
+
+  return timestamp;
+};
+
 // ------------------- 建立 SocketIO function ----------------------
 const connectToSocketIO = (webSrv) => {
   const io = new Server(webSrv);
@@ -365,30 +395,13 @@ const connectToSocketIO = (webSrv) => {
         connections[partnerId].socket.join(roomId);
       }
 
-      // 傳送訊息時間
-      const msOfTime = Date.now();
-      const time = new Date();
-      const timestamp = time.toLocaleString("en-US", {
-        timeZone: "Asia/Taipei",
-      });
-
-      // 從快取的 "partner" 拿到 chat index
-      const chatroomInfo = await getPartnerOfUser(userId, partnerId);
-      const chatIndexId = chatroomInfo[3];
-
-      try {
-        // 把訊息存入 ES
-        await saveChatRecordToES(
-          chatIndexId,
-          userId,
-          userName,
-          message,
-          timestamp,
-          msOfTime
-        );
-      } catch (error) {
-        console.error("cannot save message into ES:", error);
-      }
+      // 儲存訊息並產生傳送訊息的時間
+      const timestamp = await saveMsgReturnTime(
+        userId,
+        userName,
+        partnerId,
+        message
+      );
 
       const response = { userId, roomId, userName, message, timestamp };
 
@@ -455,29 +468,15 @@ const connectToSocketIO = (webSrv) => {
             response.status = "success";
             response.roomId = roomId;
 
-            // 傳送訊息時間
-            const msOfTime = Date.now();
-            const time = new Date();
-            const timestamp = time.toLocaleString("en-US", {
-              timeZone: "Asia/Taipei",
-            });
-
-            // 從快取的 "partner" 拿到 chat index
-            const chatroomInfo = await getPartnerOfUser(userId, partnerId);
-            const chatIndexId = chatroomInfo[3];
-
-            // 把照片檔名存進 ES
-            await saveChatRecordToES(
-              chatIndexId,
+            // 儲存訊息並產生傳送訊息的時間
+            const timestamp = await saveMsgReturnTime(
               userId,
               userName,
-              `uploads/${filename}`,
-              timestamp,
-              msOfTime
+              partnerId,
+              `uploads/${filename}`
             );
 
             response.timestamp = timestamp;
-            response.msOfTime = msOfTime;
             io.to(roomId).emit("wholeFile", response);
           });
         }
