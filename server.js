@@ -59,7 +59,7 @@ const getPotentialInfoList = async (id) => {
 };
 
 // Function2: check if you are my candidate not pursuer
-const ifYouAreCandidate = async (userId, candidateId) => {
+const updateCandidateList = async (userId, candidateId) => {
   // 從快取把雙方的 "candidate" 刪除彼此
   await deleteCandidateOfUser(userId, candidateId);
   await deleteCandidateOfUser(candidateId, userId);
@@ -201,8 +201,11 @@ const connectToSocketIO = (webSrv) => {
       // 確認目前推薦者是否為使用者的 pursuer
       const isPursuer = await getWhoLikeMeOfSelf(userId, candidateId);
       if (!isPursuer) {
+        // 對方尚未喜歡自己，把自己儲存到對方的 "who_like_me" 快取
+        await saveWhoLikeMeOfOtherSide(candidateId, userId, userName);
+
         // 更新自己的 candidate list
-        const myCandidateInfoList = await ifYouAreCandidate(
+        const myCandidateInfoList = await updateCandidateList(
           userId,
           candidateId
         );
@@ -337,7 +340,7 @@ const connectToSocketIO = (webSrv) => {
         );
       } else {
         // 更新自己的 candidate list
-        const myCandidateInfoList = await ifYouAreCandidate(userId, unlikeId);
+        const myCandidateInfoList = await updateCandidateList(userId, unlikeId);
 
         // 把重新整理的名單再次送回給自己的前端
         const responseForSelf = {
