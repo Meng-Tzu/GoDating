@@ -37,7 +37,7 @@ import {
 } from "./models/chat_record_model.js";
 
 // ------------------- Function 區塊 ------------------------
-// potentialInfoList = pursuer + candidate list
+// Function1: potentialInfoList = pursuer + candidate list
 const getPotentialInfoList = async (id) => {
   const candidateList = await getAllCandidateFromCache(id);
   const candidateIdList = Object.keys(candidateList);
@@ -56,6 +56,30 @@ const getPotentialInfoList = async (id) => {
   }
 
   return potentialInfoList;
+};
+
+// Function2: check if you are my candidate not pursuer
+const ifYouAreCandidate = async (userId, candidateId) => {
+  // 從快取把雙方的 "candidate" 刪除彼此
+  await deleteCandidateOfUser(userId, candidateId);
+  await deleteCandidateOfUser(candidateId, userId);
+
+  // 存進雙方的 "never_match" 到快取
+  await saveNeverMatchOfUser(userId, candidateId);
+  await saveNeverMatchOfUser(candidateId, userId);
+
+  // 更新自己的 candidate list
+  const candidateList = await getAllCandidateFromCache(userId);
+  const candidateIdList = Object.keys(candidateList);
+  const candidateInfoList = [];
+  for (const candidateId of candidateIdList) {
+    const candidateInfo = await getCandidateInfoFromCache(candidateId);
+    const tags = await getMatchTagTitles(candidateId);
+    candidateInfo.tags = tags;
+    candidateInfoList.push(candidateInfo);
+  }
+
+  return candidateInfoList;
 };
 
 // ------------------- 建立 SocketIO function ----------------------
@@ -147,34 +171,18 @@ const connectToSocketIO = (webSrv) => {
       // 確認目前推薦者是否為使用者的 pursuer
       const isPursuer = await getWhoLikeMeOfSelf(userId, candidateId);
       if (!isPursuer) {
-        // 對方尚未喜歡自己，把自己儲存到對方的 "who_like_me" 快取
-        await saveWhoLikeMeOfOtherSide(candidateId, userId, userName);
-
-        // 從快取把雙方的 "candidate" 刪除彼此
-        await deleteCandidateOfUser(userId, candidateId);
-        await deleteCandidateOfUser(candidateId, userId);
-
-        // 存進雙方的 "never_match" 到快取
-        await saveNeverMatchOfUser(userId, candidateId);
-        await saveNeverMatchOfUser(candidateId, userId);
-
         // 更新自己的 candidate list
-        const candidateListOfSelf = await getAllCandidateFromCache(userId);
-        const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
-        const candidateInfoListOfSelf = [];
-        for (const candidateId of candidateIdListOfSelf) {
-          const candidateInfo = await getCandidateInfoFromCache(candidateId);
-          const tags = await getMatchTagTitles(candidateId);
-          candidateInfo.tags = tags;
-          candidateInfoListOfSelf.push(candidateInfo);
-        }
+        const myCandidateInfoList = await ifYouAreCandidate(
+          userId,
+          candidateId
+        );
 
         // 把重新整理的名單再次送回給自己的前端
         const responseForSelf = {
           userId,
           candidateId,
           candidateName,
-          candidateInfoList: candidateInfoListOfSelf,
+          candidateInfoList: myCandidateInfoList,
         };
         socket.emit("success-send-like-signal", responseForSelf);
 
@@ -298,31 +306,15 @@ const connectToSocketIO = (webSrv) => {
           `userId#${userId}(${userName}) unlike userId#${unlikeId}(${unlikeName})`
         );
       } else {
-        // 從快取把雙方的 "candidate" 刪除彼此
-        await deleteCandidateOfUser(userId, unlikeId);
-        await deleteCandidateOfUser(unlikeId, userId);
-
-        // 存進雙方的 "never_match" 到快取
-        await saveNeverMatchOfUser(userId, unlikeId);
-        await saveNeverMatchOfUser(unlikeId, userId);
-
         // 更新自己的 candidate list
-        const candidateListOfSelf = await getAllCandidateFromCache(userId);
-        const candidateIdListOfSelf = Object.keys(candidateListOfSelf);
-        const candidateInfoListOfSelf = [];
-        for (const candidateId of candidateIdListOfSelf) {
-          const candidateInfo = await getCandidateInfoFromCache(candidateId);
-          const tags = await getMatchTagTitles(candidateId);
-          candidateInfo.tags = tags;
-          candidateInfoListOfSelf.push(candidateInfo);
-        }
+        const myCandidateInfoList = await ifYouAreCandidate(userId, unlikeId);
 
         // 把重新整理的名單再次送回給自己的前端
         const responseForSelf = {
           userId,
           unlikeId,
           unlikeName,
-          potentialInfoList: candidateInfoListOfSelf,
+          potentialInfoList: myCandidateInfoList,
         };
         socket.emit("send-unlike-signal", responseForSelf);
 
