@@ -28,4 +28,4 @@ chatRouter.post("/chat/allrecord", loadAllChatRecord);
 chatRouter.post("/chat/fuzzysearch", searchChatRecord);
 
 // 輸出路由
-export { chatRouter };
+export default chatRouter;

@@ -16,4 +16,4 @@ matchRouter.post("/match/allusers", suggestCandidateToAllUsers);
 matchRouter.post("/match/newone", suggestCandidateToNewOne);
 
 // 輸出路由
-export { matchRouter };
+export default matchRouter;
