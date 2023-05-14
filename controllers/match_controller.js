@@ -64,6 +64,145 @@ const compareNumbers = (a, b) => {
   return b.tagCount - a.tagCount;
 };
 
+// Function3: 確認對方的候選人清單有沒有自己
+const isMyselfInYourCandidateList = (userCandidatesPair) => {
+  for (const userId in userCandidatesPair) {
+    // 取得使用者的候選人名單
+    let candidateIdList = userCandidatesPair[userId];
+    // console.log("candidateIdList", candidateIdList);
+
+    candidateIdList.forEach((candidateId, index) => {
+      // 取得候選人本身的口袋名單
+      const shortlistOfCandidate = userCandidatesPair[candidateId];
+      // console.log("shortlistOfCandidate", shortlistOfCandidate);
+
+      // 如果對方的口袋名單沒有自己，就把對方從自己的候選人名單刪除
+      if (!shortlistOfCandidate.includes(+userId)) {
+        delete candidateIdList[index]; // 此位置會變成 empty items
+      }
+    });
+
+    // 清掉 array 裡的 empty items
+    userCandidatesPair[userId] = candidateIdList.filter(
+      (candidateId) => candidateId
+    );
+  }
+
+  return userCandidatesPair;
+};
+
+// Function4: 把使用者的候選人名單加上年齡
+const addCandidateAge = async (userCandidatesPair) => {
+  for (const userId in userCandidatesPair) {
+    // 取得使用者的候選人名單
+    const candidateList = userCandidatesPair[userId];
+    for (let i = 0; i < candidateList.length; i++) {
+      const candidateId = candidateList[i];
+
+      // 取得每一個候選人的詳細資訊
+      const candidateInfo = await getUserMatchInfo(candidateId);
+
+      // 取得候選人的年齡
+      const candidateBirthday = `${candidateInfo.birth_year}/${candidateInfo.birth_month}/${candidateInfo.birth_date}`;
+      const candidateAge = getAge(candidateBirthday);
+
+      // 創造 key-value pair: {candidateId: candidateAge}
+      const candidateIdAgePair = {};
+      candidateIdAgePair[candidateId] = candidateAge;
+
+      // 把使用者的候選人名單加上年齡
+      candidateList[i] = candidateIdAgePair;
+    }
+  }
+
+  return userCandidatesPair;
+};
+
+// Function5: 篩選候選人符合自己設定的年齡條件
+const selectCandidateBasedOnAge = async (userCandidatesPair) => {
+  for (const userId in userCandidatesPair) {
+    // 取得使用者希望的年齡區間
+    const desireAgeRange = await getUserDesireAgeRange(userId);
+    // console.log("desireAgeRange", desireAgeRange);
+
+    // 取得使用者的候選人名單
+    const candidateList = userCandidatesPair[userId];
+
+    for (let i = 0; i < candidateList.length; i++) {
+      // 取得候選人的年齡
+      const candidateAge = Object.values(candidateList[i])[0];
+
+      // 如果候選人不在使用者希望的年齡區間，刪除候選人
+      if (
+        candidateAge < desireAgeRange.seek_age_min ||
+        candidateAge > desireAgeRange.seek_age_max
+      ) {
+        delete candidateList[i];
+      }
+    }
+
+    // 清掉 array 裡的 empty items
+    userCandidatesPair[userId] = candidateList.filter((candidate) => candidate);
+  }
+
+  return userCandidatesPair;
+};
+
+// Function6: 列出各個使用者總共的 tag ids
+const getUserTagsPair = async (allUserIds, userTagPair) => {
+  for (let userId of allUserIds) {
+    let tagIds = await getMatchTagIds(userId);
+    tagIds = tagIds.map((tagObj) => tagObj.tag_id);
+    userTagPair[userId] = tagIds;
+  }
+  return userTagPair;
+};
+
+// Function7: 取得使用者的候選人名單，並只留下候選人 id
+const getCandidateIdList = (userCandidatesPair) => {
+  for (const userId in userCandidatesPair) {
+    const candidateIdList = userCandidatesPair[userId].flatMap(
+      (candidate) => +Object.keys(candidate)
+    );
+    // console.log("candidateIdList", candidateIdList);
+
+    // userCandidatesPair 改回原本的格式
+    userCandidatesPair[userId] = candidateIdList;
+  }
+
+  return userCandidatesPair;
+};
+
+// Function8: 把使用者的候選人名單加上相同興趣 tag 數量
+const addCandidateTagCount = (userCandidatesPair, userTagPair) => {
+  for (const userId in userCandidatesPair) {
+    // 取得使用者的候選人名單
+    const candidateIdList = userCandidatesPair[userId];
+
+    candidateIdList.forEach((candidateId, index) => {
+      // 計算有多少個相同的 tag 數量
+      let tagCount = 0;
+
+      // candidate 有哪些 tag_id
+      const candidateTagIds = userTagPair[candidateId];
+      candidateTagIds.forEach((tagId) => {
+        // 如果 candidate 的 tag 有在使用者的 tag list 裡面，count 就加一
+        if (userTagPair[userId].includes(tagId)) {
+          tagCount++;
+        }
+      });
+
+      // 創造 key-value pair: {candidateId: tagCount}
+      const candidate_TagCount_pair = { candidateId, tagCount };
+
+      // 把使用者的候選人名單加上相同的 tag 數量
+      candidateIdList[index] = candidate_TagCount_pair;
+    });
+  }
+
+  return userCandidatesPair;
+};
+
 // ------------------------- middleware 區塊 ------------------------------
 
 // FIXME: 取得所有使用者 id -> 有必要嗎?
@@ -76,185 +215,63 @@ const suggestCandidateToAllUsers = async (req, res) => {
   // console.log("allUserIds", allUserIds);
 
   // Step1: 篩選候選人符合自己設定的性別/性傾向
-  const sex_match_pair = {};
+  let potentialList = {};
   for (let userId of allUserIds) {
-    sex_match_pair[userId] = await preSexMatching(userId, allUserIds);
+    potentialList[userId] = await preSexMatching(userId, allUserIds);
   }
-  // console.log("before: sex_match_pair", sex_match_pair);
+  // console.log("step1-1 potentialList:", potentialList);
 
   // 確認對方的候選人清單有沒有自己
-  for (const userId in sex_match_pair) {
-    // 取得使用者的候選人名單
-    let candidateIdList = sex_match_pair[userId];
-    // console.log("candidateIdList", candidateIdList);
-
-    candidateIdList.forEach((candidateId, index) => {
-      // 取得候選人本身的口袋名單
-      const shortlistOfCandidate = sex_match_pair[candidateId];
-      // console.log("shortlistOfCandidate", shortlistOfCandidate);
-
-      // 如果對方的口袋名單沒有自己，就把對方從自己的候選人名單刪除
-      if (!shortlistOfCandidate.includes(+userId)) {
-        delete candidateIdList[index]; // 此位置會變成 empty items
-      }
-    });
-
-    // 清掉 array 裡的 empty items
-    sex_match_pair[userId] = candidateIdList.filter(
-      (candidateId) => candidateId
-    );
-  }
-  // console.log("after: userId_cadidateId", sex_match_pair);
+  potentialList = isMyselfInYourCandidateList(potentialList);
+  // console.log("step1-2 potentialList:", potentialList);
 
   // 把使用者的候選人名單加上年齡
-  for (const userId in sex_match_pair) {
-    // 取得使用者的候選人名單
-    const candidateList = sex_match_pair[userId];
-    for (let i = 0; i < candidateList.length; i++) {
-      const candidateId = candidateList[i];
-
-      // 取得每一個候選人的詳細資訊
-      const candidateInfo = await getUserMatchInfo(candidateId);
-
-      // 取得候選人的年齡
-      const candidateBirthday = `${candidateInfo.birth_year}/${candidateInfo.birth_month}/${candidateInfo.birth_date}`;
-      const candidateAge = getAge(candidateBirthday);
-
-      // 創造 key-value pair: {candidateId: candidateAge}
-      const candidateIdAgePair = {};
-      candidateIdAgePair[candidateId] = candidateAge;
-
-      // 把使用者的候選人名單加上年齡
-      candidateList[i] = candidateIdAgePair;
-    }
-  }
-
-  // console.log("after add age:", sex_match_pair);
+  potentialList = await addCandidateAge(potentialList);
+  // console.log("step2-0(add age) potentialList:", potentialList);
 
   // Step2: 篩選候選人符合自己設定的年齡條件
-  for (const userId in sex_match_pair) {
-    // 取得使用者希望的年齡區間
-    const desireAgeRange = await getUserDesireAgeRange(userId);
-    // console.log("desireAgeRange", desireAgeRange);
+  potentialList = await selectCandidateBasedOnAge(potentialList);
+  // console.log("step2-1 potentialList:", potentialList);
 
-    // 取得使用者的候選人名單
-    const candidateList = sex_match_pair[userId];
-
-    for (let i = 0; i < candidateList.length; i++) {
-      // 取得候選人的年齡
-      const candidateAge = Object.values(candidateList[i])[0];
-
-      // 如果候選人不在使用者希望的年齡區間，刪除候選人
-      if (
-        candidateAge < desireAgeRange.seek_age_min ||
-        candidateAge > desireAgeRange.seek_age_max
-      ) {
-        delete candidateList[i];
-      }
-    }
-
-    // 清掉 array 裡的 empty items
-    sex_match_pair[userId] = candidateList.filter((candidate) => candidate);
-  }
-
-  // console.log("after 篩掉不在設定年齡裡的人:", sex_match_pair);
+  // 取得使用者的候選人名單，並只留下候選人 id
+  potentialList = getCandidateIdList(potentialList);
+  // console.log("step2-2 potentialList:", potentialList);
 
   // 確認對方的候選人清單有沒有自己
-  for (const userId in sex_match_pair) {
-    // 取得使用者的候選人名單，並只留下候選人 id
-    const candidateIdList = sex_match_pair[userId].flatMap(
-      (candidate) => +Object.keys(candidate)
-    );
-    // console.log("candidateIdList", candidateIdList);
+  potentialList = isMyselfInYourCandidateList(potentialList);
+  // console.log("step2-3 potentialList:", potentialList);
 
-    // sex_match_pair 改回原本的格式
-    sex_match_pair[userId] = candidateIdList;
-  }
-
-  for (const userId in sex_match_pair) {
-    // 取得使用者的候選人名單
-    const candidateIdList = sex_match_pair[userId];
-    // console.log("candidateIdList", candidateIdList);
-
-    candidateIdList.forEach((candidateId, index) => {
-      // 取得候選人本身的口袋名單
-      const shortlistOfCandidate = sex_match_pair[candidateId];
-      // console.log("shortlistOfCandidate", shortlistOfCandidate);
-
-      // 如果對方的口袋名單沒有自己，就把對方從自己的候選人名單刪除
-      if (!shortlistOfCandidate.includes(+userId)) {
-        delete candidateIdList[index]; // 此位置會變成 empty items
-      }
-    });
-
-    // 清掉 array 裡的 empty items
-    sex_match_pair[userId] = candidateIdList.filter(
-      (candidateId) => candidateId
-    );
-  }
-
-  // console.log("最終篩選年齡版本:", sex_match_pair);
+  // 列出各個使用者總共的 tag_id
+  let userTagPair = {};
+  userTagPair = await getUserTagsPair(allUserIds, userTagPair);
+  // console.log("step3-0 userTagPair", userTagPair);
 
   // Step3: 以相同 tag 的數量去排序候選人
-  // 列出各個使用者總共的 tag_id
-  const user_tags_pair = {};
-  for (let userId of allUserIds) {
-    let tagIds = await getMatchTagIds(userId);
-    tagIds = tagIds.map((tagObj) => tagObj.tag_id);
 
-    user_tags_pair[userId] = tagIds;
-  }
-  // console.log("user_tags_pair", user_tags_pair);
-
-  // Step3: 以興趣排序候選人名單
   // 把使用者的候選人名單加上相同興趣 tag 數量
-  for (const userId in sex_match_pair) {
-    // 取得使用者的候選人名單
-    const candidateIdList = sex_match_pair[userId];
-
-    candidateIdList.forEach((candidateId, index) => {
-      // 計算有多少個相同的 tag 數量
-      let tagCount = 0;
-
-      // candidate 有哪些 tag_id
-      const candidateTagIds = user_tags_pair[candidateId];
-      candidateTagIds.forEach((tagId) => {
-        // 如果 candidate 的 tag 有在使用者的 tag list 裡面，count 就加一
-        if (user_tags_pair[userId].includes(tagId)) {
-          tagCount++;
-        }
-      });
-
-      // 創造 key-value pair: {candidateId: tagCount}
-      const candidate_TagCount_pair = { candidateId, tagCount };
-
-      // 把使用者的候選人名單加上相同的 tag 數量
-      candidateIdList[index] = candidate_TagCount_pair;
-    });
-  }
-  // console.log("加上相同的 tag 數量:", sex_match_pair);
+  potentialList = addCandidateTagCount(potentialList, userTagPair);
+  // console.log("step3-1 potentialList", potentialList);
 
   // 依照 tag 數量去排序
-  for (const userId in sex_match_pair) {
+  for (const userId in potentialList) {
     // 取得使用者的候選人名單
-    const candidateIdList = sex_match_pair[userId];
+    const candidateIdList = potentialList[userId];
     candidateIdList.sort(compareNumbers);
   }
-  // console.log("排序過後:", sex_match_pair);
+  // console.log("step3-2 potentialList", potentialList);
 
-  // sex_match_pair 改回原本的格式
-  for (const userId in sex_match_pair) {
+  // potentialList 改回原本的格式
+  for (const userId in potentialList) {
     // 取得使用者的候選人名單，並只留下候選人 id
-    const candidateIdList = sex_match_pair[userId].map(
+    const candidateIdList = potentialList[userId].map(
       (candidate) => candidate.candidateId
     );
     // console.log("userId", userId, "candidateIdList", candidateIdList);
 
-    // sex_match_pair 改回原本的格式
-    sex_match_pair[userId] = candidateIdList;
+    // potentialList 改回原本的格式
+    potentialList[userId] = candidateIdList;
   }
-
-  console.log("sex_match_pair 最終版排序後:", sex_match_pair);
+  // console.log("step3-3 potentialList", potentialList);
 
   // ------------------------- 篩選結束 -------------------------
 
@@ -264,8 +281,8 @@ const suggestCandidateToAllUsers = async (req, res) => {
   await deleteAllRowInTable("user_candidate");
 
   // 存新的所有 "candidate" 到 cache & DB
-  await saveCandidatesToCache(sex_match_pair);
-  await saveCandidatesToDB(sex_match_pair);
+  await saveCandidatesToCache(potentialList);
+  await saveCandidatesToDB(potentialList);
 
   res.json({ data: "Successfully update candidateId list" });
 };
@@ -278,160 +295,41 @@ const suggestCandidateToNewOne = async (req, res) => {
   // console.log("allUserIds", allUserIds);
 
   // Step1: 篩選候選人符合自己設定的性別/性傾向
-  const potentialList = {};
+  let potentialList = {};
   for (let userId of allUserIds) {
     potentialList[userId] = await preSexMatching(userId, allUserIds);
   }
   // console.log("step1-1 potentialList:", potentialList);
 
   // 確認對方的候選人清單有沒有自己
-  for (const userId in potentialList) {
-    // 取得每個使用者的候選人名單
-    let candidateIdList = potentialList[userId];
-    // console.log("candidateIdList", candidateIdList);
-
-    candidateIdList.forEach((candidateId, index) => {
-      // 取得候選人本身的口袋名單
-      const shortlistOfCandidate = potentialList[candidateId];
-      // console.log("shortlistOfCandidate", shortlistOfCandidate);
-
-      // 如果對方的口袋名單沒有自己，就把對方從自己的候選人名單刪除
-      if (!shortlistOfCandidate.includes(+userId)) {
-        delete candidateIdList[index]; // 此位置會變成 empty items
-      }
-    });
-
-    // 清掉 array 裡的 empty items
-    potentialList[userId] = candidateIdList.filter(
-      (candidateId) => candidateId
-    );
-  }
+  potentialList = isMyselfInYourCandidateList(potentialList);
   // console.log("step1-2 potentialList:", potentialList);
 
   // 把使用者的候選人名單加上年齡
-  for (const userId in potentialList) {
-    // 取得使用者的候選人名單
-    const candidateList = potentialList[userId];
-    for (let i = 0; i < candidateList.length; i++) {
-      const candidateId = candidateList[i];
-
-      // 取得每一個候選人的詳細資訊
-      const candidateInfo = await getUserMatchInfo(candidateId);
-
-      // 取得候選人的年齡
-      const candidateBirthday = `${candidateInfo.birth_year}/${candidateInfo.birth_month}/${candidateInfo.birth_date}`;
-      const candidateAge = getAge(candidateBirthday);
-
-      // 創造 key-value pair: {candidateId: candidateAge}
-      const candidateIdAgePair = {};
-      candidateIdAgePair[candidateId] = candidateAge;
-
-      // 把使用者的候選人名單加上年齡
-      candidateList[i] = candidateIdAgePair;
-    }
-  }
+  potentialList = await addCandidateAge(potentialList);
   // console.log("step2-0(add age) potentialList:", potentialList);
 
   // Step2: 篩選候選人符合自己設定的年齡條件
-  for (const userId in potentialList) {
-    // 取得使用者希望的年齡區間
-    const desireAgeRange = await getUserDesireAgeRange(userId);
-    // console.log("desireAgeRange", desireAgeRange);
-
-    // 取得使用者的候選人名單
-    const candidateList = potentialList[userId];
-
-    for (let i = 0; i < candidateList.length; i++) {
-      // 取得候選人的年齡
-      const candidateAge = Object.values(candidateList[i])[0];
-
-      // 如果候選人不在使用者希望的年齡區間，刪除候選人
-      if (
-        candidateAge < desireAgeRange.seek_age_min ||
-        candidateAge > desireAgeRange.seek_age_max
-      ) {
-        delete candidateList[i];
-      }
-    }
-
-    // 清掉 array 裡的 empty items
-    potentialList[userId] = candidateList.filter((candidate) => candidate);
-  }
+  potentialList = await selectCandidateBasedOnAge(potentialList);
   // console.log("step2-1 potentialList:", potentialList);
 
-  //  取得使用者的候選人名單，並只留下候選人 id
-  for (const userId in potentialList) {
-    const candidateIdList = potentialList[userId].flatMap(
-      (candidate) => +Object.keys(candidate)
-    );
-    // console.log("candidateIdList", candidateIdList);
-
-    // potentialList 改回原本的格式
-    potentialList[userId] = candidateIdList;
-  }
+  // 取得使用者的候選人名單，並只留下候選人 id
+  potentialList = getCandidateIdList(potentialList);
   // console.log("step2-2 potentialList:", potentialList);
 
   // 確認對方的候選人清單有沒有自己
-  for (const userId in potentialList) {
-    // 取得使用者的候選人名單
-    const candidateIdList = potentialList[userId];
-    // console.log("candidateIdList", candidateIdList);
-
-    candidateIdList.forEach((candidateId, index) => {
-      // 取得候選人本身的口袋名單
-      const shortlistOfCandidate = potentialList[candidateId];
-      // console.log("shortlistOfCandidate", shortlistOfCandidate);
-
-      // 如果對方的口袋名單沒有自己，就把對方從自己的候選人名單刪除
-      if (!shortlistOfCandidate.includes(+userId)) {
-        delete candidateIdList[index]; // 此位置會變成 empty items
-      }
-    });
-
-    // 清掉 array 裡的 empty items
-    potentialList[userId] = candidateIdList.filter(
-      (candidateId) => candidateId
-    );
-  }
+  potentialList = isMyselfInYourCandidateList(potentialList);
   // console.log("step2-3 potentialList:", potentialList);
 
   // 列出各個使用者總共的 tag_id
-  const user_tags_pair = {};
-  for (let userId of allUserIds) {
-    let tagIds = await getMatchTagIds(userId);
-    tagIds = tagIds.map((tagObj) => tagObj.tag_id);
-
-    user_tags_pair[userId] = tagIds;
-  }
-  // console.log("step3-0 user_tags_pair", user_tags_pair);
+  let userTagPair = {};
+  userTagPair = await getUserTagsPair(allUserIds, userTagPair);
+  // console.log("step3-0 userTagPair", userTagPair);
 
   // Step3: 以相同 tag 的數量去排序候選人
 
   // 把使用者的候選人名單加上相同興趣 tag 數量
-  for (const userId in potentialList) {
-    // 取得使用者的候選人名單
-    const candidateIdList = potentialList[userId];
-
-    candidateIdList.forEach((candidateId, index) => {
-      // 計算有多少個相同的 tag 數量
-      let tagCount = 0;
-
-      // candidate 有哪些 tag_id
-      const candidateTagIds = user_tags_pair[candidateId];
-      candidateTagIds.forEach((tagId) => {
-        // 如果 candidate 的 tag 有在使用者的 tag list 裡面，count 就加一
-        if (user_tags_pair[userId].includes(tagId)) {
-          tagCount++;
-        }
-      });
-
-      // 創造 key-value pair: {candidateId: tagCount}
-      const candidate_TagCount_pair = { candidateId, tagCount };
-
-      // 把使用者的候選人名單加上相同的 tag 數量
-      candidateIdList[index] = candidate_TagCount_pair;
-    });
-  }
+  potentialList = addCandidateTagCount(potentialList, userTagPair);
   // console.log("step3-1 potentialList", potentialList);
 
   // 依照 tag 數量去排序
@@ -539,12 +437,12 @@ const certainUserPursuerList = async (req, res) => {
     pursuerList = await getPursuersFromDB(userid);
   }
 
-  const userPursuertePair = {};
-  userPursuertePair[userid] = pursuerList;
+  const userPursuerPair = {};
+  userPursuerPair[userid] = pursuerList;
 
   const response = { data: [] };
 
-  response.data.push(userPursuertePair);
+  response.data.push(userPursuerPair);
 
   res.status(200).json(response);
   return;
