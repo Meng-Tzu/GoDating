@@ -192,7 +192,7 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
     $innerMsg.attr("class", "text-gray-500").text("哈囉，今天好嗎？");
 
     $innerNameDiv.appendTo($inner2ndDiv);
-    $innerMsg.appendTo($inner2ndDiv);
+    // $innerMsg.appendTo($inner2ndDiv);
 
     // 最外框
     const $outerDiv = $div.clone();
@@ -345,7 +345,7 @@ const createSearchResultDiv = (result) => {
   $searchResultDiv.css("display", "flex").css("flex-direction", "column");
 
   // 更換標題
-  $("#current #more-info h3").text("搜尋結果");
+  $("#current #more-info h3").text("相關搜尋結果");
 
   // 顯示取消圖示
   $("#cross").css("display", "inline");
@@ -543,9 +543,14 @@ let fetchOption = {
 
   if (!userData) {
     // token 錯誤
-    alert("Sorry, you need to sign up / sign in again.");
-    localStorage.removeItem("token");
-    window.location.href = "/login.html";
+    Swal.fire({
+      icon: "warning",
+      title: "您尚未登入喔！",
+      text: "請再嘗試登入 / 註冊",
+    }).then(() => {
+      localStorage.removeItem("token");
+      window.location.href = "/login.html";
+    });
   } else {
     const { id, name, email, image } = userData;
     $("#profile-img").attr("src", `images/${image}`);

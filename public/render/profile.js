@@ -42,9 +42,14 @@ let fetchOption = {
   const userData = await getApi(userApi, fetchOption);
   if (!userData) {
     // token 錯誤
-    alert("Sorry, you need to sign up / sign in again.");
-    localStorage.removeItem("token");
-    window.location.href = "/login.html";
+    Swal.fire({
+      icon: "warning",
+      title: "您尚未登入喔！",
+      text: "請再嘗試登入 / 註冊",
+    }).then(() => {
+      localStorage.removeItem("token");
+      window.location.href = "/login.html";
+    });
   } else {
     const { id, name } = userData;
     $(".user-name").text(name).attr("id", id);
