@@ -93,11 +93,20 @@ $("#login").on("submit", function (e) {
     // 立即執行函式
     (async () => {
       const userData = await getApi(userApi, fetchOption);
-      if (!userData) {
+      if (userData === "Sorry, your input is not correct.") {
         Swal.fire({
           icon: "error",
           title: "輸入錯誤",
           text: "請確認帳號密碼輸入是否正確",
+        });
+
+        userApi = "/api/1.0/user/";
+        return;
+      } else if (userData === "輸入格式錯誤") {
+        Swal.fire({
+          icon: "error",
+          title: "格式輸入錯誤",
+          text: "請確認帳號密碼輸入格式是否正確",
         });
 
         userApi = "/api/1.0/user/";
