@@ -1109,9 +1109,14 @@ $(".logo").click(function (e) {
   $("#cross").css("display", "none");
 });
 
-// 點擊右上個人照人名跳轉到 profile page
+// TODO: 點擊右上個人照人名跳轉到 profile page
 $("#profile").click(function () {
-  window.location.href = "/profile.html";
+  Swal.fire({
+    icon: "info",
+    title: "個人頁面功能待開發",
+    text: "感謝您的耐心等待！",
+  });
+  // window.location.href = "/profile.html";
 });
 
 // 把想配對的 candidate 資訊送給 server 儲存
