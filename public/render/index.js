@@ -345,7 +345,7 @@ const createSearchResultDiv = (result) => {
   $searchResultDiv.css("display", "flex").css("flex-direction", "column");
 
   // 更換標題
-  $("#current #more-info h3").text("搜尋結果");
+  $("#current #more-info h3").text("相關搜尋結果");
 
   // 顯示取消圖示
   $("#cross").css("display", "inline");
