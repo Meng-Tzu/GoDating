@@ -1,0 +1,29 @@
+main {
+  div#login-block {
+    width: 70%;
+
+    div#title {
+      display: flex;
+      justify-content: space-around;
+      h3 {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+    }
+
+    form#login {
+      div.form-group {
+        label {
+          font-size: 1rem;
+        }
+      }
+    }
+    p.text-center {
+      a {
+        color: #e3b04b;
+        cursor: pointer;
+      }
+    }
+  }
+}

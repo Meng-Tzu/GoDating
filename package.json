@@ -1,0 +1,41 @@
+{
+  "name": "websocket",
+  "version": "1.0.0",
+  "description": "This is for learning WebSocket",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Meng-Tzu/WebSocket-Test.git"
+  },
+  "keywords": [
+    "WebSocket",
+    "SocketIO"
+  ],
+  "author": "Meng-Tzu Tsai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Meng-Tzu/WebSocket-Test/issues"
+  },
+  "homepage": "https://github.com/Meng-Tzu/WebSocket-Test#readme",
+  "dependencies": {
+    "@elastic/elasticsearch": "^8.6.0",
+    "argon2": "^0.30.3",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "ioredis": "^5.3.1",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.2.0",
+    "socket.io": "^4.6.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.38.0"
+  }
+}

@@ -1,0 +1,19 @@
+main div#login-block {
+  width: 70%;
+}
+main div#login-block div#title {
+  display: flex;
+  justify-content: space-around;
+}
+main div#login-block div#title h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+main div#login-block form#login div.form-group label {
+  font-size: 1rem;
+}
+main div#login-block p.text-center a {
+  color: #e3b04b;
+  cursor: pointer;
+}/*# sourceMappingURL=style.css.map */
