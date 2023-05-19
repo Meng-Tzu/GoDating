@@ -574,16 +574,37 @@ let fetchOption = {
 
       const { potentialInfoList } = msg;
 
+      // 如果沒有任何推薦的人選
+      if (!potentialInfoList.length) {
+        $("#current-recommend").css("display", "flex");
+        $("#candidate-picture")
+          .attr("src", "images/user_upload.png")
+          .css("background-color", "white");
+        $(".candidate-name").text("目前沒有符合的推薦人選喔！");
+        $("#sex-age").hide();
+        $("#candidate-tags").hide();
+        $("#candidate-intro").hide();
+        $("#choose-btn").hide();
+
+        return;
+      }
+
       // 顯示目前推薦人選
       const currentRecommend = potentialInfoList[0];
       $("#current").css("display", "flex");
       $("#current-recommend").css("display", "flex");
       // $(".next-recommend").css("display", "flex");
       $("#who-like-me").css("display", "block");
-      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#candidate-picture")
+        .attr("src", currentRecommend.main_image)
+        .css("background-color", "none");
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
+      $("#sex-age").show();
+      $("#candidate-tags").show();
+      $("#candidate-intro").show();
+      $("#choose-btn").show();
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -639,16 +660,37 @@ let fetchOption = {
     socket.on("response-all-potential", (msg) => {
       const { potentialInfoList } = msg;
 
+      // 如果沒有任何推薦的人選
+      if (!potentialInfoList.length) {
+        $("#current-recommend").css("display", "flex");
+        $("#candidate-picture")
+          .attr("src", "images/user_upload.png")
+          .css("background-color", "white");
+        $(".candidate-name").text("目前沒有符合的推薦人選喔！");
+        $("#sex-age").hide();
+        $("#candidate-tags").hide();
+        $("#candidate-intro").hide();
+        $("#choose-btn").hide();
+
+        return;
+      }
+
       // 顯示目前推薦人選
       const currentRecommend = potentialInfoList[0];
       $("#current").css("display", "flex");
       $("#current-recommend").css("display", "flex");
       // $(".next-recommend").css("display", "flex");
       $("#who-like-me").css("display", "block");
-      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#candidate-picture")
+        .attr("src", currentRecommend.main_image)
+        .css("background-color", "none");
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
+      $("#sex-age").show();
+      $("#candidate-tags").show();
+      $("#candidate-intro").show();
+      $("#choose-btn").show();
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -846,15 +888,36 @@ let fetchOption = {
 
     // 喜歡後，刪除已選擇過的候選人
     socket.on("success-send-like-signal", (msg) => {
-      const { userId, candidateId, candidateName } = msg;
+      const { userId, candidateId, candidateName, candidateInfoList } = msg;
+
+      // 如果沒有任何推薦的人選
+      if (!candidateInfoList.length) {
+        $("#current-recommend").css("display", "flex");
+        $("#candidate-picture")
+          .attr("src", "images/user_upload.png")
+          .css("background-color", "white");
+        $(".candidate-name").text("目前沒有符合的推薦人選喔！");
+        $("#sex-age").hide();
+        $("#candidate-tags").hide();
+        $("#candidate-intro").hide();
+        $("#choose-btn").hide();
+
+        return;
+      }
 
       // 更新目前推薦人選
-      const currentRecommend = msg.candidateInfoList[0];
+      const currentRecommend = candidateInfoList[0];
       $("#current-recommend").css("display", "flex");
-      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#candidate-picture")
+        .attr("src", currentRecommend.main_image)
+        .css("background-color", "none");
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
+      $("#sex-age").show();
+      $("#candidate-tags").show();
+      $("#candidate-intro").show();
+      $("#choose-btn").show();
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -887,13 +950,34 @@ let fetchOption = {
         potentialInfoList,
       } = msg;
 
+      // 如果沒有任何推薦的人選
+      if (!potentialInfoList.length) {
+        $("#current-recommend").css("display", "flex");
+        $("#candidate-picture")
+          .attr("src", "images/user_upload.png")
+          .css("background-color", "white");
+        $(".candidate-name").text("目前沒有符合的推薦人選喔！");
+        $("#sex-age").hide();
+        $("#candidate-tags").hide();
+        $("#candidate-intro").hide();
+        $("#choose-btn").hide();
+
+        return;
+      }
+
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
       $("#current-recommend").css("display", "flex");
-      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#candidate-picture")
+        .attr("src", currentRecommend.main_image)
+        .css("background-color", "none");
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
+      $("#sex-age").show();
+      $("#candidate-tags").show();
+      $("#candidate-intro").show();
+      $("#choose-btn").show();
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
