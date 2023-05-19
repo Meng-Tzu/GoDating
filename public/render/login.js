@@ -36,6 +36,8 @@ $("#join").click(function (e) {
 
   $("#nickname").css("display", "");
   $("#nickname").children("input").prop("required", true);
+  $("#loginEmail").val("");
+  $("#loginPwd").val("");
 
   const $submitBtn = $("#bnt-login").children("button");
   $submitBtn.text("開始一趟新旅程！");
