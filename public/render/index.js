@@ -192,7 +192,7 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
     $innerMsg.attr("class", "text-gray-500").text("哈囉，今天好嗎？");
 
     $innerNameDiv.appendTo($inner2ndDiv);
-    $innerMsg.appendTo($inner2ndDiv);
+    // $innerMsg.appendTo($inner2ndDiv);
 
     // 最外框
     const $outerDiv = $div.clone();
