@@ -11,6 +11,10 @@ import {
 
 import signInValidator from "../middlewares/sign_in_validator.js";
 import signUpValidator from "../middlewares/sign_up_validator.js";
+import {
+  imageValidator,
+  criteria,
+} from "../middlewares/profile_survey_validator.js";
 
 import { signIn, signUp, verify } from "../controllers/user_controller.js";
 
@@ -37,8 +41,8 @@ userRouter.post("/user/signup", signUpValidator, signUp);
 // 使用者資料驗證
 userRouter.post("/user/verify", verify);
 
-// FIXME: 使用者上傳問卷資料 (必須有 middleware 去驗證 input 格式是正確的)
-userRouter.post("/user/profile", pictureUpload, saveDetailInfo);
+// FIXME: 使用者上傳問卷資料 (沒有 middleware 去驗證照片格式是正確的)
+userRouter.post("/user/profile", pictureUpload, criteria, saveDetailInfo);
 
 // FIXME: 使用者上傳問卷資料 (必須有 middleware 去驗證 input 格式是正確的)
 userRouter.post("/user/tags", saveTags);

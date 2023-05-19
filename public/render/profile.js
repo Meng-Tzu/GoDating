@@ -6,7 +6,7 @@ const getApi = async (url, option) => {
   return response.data;
 };
 
-// Function1: 取得 API 資料
+// FIXME: Function1:  API 資料是否錯誤 (驗證有無錯誤的方式很怪)
 const getError = async (url, option) => {
   let response = await fetch(url, option);
   response = await response.json();
@@ -15,8 +15,14 @@ const getError = async (url, option) => {
     return response.error;
   }
 
-  // FIXME: 格式錯誤 (回覆的方式怪怪的)
+  // 如果輸入格式都沒有錯誤
+  if (!response.errors) {
+    return null;
+  }
+
+  // FIXME: 沒有照片 (回覆的方式怪怪的)
   if (response.errors.length) {
+    console.log("沒有照片");
     return "尚未填寫完畢喔！";
   }
 };
@@ -34,7 +40,6 @@ let fetchOption = {
 // 立即執行函式
 (async () => {
   const userData = await getApi(userApi, fetchOption);
-
   if (!userData) {
     // token 錯誤
     alert("Sorry, you need to sign up / sign in again.");
@@ -46,10 +51,17 @@ let fetchOption = {
   }
 })();
 
+let formData;
 $("#match-info").click(async function () {
-  // TODO: 送出表單時再次驗證
-  console.log("userApi:verify", userApi);
+  // 送出表單時再次驗證
+  fetchOption = {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: "",
+  };
+
   const userData = await getApi(userApi, fetchOption);
+
   if (!userData) {
     // token 錯誤
     alert("Sorry, you need to sign up / sign in again.");
@@ -57,7 +69,7 @@ $("#match-info").click(async function () {
     window.location.href = "/login.html";
   }
 
-  let formData = new FormData();
+  formData = new FormData();
   formData.append("userId", $(".user-name").attr("id"));
   formData.append("picture", $("#picture")[0].files[0]);
   formData.append("birthday", $("#birthday").val());
@@ -70,41 +82,82 @@ $("#match-info").click(async function () {
   formData.append("seekAgeMax", $("#slider-range").slider("values", 1));
   formData.append("selfIntro", $("#self-intro").val());
 
-  // TODO: 把新註冊者詳細資訊存進 DB (驗證是否有照片)
+  // FIXME: 把新註冊者詳細資訊存進 DB (驗證照片錯誤提示沒有出現)
+
+  // 確認 formData 內的資料
+  // for (const pair of formData.entries()) {
+  //   console.log(pair[0], pair[1]);
+  // }
+
   fetchOption.body = formData;
   userApi = "/api/1.0/user/profile";
-  console.log("userApi:profile", userApi);
 
   const error = await getError(userApi, fetchOption);
-  if (error === "尚未填寫完畢喔！") {
-    Swal.fire({
-      icon: "error",
-      title: "尚未填寫完畢喔！",
-    });
-    userApi = "/api/1.0/user/verify";
-    return;
-  } else if (error === "Image is required") {
+  if (error) {
+    if (error === "尚未填寫完畢喔！") {
+      Swal.fire({
+        icon: "error",
+        title: "尚未填寫完畢喔！",
+      });
+      userApi = "/api/1.0/user/verify";
+      return;
+    } else if (error === "File must be an image") {
+      Swal.fire({
+        icon: "error",
+        title: "個人照格式錯誤",
+        text: "僅限上傳 jpg, jpeg, png 格式的照片",
+      });
+      userApi = "/api/1.0/user/verify";
+      return;
+    } else if (error === "Image is required") {
+      Swal.fire({
+        icon: "error",
+        title: "您沒有上傳個人照喔喔喔喔！",
+      });
+      userApi = "/api/1.0/user/verify";
+      return;
+    }
+  }
+
+  // 使者資訊存進資料庫
+  const result = await getApi(userApi, fetchOption);
+  if (result === "error: Image is required.") {
     Swal.fire({
       icon: "error",
       title: "您沒有上傳個人照喔！",
     });
     userApi = "/api/1.0/user/verify";
     return;
-  } else if (error === "File must be an image") {
+  }
+
+  // 取得新註冊者的 candidate list
+  const data = { newuserid: $(".user-name").attr("id") };
+  fetchOption = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: "",
+  };
+  fetchOption.body = JSON.stringify(data);
+
+  const matchApi = "/api/1.0/match/newone";
+  const candidateListOfNewUser = await getApi(matchApi, fetchOption);
+
+  // 配對條件沒有任何人符合，建議更改條件 (刪除使用者詳細資訊)
+  if ("error" in candidateListOfNewUser) {
     Swal.fire({
       icon: "error",
-      title: "個人照格式錯誤",
-      text: "僅限上傳 jpg, jpeg, png 格式的照片",
+      title: candidateListOfNewUser.error,
+      text: "請確認個人資料是否填寫正確，或是放寬篩選條件唷！",
     });
+
     userApi = "/api/1.0/user/verify";
     return;
   }
 
-  // TODO: 無法成功提交
-  console.log("userApi", userApi);
-  await getApi(userApi, fetchOption);
-
-  // 選擇標籤 (與詳細資訊表單合併)
+  // FIXME: 選擇標籤 (等可使用標籤去排權重，再規劃重新排序候選人名單)
   const tagApi = "/api/1.0/user/tags";
   fetchOption = {
     method: "POST",
@@ -122,40 +175,13 @@ $("#match-info").click(async function () {
   fetchOption.body = JSON.stringify(tags);
   await getApi(tagApi, fetchOption);
 
-  // 取得新註冊者的 candidate list
-  const data = { newuserid: $(".user-name").attr("id") };
-  fetchOption = {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: "",
-  };
-  fetchOption.body = JSON.stringify(data);
-
-  const matchApi = "/api/1.0/match/newone";
-  const candidateListOfNewUser = await getApi(matchApi, fetchOption);
-
-  // TODO: 配對條件沒有任何人符合，建議更改條件 (沒有被觸發?) (sweet alert)
-  if ("error" in candidateListOfNewUser) {
-    // alert(candidateListOfNewUser.error);
-    Swal.fire({
-      icon: "error",
-      title: candidateListOfNewUser.error,
-      text: "是否要再更改配對條件？",
-    });
-    return;
-  }
-
-  // TODO: 新註冊者的資料存到 localstorage (sweet alert)
+  // 新註冊者的資料存到 localstorage
   const update = {
     newUserId: candidateListOfNewUser.userId,
     otherUserIdsList: candidateListOfNewUser.potentialListOfCertainUser,
   };
   localStorage.setItem("update", JSON.stringify(update));
 
-  // alert(`${response} \n ${saveTagsStatus} \n 感謝您填寫問卷！`);
   Swal.fire("感謝您填寫問卷！", "馬上進行探索吧！", "success").then(() => {
     window.location.href = "/";
   });

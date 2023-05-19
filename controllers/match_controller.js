@@ -22,6 +22,46 @@ import { getAge } from "../util/util.js";
 
 // -------------------------- Function 區塊 -------------------------------
 
+// TODO: Function0: 排除自己的 id (for unit test)
+// const excludeMyselfId = (myId, allUserIds) => {
+//   return allUserIds.filter((userId) => userId !== myId);
+// };
+
+// TODO: Function0: 以性傾向做篩選 (for unit test)
+// const selectBySexualOrientation = async (myId, userCandidatesPair) => {
+//   const myInfo = await getUserMatchInfo(myId);
+
+//   if (myInfo.orientation_id === 3 || myInfo.orientation_id === 6) {
+//     // 雙性戀, 摸索中 -> 全選
+//   } else if (myInfo.orientation_id === 2) {
+//     // 同性戀
+//     const candidates = [];
+//     for (let userId of userCandidatesPair) {
+//       const candidate = await getUserMatchInfo(userId);
+//       if (candidate.sex_id === myInfo.sex_id) {
+//         candidates.push(userId);
+//       }
+//     }
+//     userCandidatesPair = candidates;
+//   } else if (myInfo.orientation_id === 1) {
+//     // FIXME: 異性戀 (有沒有更聰明的篩選?)
+//     let sex = [1, 2];
+//     // 剔除自己的性別 id
+//     sex = sex.filter((sexId) => sexId !== myInfo.sex_id);
+
+//     const candidates = [];
+//     for (let userId of userCandidatesPair) {
+//       const candidate = await getUserMatchInfo(userId);
+//       if (candidate.sex_id === sex[0]) {
+//         candidates.push(userId);
+//       }
+//     }
+//     userCandidatesPair = candidates;
+//   }
+
+//   return userCandidatesPair;
+// };
+
 // Function1: 篩選其他人的性別是否符合自己的性傾向
 const preSexMatching = async (selfId, allUserIds) => {
   // 排除自己的 id
@@ -360,7 +400,7 @@ const suggestCandidateToNewOne = async (req, res) => {
   const potentialListOfCertainUser = potentialList[newuserid];
 
   // 如果新註冊者的配對條件沒有任何人符合，回傳錯誤
-  if (!potentialListOfCertainUser) {
+  if (!potentialListOfCertainUser.length) {
     res.json({
       data: { error: "抱歉，目前沒有合適的人選推薦給您，要再更改配對條件嗎?" },
     });
@@ -464,10 +504,14 @@ const AllUserCandidateList = async (req, res) => {
   return;
 };
 
+// TODO: 反註解
 export {
   suggestCandidateToAllUsers,
   suggestCandidateToNewOne,
   certainUserCandidateList,
   certainUserPursuerList,
   AllUserCandidateList,
+  // excludeMyselfId,
+  // selectBySexualOrientation,
+  preSexMatching,
 };
