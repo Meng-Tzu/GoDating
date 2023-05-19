@@ -59,6 +59,7 @@ $("#member").click(function (e) {
   $("#background-image").css("background-image", "url(./images/signin.jpg)");
 
   $("#nickname").css("display", "none");
+  $("#loginName").val("");
   $("#nickname").children("input").prop("required", false);
 
   const $submitBtn = $("#bnt-login").children("button");
