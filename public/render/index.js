@@ -8,53 +8,7 @@ const getApi = async (url, option) => {
   return response.data;
 };
 
-// FIXME: Function2: 動態製造 DOM 物件 (create option for user) (整合)
-const createUserOption = (users, elementName) => {
-  // 選擇要當模板的 element tag
-  const $userTemplete = $(`.${elementName}`);
-
-  // 選取要被插入 child 的 parant element
-  const $parent = $(`#${elementName}s`);
-
-  // 依據 group array 的長度，產生多少個選項
-  for (const id in users) {
-    // 複製出一個下拉式選單的 option element tag
-    const $newDom = $userTemplete.clone();
-
-    // 把新的 option 的 value 和 text 改掉
-    $newDom.attr("value", id).text(users[id]).css("display", "inline");
-
-    // 把新的 option 加入 parant element
-    $newDom.appendTo($parent);
-  }
-};
-
-// Function3: 動態製造 DOM 物件 (create options for candidate)
-// const createCandidateOption = (candidates, elementName) => {
-//   // 選擇要當模板的 element tag
-//   const $userTemplete = $(`.templete-${elementName}`);
-
-//   // 選取要被插入 child 的 parant element
-//   const $parent = $(`#${elementName}s`);
-
-//   // 依據 candidates array 的長度，產生多少個選項
-//   for (const candidateId in candidates) {
-//     // 複製出一個下拉式選單的 option element tag
-//     const $newDom = $userTemplete.clone();
-
-//     // 把新的 option 的 value 和 text 改掉
-//     $newDom
-//       .addClass(`${elementName}`)
-//       .attr("value", candidateId)
-//       .text(candidates[candidateId])
-//       .css("display", "inline");
-
-//     // 把新的 option 加入 parant element
-//     $newDom.appendTo($parent);
-//   }
-// };
-
-// Function3: 動態製造 DOM 物件 (create p element for tags)
+// Function2: 動態製造 DOM 物件 (create p element for tags)
 const createTags = (tagList, elementName) => {
   // 移除先前渲染過的 tags，避免重複渲染
   $(`.${elementName}`).remove();
@@ -78,31 +32,7 @@ const createTags = (tagList, elementName) => {
   });
 };
 
-// Function4: 動態製造 DOM 物件 (create option for pursuer)
-// const createPursuerOption = (pursuerId, pursuerName) => {
-//   // 選取要被插入 child 的 parant element
-//   const $parent = $("#pursuers");
-
-//   // 新建 option element
-//   const $option = $("<option>");
-
-//   // 把新的 option 的 value 和 text 改掉
-//   $option
-//     .addClass("pursuer")
-//     .attr("value", pursuerId)
-//     .text(pursuerName)
-//     .css("display", "inline");
-
-//   // 把新的 button 加入 parant element
-//   $option.appendTo($parent);
-// };
-
-// Function5: 動態刪除 DOM 物件 (delete option for candidate)
-// const deleteCandidateOption = (candidateId) => {
-//   $(`.condidate[value="${candidateId}"]`).remove();
-// };
-
-// Function6: 動態製造 DOM 物件 (create div for partner)
+// Function3: 動態製造 DOM 物件 (create div for partner)
 const createPartnerDiv = (roomId, partnerInfo) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#match");
@@ -146,8 +76,8 @@ const createPartnerDiv = (roomId, partnerInfo) => {
   $outerDiv.appendTo($parent);
 };
 
-// FIXME: Function7: 動態製造 DOM 物件 (create div for all partners) (chatIndexId 沒有用??)
-const createAllPartnerDiv = (partners, userIdNicknamePair) => {
+// FIXME: Function4: 動態製造 DOM 物件 (create div for all partners) (chatIndexId 沒有用??)
+const createAllPartnerDiv = (partners) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#match");
 
@@ -211,13 +141,12 @@ const createAllPartnerDiv = (partners, userIdNicknamePair) => {
   }
 };
 
-// Function8: 動態製造 DOM 物件 (create div for next-recommend)
+// Function5: 動態製造 DOM 物件 (create div for next-recommend)
 const createNextRecommendDiv = (candidateInfoList) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#next-recommend-list");
   $parent.css("display", "flex");
 
-  const $templete = $(".templete-next-recommend");
   candidateInfoList.forEach((candidateInfo, index) => {
     // 創新的 element
     const $div = $("<div>");
@@ -247,7 +176,7 @@ const createNextRecommendDiv = (candidateInfoList) => {
   });
 };
 
-// Function9: 動態製造 DOM 物件 (訊息分左右)
+// Function6: 動態製造 DOM 物件 (訊息分左右)
 const createMessageBubble = (msg, ownerId, imgChunks) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#dialogue");
@@ -336,7 +265,7 @@ const createMessageBubble = (msg, ownerId, imgChunks) => {
   }
 };
 
-// Function10: 動態製造 DOM 物件 (create div for search result)
+// Function7: 動態製造 DOM 物件 (create div for search result)
 const createSearchResultDiv = (result) => {
   // 選取要被插入 child 的 parant element
   const $parent = $("#current");
@@ -381,7 +310,7 @@ const createSearchResultDiv = (result) => {
 
   $searchResultDiv.appendTo($parent);
 };
-// Function11: 點擊特定 partner 開啟聊天室
+// Function8: 點擊特定 partner 開啟聊天室
 const openChatroom = async function ($this) {
   const roomId = $this.attr("id");
 
@@ -493,7 +422,7 @@ const openChatroom = async function ($this) {
   }
 };
 
-// Function12: [WebSocket] 使用者上傳照片
+// Function9: [WebSocket] 使用者上傳照片
 const upload = (roomId, partnerId, obj) => {
   console.log("partnerId:", partnerId);
   const files = obj.files;
@@ -506,23 +435,6 @@ const upload = (roomId, partnerId, obj) => {
     console.log("status:", status);
   });
 };
-
-// ------------------------------ 前端渲染區塊 --------------------------------
-
-// 取得所有使用者 id 和 nickname
-const allUsersUrl = `/api/1.0/user/userslist`;
-const userIdNicknamePair = {}; // {id: nickname}
-
-(async () => {
-  // FIXME: 取得所有使用者 (只有在這個立即執行函式會需要 allUsers 嗎?)
-  const idNameList = await getApi(allUsersUrl);
-  idNameList.forEach((userObj) => {
-    userIdNicknamePair[userObj.id] = userObj.nick_name;
-  });
-
-  // 動態產生下拉式選單的選項
-  createUserOption(userIdNicknamePair, "user");
-})();
 
 // --------------------------- WebSocket 區塊 --------------------------------
 
@@ -577,6 +489,18 @@ let fetchOption = {
     socket.on("user-connect", async (msg) => {
       console.log("open connection to server");
 
+      // 產生已配對成功的 partner 有誰
+      const partnersUrl = `/api/1.0/user/partner`;
+      let fetchOption = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "",
+      };
+      fetchOption.body = JSON.stringify({ userid: msg.id });
+      const userPartnerList = await getApi(partnersUrl, fetchOption);
+      const certainPartnerList = userPartnerList[0];
+      createAllPartnerDiv(certainPartnerList);
+
       const { potentialInfoList } = msg;
 
       // 如果沒有任何推薦的人選
@@ -588,6 +512,7 @@ let fetchOption = {
         $(".candidate-name").text("目前沒有符合的推薦人選喔！");
         $("#sex-age").hide();
         $("#candidate-tags").hide();
+        $("#intro-title").hide();
         $("#candidate-intro").hide();
         $("#choose-btn").hide();
 
@@ -608,6 +533,7 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       $("#sex-age").show();
       $("#candidate-tags").show();
+      $("#intro-title").show();
       $("#candidate-intro").show();
       $("#choose-btn").show();
       if (currentRecommend.sex == "女性") {
@@ -634,32 +560,6 @@ let fetchOption = {
       const nextRecommend = potentialInfoList.slice(1);
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
-
-      // 取得特定使用者的候選人名單
-      const candidatesUrl = `/api/1.0/user/candidate`;
-      const pursuersUrl = `/api/1.0/user/pursuer`;
-      const partnersUrl = `/api/1.0/user/partner`;
-      let fetchOption = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: "",
-      };
-      fetchOption.body = JSON.stringify({ userid: msg.id });
-
-      const userCandidateList = await getApi(candidatesUrl, fetchOption);
-      const userPursuerList = await getApi(pursuersUrl, fetchOption);
-      const userPartnerList = await getApi(partnersUrl, fetchOption);
-
-      // FIXME: 動態產生下拉式選單的選項 (改用 socketIO 取得資料)
-      (() => {
-        // 取得該連線者的候選人名單
-        const certainCandidateList = userCandidateList[0][msg.id];
-        const certainPursuerList = userPursuerList[0][msg.id];
-        const certainPartnerList = userPartnerList[0];
-
-        // 產生已配對成功的 partner 有誰
-        createAllPartnerDiv(certainPartnerList, userIdNicknamePair);
-      })();
     });
 
     socket.on("response-all-potential", (msg) => {
@@ -674,6 +574,7 @@ let fetchOption = {
         $(".candidate-name").text("目前沒有符合的推薦人選喔！");
         $("#sex-age").hide();
         $("#candidate-tags").hide();
+        $("#intro-title").hide();
         $("#candidate-intro").hide();
         $("#choose-btn").hide();
 
@@ -694,6 +595,7 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       $("#sex-age").show();
       $("#candidate-tags").show();
+      $("#intro-title").show();
       $("#candidate-intro").show();
       $("#choose-btn").show();
       if (currentRecommend.sex == "女性") {
@@ -904,6 +806,7 @@ let fetchOption = {
         $(".candidate-name").text("目前沒有符合的推薦人選喔！");
         $("#sex-age").hide();
         $("#candidate-tags").hide();
+        $("#intro-title").hide();
         $("#candidate-intro").hide();
         $("#choose-btn").hide();
 
@@ -921,6 +824,7 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       $("#sex-age").show();
       $("#candidate-tags").show();
+      $("#intro-title").show();
       $("#candidate-intro").show();
       $("#choose-btn").show();
       if (currentRecommend.sex == "女性") {
@@ -964,6 +868,7 @@ let fetchOption = {
         $(".candidate-name").text("目前沒有符合的推薦人選喔！");
         $("#sex-age").hide();
         $("#candidate-tags").hide();
+        $("#intro-title").hide();
         $("#candidate-intro").hide();
         $("#choose-btn").hide();
 
@@ -981,6 +886,7 @@ let fetchOption = {
         .attr("id", currentRecommend.id);
       $("#sex-age").show();
       $("#candidate-tags").show();
+      $("#intro-title").show();
       $("#candidate-intro").show();
       $("#choose-btn").show();
       if (currentRecommend.sex == "女性") {
@@ -1184,34 +1090,7 @@ $("#btn-text").click(function (e) {
   $("#message").val("");
 });
 
-// FIXME: (舊的)上傳圖片 (改成上傳到 S3)
-// const $picture = $("#picture");
-
-// $("#btn-file").click(function (e) {
-//   e.preventDefault();
-
-//   if (socket === null) {
-//     alert("Please connect first");
-//     return;
-//   }
-
-//   // 取得網址的 params
-//   const params = new URLSearchParams(window.location.search);
-//   const roomId = params.get("room");
-
-//   if (!roomId) {
-//     alert("You have to get a chatroom id");
-//     return;
-//   }
-
-//   const partnerId = +$(".other-side").attr("id");
-
-//   console.log("$picture[0]", $picture[0]);
-
-// upload(roomId, partnerId, $picture[0]);
-// });
-
-// 只要一選擇照片就上傳
+// FIXME: 只要一選擇照片就上傳 (改成上傳到 S3)
 $("#picture-upload").on("change", function (e) {
   if (socket === null) {
     alert("Please connect first");
