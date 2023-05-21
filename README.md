@@ -60,7 +60,7 @@ A dating website that provides personalized recommendation system, real-time mes
 
 [(Back to top)](#godating)
 
-![MySQL Schema](https://mengtzu.site/images/architecture.jpg)
+![Architecture](./doc/architecture.jpg)
 
 ## Database Schema
 
@@ -70,7 +70,7 @@ A dating website that provides personalized recommendation system, real-time mes
 
 - user information
 
-  ![MySQL Schema](https://mengtzu.site/images/mysql_schema.jpg)
+  ![MySQL Schema](./doc/mysql_schema.jpg)
 
 ### Elasticsearch
 
@@ -100,13 +100,13 @@ A dating website that provides personalized recommendation system, real-time mes
 
 [(Back to top)](#godating)
 
-- Interest-based Recommendations: Refine recommendation system, prioritizing matches based on users' shared interests. Provide users with even more accurate and tailored suggestions.
+- **Interest-based Recommendations** : Refine recommendation system, prioritizing matches based on users' shared interests. Provide users with even more accurate and tailored suggestions.
 
-- Customizable Filtering Criteria: Allow users to change their preferences to discover more potential candidates.
+- **Customizable Filtering Criteria** : Allow users to change their preferences to discover more potential candidates.
 
-- Proximity-based Match Discovery: Enables users to explore potential individuals who share a geographical proximity and may have mutual interest.
+- **Proximity-based Match Discovery** : Enables users to explore potential individuals who share a geographical proximity and may have mutual interest.
 
-- Diversified Sexual Orientation Options: Expand the range of sexual orientation options in the questionnaire survey to supports users in finding compatible partners.
+- **Diversified Sexual Orientation Options** : Expand the range of sexual orientation options in the questionnaire survey to supports users in finding compatible partners.
 
 ## Contact Information
 
