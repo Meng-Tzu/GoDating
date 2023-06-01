@@ -135,10 +135,7 @@ header {
 main {
   display: flex;
   flex-wrap: wrap;
-  // min-height: 90vh;
-  max-height: calc(
-    100vh - var(--header-height)
-  ); /* adjust this value based on the height of your header */
+  height: 100vh;
 
   section#match {
     flex: 1 1 150px;
@@ -225,6 +222,7 @@ main {
     div#current-recommend {
       margin: 2rem 0;
       width: 50%;
+      min-height: 480px;
       max-height: 80vh;
       // border: 1px solid gray;
       display: flex;
