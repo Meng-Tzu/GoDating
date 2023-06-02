@@ -178,7 +178,7 @@ $("#match-info").click(async function () {
     Swal.fire({
       icon: "error",
       title: candidateListOfNewUser.error,
-      text: "請確認生日日期是否填寫正確，或是放寬篩選條件唷！",
+      text: "請確認生日日期是否小於 18 歲，或是放寬篩選條件唷！",
     });
 
     userApi = "/api/1.0/user/verify";
