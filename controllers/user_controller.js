@@ -242,7 +242,7 @@ const saveDetailInfo = async (req, res) => {
 
   // 檢查圖片是否有填
   if (!picture) {
-    res.status(403).json({ data: "error: Image is required." });
+    res.status(400).json({ data: "error: Image is required." });
     return;
   } else {
     const pictureName = picture[0].filename;

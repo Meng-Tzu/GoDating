@@ -3,28 +3,15 @@ const getApi = async (url, option) => {
   let response = await fetch(url, option);
   response = await response.json();
 
-  return response.data;
-};
-
-// FIXME: Function1:  API 資料是否錯誤 (驗證有無錯誤的方式很怪)
-const getError = async (url, option) => {
-  let response = await fetch(url, option);
-  response = await response.json();
-
   if (response.error) {
     return response.error;
   }
 
-  // 如果輸入格式都沒有錯誤
-  if (!response.errors) {
-    return null;
+  if (response.errors) {
+    return response.errors[0].msg;
   }
 
-  // FIXME: 沒有照片 (回覆的方式怪怪的)
-  if (response.errors.length) {
-    console.log("沒有照片");
-    return "尚未填寫完畢喔！";
-  }
+  return response.data;
 };
 
 // 從 JWT token 取得使用者 id 去做 socketIO 連線
@@ -97,39 +84,75 @@ $("#match-info").click(async function () {
   fetchOption.body = formData;
   userApi = "/api/1.0/user/profile";
 
-  const error = await getError(userApi, fetchOption);
-  if (error) {
-    if (error === "尚未填寫完畢喔！") {
-      Swal.fire({
-        icon: "error",
-        title: "尚未填寫完畢喔！",
-      });
-      userApi = "/api/1.0/user/verify";
-      return;
-    } else if (error === "File must be an image") {
-      Swal.fire({
-        icon: "error",
-        title: "個人照格式錯誤",
-        text: "僅限上傳 jpg, jpeg, png 格式的照片",
-      });
-      userApi = "/api/1.0/user/verify";
-      return;
-    } else if (error === "Image is required") {
-      Swal.fire({
-        icon: "error",
-        title: "您沒有上傳個人照喔喔喔喔！",
-      });
-      userApi = "/api/1.0/user/verify";
-      return;
-    }
-  }
-
   // 使者資訊存進資料庫
   const result = await getApi(userApi, fetchOption);
   if (result === "error: Image is required.") {
     Swal.fire({
       icon: "error",
       title: "您沒有上傳個人照喔！",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (result === "birthday is required.") {
+    Swal.fire({
+      icon: "error",
+      title: "尚未填寫完畢喔！",
+      text: "請選擇生日日期",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (result === "sexId is required.") {
+    Swal.fire({
+      icon: "error",
+      title: "尚未填寫完畢喔！",
+      text: "請選擇性別",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (result === "orientationId is required.") {
+    Swal.fire({
+      icon: "error",
+      title: "尚未填寫完畢喔！",
+      text: "請選擇性傾向",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (result === "seeking min-age is required.") {
+    Swal.fire({
+      icon: "error",
+      title: "尚未填寫完畢喔！",
+      text: "請選擇尋找的年齡範圍",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (result === "seeking max-age is required.") {
+    Swal.fire({
+      icon: "error",
+      title: "尚未填寫完畢喔！",
+      text: "請選擇尋找的年齡範圍",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (result === "selfIntro is required.") {
+    Swal.fire({
+      icon: "error",
+      title: "尚未填寫完畢喔！",
+      text: "請填寫自我介紹",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (result === "File must be an image") {
+    Swal.fire({
+      icon: "error",
+      title: "個人照格式錯誤",
+      text: "僅限上傳 jpg, jpeg, png 格式的照片",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (result === "Image is required") {
+    Swal.fire({
+      icon: "error",
+      title: "您沒有上傳個人照喔喔喔喔！",
     });
     userApi = "/api/1.0/user/verify";
     return;
@@ -155,7 +178,7 @@ $("#match-info").click(async function () {
     Swal.fire({
       icon: "error",
       title: candidateListOfNewUser.error,
-      text: "請確認個人資料是否填寫正確，或是放寬篩選條件唷！",
+      text: "請確認生日日期是否填寫正確，或是放寬篩選條件唷！",
     });
 
     userApi = "/api/1.0/user/verify";
