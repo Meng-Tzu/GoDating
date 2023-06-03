@@ -36,12 +36,12 @@ const criteria = [
   check("seekAgeMin")
     .exists()
     .notEmpty()
-    .withMessage("seekAgeMin is required.")
+    .withMessage("seeking min-age is required.")
     .bail(),
   check("seekAgeMax")
     .exists()
     .notEmpty()
-    .withMessage("seekAgeMax is required.")
+    .withMessage("seeking max-age is required.")
     .bail(),
   check("selfIntro")
     .exists()
@@ -49,16 +49,18 @@ const criteria = [
     .withMessage("selfIntro is required.")
     .bail(),
   (req, res, next) => {
-    if (
-      req.body.sexId === "undefined" ||
-      req.body.orientationId === "undefined"
-    ) {
-      console.log("sexId or orientationId null");
-      return res.status(400).json({ error: "尚未填寫完畢喔！" });
-    }
     const errors = validationResult(req);
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
+
+    if (req.body.sexId === "undefined") {
+      res.status(400).json({ error: "sexId is required." });
+      return;
+    } else if (req.body.orientationId === "undefined") {
+      res.status(400).json({ error: "orientationId is required." });
+      return;
+    }
+
     next();
   },
 ];

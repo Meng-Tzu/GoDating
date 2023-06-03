@@ -366,15 +366,17 @@ const openChatroom = async function ($this) {
     createTags(tagList, "tag");
   });
 
-  // 顯示出聊天室窗
+  // FIXME: 顯示出聊天室窗 (已經 "show" 了，為什麼還要改成 "flex")
   $("#connection").css("display", "none");
   $("#short-list").css("display", "none");
   $("#who-like-me").css("display", "none");
   $("#current-recommend").css("display", "none");
   $("#next-recommend-list").css("display", "none");
   $(".next-recommend").remove();
+  $("#chat-block").show();
   $("#title").css("display", "flex");
   $("#dialogue").css("display", "flex");
+  // $("#pass-msg").css("display", "flex");
   $("#partner-info").css("display", "block");
   $(".other-side").text(partnerName).attr("id", partnerId);
   $("#text-msg").css("display", "flex");
@@ -467,6 +469,7 @@ let fetchOption = {
     const { id, name, email, image } = userData;
     $("#profile-img").attr("src", `images/${image}`);
     $(".user-name").text(name).attr("id", id);
+    $("#chat-block").hide();
 
     // 建立一個 io 物件(?)，並連上 SocketIO server
     socket = io();
@@ -999,9 +1002,7 @@ $(".logo").click(function (e) {
   // 隱藏聊天室窗
   $("#connection").css("display", "none");
   $("#short-list").css("display", "block");
-  $("#title").css("display", "none");
-  $("#dialogue").css("display", "none");
-  $("#text-msg").css("display", "none");
+  $("#chat-block").hide();
   $("#picture-msg").css("display", "none");
   $("#current h3").text("猜你會喜歡...");
   $("#partner-info").css("display", "none");

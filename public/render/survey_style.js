@@ -19,6 +19,7 @@ $("#picture").change(function () {
 // 生日設定
 $("#example2").calendar({
   type: "date",
+  maxDate: new Date(),
 });
 
 // 個性化標籤設定
