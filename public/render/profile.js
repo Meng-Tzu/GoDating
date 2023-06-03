@@ -27,7 +27,7 @@ let fetchOption = {
 // 立即執行函式
 (async () => {
   const userData = await getApi(userApi, fetchOption);
-  if (!userData) {
+  if (userData === "Wrong token.") {
     // token 錯誤
     Swal.fire({
       icon: "warning",
