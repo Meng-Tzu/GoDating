@@ -358,6 +358,7 @@ const connectToSocketIO = (webSrv) => {
           userId,
           unlikeId,
           unlikeName,
+          pursuerList: {},
           potentialInfoList: myCandidateInfoList,
         };
         socket.emit("send-unlike-signal", responseForSelf);

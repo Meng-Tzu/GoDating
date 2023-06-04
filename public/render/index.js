@@ -524,7 +524,7 @@ let fetchOption = {
 
       // 顯示目前推薦人選
       const currentRecommend = potentialInfoList[0];
-      if (currentRecommend.id in pursuerList) {
+      if (Object.keys(pursuerList).length) {
         $("#like-signal").show();
       } else {
         $("#like-signal").hide();
@@ -592,7 +592,7 @@ let fetchOption = {
 
       // 顯示目前推薦人選
       const currentRecommend = potentialInfoList[0];
-      if (currentRecommend.id in pursuerList) {
+      if (Object.keys(pursuerList).length) {
         $("#like-signal").show();
       } else {
         $("#like-signal").hide();
@@ -691,7 +691,7 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
-      if (currentRecommend.id in pursuerList) {
+      if (Object.keys(pursuerList).length) {
         $("#like-signal").show();
       } else {
         $("#like-signal").hide();
@@ -757,7 +757,7 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
-      if (currentRecommend.id in pursuerList) {
+      if (Object.keys(pursuerList).length) {
         $("#like-signal").show();
       } else {
         $("#like-signal").hide();
@@ -907,7 +907,7 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
-      if (currentRecommend.id in pursuerList) {
+      if (Object.keys(pursuerList).length) {
         $("#like-signal").show();
       } else {
         $("#like-signal").hide();
@@ -954,7 +954,7 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
-      if (currentRecommend.id in pursuerList) {
+      if (Object.keys(pursuerList).length) {
         $("#like-signal").show();
       } else {
         $("#like-signal").hide();
