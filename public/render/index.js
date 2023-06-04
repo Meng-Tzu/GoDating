@@ -504,7 +504,7 @@ let fetchOption = {
       const certainPartnerList = userPartnerList[0];
       createAllPartnerDiv(certainPartnerList);
 
-      const { potentialInfoList } = msg;
+      const { pursuerList, potentialInfoList } = msg;
 
       // 如果沒有任何推薦的人選
       if (!potentialInfoList.length) {
@@ -524,6 +524,12 @@ let fetchOption = {
 
       // 顯示目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (currentRecommend.id in pursuerList) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current").css("display", "flex");
       $("#current-recommend").css("display", "flex");
       // $(".next-recommend").css("display", "flex");
@@ -566,7 +572,7 @@ let fetchOption = {
     });
 
     socket.on("response-all-potential", (msg) => {
-      const { potentialInfoList } = msg;
+      const { pursuerList, potentialInfoList } = msg;
 
       // 如果沒有任何推薦的人選
       if (!potentialInfoList.length) {
@@ -586,6 +592,12 @@ let fetchOption = {
 
       // 顯示目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (currentRecommend.id in pursuerList) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current").css("display", "flex");
       $("#current-recommend").css("display", "flex");
       // $(".next-recommend").css("display", "flex");
@@ -673,11 +685,18 @@ let fetchOption = {
 
     // 主動配對成功
     socket.on("success-match", async (msg) => {
-      const { userId, partnerInfo, roomId, potentialInfoList } = msg;
+      const { userId, partnerInfo, roomId, pursuerList, potentialInfoList } =
+        msg;
       createPartnerDiv(roomId, partnerInfo);
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (currentRecommend.id in pursuerList) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
       $(".candidate-name")
@@ -733,10 +752,17 @@ let fetchOption = {
 
     // 新增誰喜歡我的下拉選單
     socket.on("who-like-me", (msg) => {
-      const { userId, pursuerId, pursuerName, potentialInfoList } = msg;
+      const { userId, pursuerId, pursuerName, pursuerList, potentialInfoList } =
+        msg;
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (currentRecommend.id in pursuerList) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
       $(".candidate-name")
@@ -859,6 +885,7 @@ let fetchOption = {
         unlikeId,
         unlikeName,
         isPursuerExist,
+        pursuerList,
         potentialInfoList,
       } = msg;
 
@@ -880,6 +907,12 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (currentRecommend.id in pursuerList) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current-recommend").css("display", "flex");
       $("#candidate-picture")
         .attr("src", currentRecommend.main_image)
@@ -916,16 +949,17 @@ let fetchOption = {
 
     // 被不喜歡後，刪掉該推薦者人
     socket.on("send-be-unlike-signal", (msg) => {
-      const {
-        userId,
-        unlikeId,
-        unlikeName,
-        isPursuerExist,
-        potentialInfoList,
-      } = msg;
+      const { userId, unlikeId, unlikeName, pursuerList, potentialInfoList } =
+        msg;
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (currentRecommend.id in pursuerList) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
       $(".candidate-name")

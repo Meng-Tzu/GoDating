@@ -50,12 +50,13 @@ const getPotentialInfoList = async (id) => {
   const potentialInfoList = [];
   for (const potentialId of integratedIdList) {
     const potentialInfo = await getCandidateInfoFromCache(potentialId);
+    potentialInfo.id = potentialId;
     const tags = await getMatchTagTitles(potentialId);
     potentialInfo.tags = tags;
     potentialInfoList.push(potentialInfo);
   }
 
-  return potentialInfoList;
+  return { pursuerList, candidateIdList, potentialInfoList };
 };
 
 // Function2: check if you are my candidate not pursuer
@@ -150,7 +151,9 @@ const connectToSocketIO = (webSrv) => {
 
       const response = {
         id,
-        potentialInfoList: myPotentialInfoList,
+        pursuerList: myPotentialInfoList.pursuerList,
+        candidateIdList: myPotentialInfoList.candidateIdList,
+        potentialInfoList: myPotentialInfoList.potentialInfoList,
       };
 
       // 新註冊者資訊，渲染到符合條件的其他使用者的「猜你會喜歡」
@@ -169,7 +172,7 @@ const connectToSocketIO = (webSrv) => {
           const responseForOtherSide = {
             userId: otherUserId,
             newUserId,
-            potentialInfoList: yourPotentialInfoList,
+            potentialInfoList: yourPotentialInfoList.potentialInfoList,
           };
           connections[otherUserId].socket.emit(
             "new-user-added",
@@ -188,7 +191,9 @@ const connectToSocketIO = (webSrv) => {
       const myPotentialInfoList = await getPotentialInfoList(userId);
 
       const response = {
-        potentialInfoList: myPotentialInfoList,
+        pursuerList: myPotentialInfoList.pursuerList,
+        candidateIdList: myPotentialInfoList.candidateIdList,
+        potentialInfoList: myPotentialInfoList.potentialInfoList,
       };
 
       socket.emit("response-all-potential", response);
@@ -229,7 +234,9 @@ const connectToSocketIO = (webSrv) => {
             userId: candidateId,
             pursuerId: userId,
             pursuerName: userName,
-            potentialInfoList: yourPotentialInfoList,
+            pursuerList: yourPotentialInfoList.pursuerList,
+            candidateIdList: yourPotentialInfoList.candidateIdList,
+            potentialInfoList: yourPotentialInfoList.potentialInfoList,
           };
           connections[candidateId].socket.emit(
             "who-like-me",
@@ -282,7 +289,9 @@ const connectToSocketIO = (webSrv) => {
           userId,
           partnerInfo,
           roomId,
-          potentialInfoList: myPotentialInfoList,
+          pursuerList: myPotentialInfoList.pursuerList,
+          candidateIdList: myPotentialInfoList.candidateIdList,
+          potentialInfoList: myPotentialInfoList.potentialInfoList,
         };
 
         // 傳給自己
@@ -331,7 +340,9 @@ const connectToSocketIO = (webSrv) => {
           userId,
           unlikeId,
           unlikeName,
-          potentialInfoList: myPotentialInfoList,
+          pursuerList: myPotentialInfoList.pursuerList,
+          candidateIdList: myPotentialInfoList.candidateIdList,
+          potentialInfoList: myPotentialInfoList.potentialInfoList,
         };
         socket.emit("send-unlike-signal", responseForSelf);
 
@@ -365,7 +376,9 @@ const connectToSocketIO = (webSrv) => {
             userId: unlikeId,
             unlikeId: userId,
             unlikeName: userName,
-            potentialInfoList: yourPotentialInfoList,
+            pursuerList: yourPotentialInfoList.pursuerList,
+            candidateIdList: yourPotentialInfoList.candidateIdList,
+            potentialInfoList: yourPotentialInfoList.potentialInfoList,
           };
           connections[unlikeId].socket.emit(
             "send-be-unlike-signal",
