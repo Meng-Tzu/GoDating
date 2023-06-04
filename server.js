@@ -199,9 +199,13 @@ const connectToSocketIO = (webSrv) => {
       socket.emit("response-all-potential", response);
     });
 
-    // 監聽到使用者喜歡候選人 (和配對成功的 socket.emit 合併)
+    // 監聽到使用者喜歡候選人
     socket.on("desired-candidate", async (msg) => {
       const { userId, userName, candidateId, candidateName } = msg;
+
+      // 確認目前推薦者是否已經是 partner (發生在使用者快速重複按喜歡)
+      const partnerInfo = await getPartnerOfUser(userId, candidateId);
+      if (partnerInfo) return;
 
       // 確認目前推薦者是否為使用者的 pursuer
       const isPursuer = await getWhoLikeMeOfSelf(userId, candidateId);
@@ -248,6 +252,10 @@ const connectToSocketIO = (webSrv) => {
           `userId#${userId}(${userName}) like userId#${candidateId}(${candidateName})`
         );
       } else {
+        // 先快速把彼此存入快取的 partner info 內
+        await savePartnerOfUser(userId, candidateId, null, null, null, null);
+        await savePartnerOfUser(candidateId, userId, null, null, null, null);
+
         // 從 cache 把對方從自己的 "who_like_me" 刪除
         await deletePursuerOfUser(userId, candidateId);
 

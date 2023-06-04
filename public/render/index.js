@@ -1,3 +1,4 @@
+$("#loading").hide();
 // ----------------------- Function 區塊 --------------------------
 
 // Function1: 取得 API 資料
@@ -699,9 +700,16 @@ let fetchOption = {
 
       $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#loading").hide();
+      $("#front-cover").show();
       $(".candidate-name")
+        .show()
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
+      $("#sex-age").show();
+      $("#current-recommend-detail-info").show();
+      $("#choose-btn").show();
+
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -739,7 +747,6 @@ let fetchOption = {
       const { userId, partnerInfo, roomId } = msg;
       createPartnerDiv(roomId, partnerInfo);
 
-      // alert(`與 ${partnerInfo.nick_name} 成功配對！`);
       Swal.fire({
         position: "top",
         icon: "success",
@@ -765,9 +772,16 @@ let fetchOption = {
 
       $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#loading").hide();
+      $("#front-cover").show();
       $(".candidate-name")
+        .show()
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
+      $("#sex-age").show();
+      $("#current-recommend-detail-info").show();
+      $("#choose-btn").show();
+
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -848,14 +862,19 @@ let fetchOption = {
       $("#candidate-picture")
         .attr("src", currentRecommend.main_image)
         .css("background-color", "none");
+      $("#loading").hide();
+      $("#front-cover").show();
       $(".candidate-name")
+        .show()
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
       $("#sex-age").show();
+      $("#current-recommend-detail-info").show();
       $("#candidate-tags").show();
       $("#intro-title").show();
       $("#candidate-intro").show();
       $("#choose-btn").show();
+
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -917,14 +936,19 @@ let fetchOption = {
       $("#candidate-picture")
         .attr("src", currentRecommend.main_image)
         .css("background-color", "none");
+      $("#loading").hide();
+      $("#front-cover").show();
       $(".candidate-name")
+        .show()
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
       $("#sex-age").show();
       $("#candidate-tags").show();
       $("#intro-title").show();
       $("#candidate-intro").show();
+      $("#current-recommend-detail-info").show();
       $("#choose-btn").show();
+
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -1061,8 +1085,13 @@ $("#profile").click(function () {
 });
 
 // 把想配對的 candidate 資訊送給 server 儲存
-$("#btn-like").click(function (e) {
-  e.preventDefault();
+$("#btn-like").click(function () {
+  $("#loading").show();
+  $("#front-cover").hide();
+  $(".candidate-name").hide();
+  $("#sex-age").hide();
+  $("#current-recommend-detail-info").hide();
+  $("#choose-btn").hide();
 
   if (socket === null) {
     alert("Please connect first");
@@ -1080,8 +1109,13 @@ $("#btn-like").click(function (e) {
 });
 
 // 不喜歡對方
-$("#unlike").click(function (e) {
-  e.preventDefault();
+$("#unlike").click(function () {
+  $("#loading").show();
+  $("#front-cover").hide();
+  $(".candidate-name").hide();
+  $("#sex-age").hide();
+  $("#current-recommend-detail-info").hide();
+  $("#choose-btn").hide();
 
   if (socket === null) {
     alert("Please connect first");
