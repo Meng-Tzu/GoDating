@@ -80,11 +80,14 @@
     </header>
 
     <div id="survey-container">
-      <div id="survey-form">
-        <h1 id="title">讓我們多了解你/妳 . . .</h1>
+      <div id="survey-form" >
+        <div id="loading"></div>
+        
+        <div id="content" style="display: none;">
+          <h1 id="title">讓我們多了解你/妳 . . .</h1>
         <!-- 上傳照片 -->
         <div class="container">
-          <label id="email-label" class="row-label" for="email">個人照上傳</label>
+          <label id="picture-label" class="row-label">個人照上傳</label>
           <div class="avatar-upload">
             <div class="avatar-edit">
                 <input type='file' id="picture" accept=".png, .jpg, .jpeg" required/>
@@ -196,7 +199,7 @@
               <option value="17">看電影</option>
           </select>
     
-     <div x-data="dropdown()" x-init="loadOptions()" class="w-full md:w-1/2 flex flex-col items-center h-64 mx-auto">
+     <div id="drop-down-menu" x-data="dropdown()" x-init="loadOptions()" class="w-full md:w-1/2 flex flex-col items-center h-64 mx-auto">
         <form>
             <input id="tags-selected" name="values" type="hidden" x-bind:value="selectedValues()">
             <div class="inline-block relative w-64">
@@ -292,6 +295,8 @@
         <!-- submit button -->
         <button id="match-info" type="submit">提交</button>
       </div>
+        </div>
+        
     </div>
   </body>
   <script

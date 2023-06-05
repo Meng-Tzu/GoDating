@@ -18,6 +18,7 @@ import {
   certainUserPartnerList,
   saveDetailInfo,
   saveTags,
+  getDetailInfo,
 } from "../controllers/user_controller.js";
 
 import {
@@ -53,6 +54,9 @@ userRouter.post("/user/survey", pictureUpload, criteria, saveDetailInfo);
 userRouter.post("/user/tags", saveTags);
 
 // FIXME: 所有使用者名單(需要增加權限管理)
+userRouter.post("/user/detailinfo", getDetailInfo);
+
+// FIXME: 所有使用者名單 (post 改成 get)
 userRouter.get("/user/userslist", getUserIdName);
 
 // FIXME: 所有使用者的候選人名單(需要增加權限管理)

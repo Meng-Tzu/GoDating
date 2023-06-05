@@ -35,16 +35,30 @@ body {
 }
 
 #survey-form {
+  position: relative;
   padding: 30px;
   padding-top: 20px;
   background: var(--color-1);
   opacity: 90%;
   border: none;
   border-radius: calc(2 * var(--border-radius));
+  min-height: 70vh;
 }
 
 #survey-form * {
   font-size: var(--font-size);
+}
+
+#survey-form #loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background-image: url(../images/loading.gif);
+  background-size: cover;
+  background-position: center;
 }
 
 #title {

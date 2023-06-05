@@ -125,7 +125,8 @@ const getUserDetailInfo = async (id) => {
   const queryStr = `
   SELECT id, nick_name, 
   birth_year, birth_month, birth_date,
-  sex_id, main_image, self_intro
+  sex_id, sexual_orientation_id AS orientation_id, 
+  main_image, self_intro
   FROM user
   WHERE id = ?
   `;

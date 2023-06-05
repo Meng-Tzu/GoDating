@@ -14,6 +14,7 @@ import {
   getUserBasicInfo,
   getUserDetailInfo,
   getUserSexId,
+  getUserDesireAgeRange,
   getMatchTagTitles,
   saveMatchTagIds,
   getMultiCandidatesDetailInfo,
@@ -206,20 +207,27 @@ const verify = async (req, res) => {
 
 // 檢查使用者是否已經填過詳細資訊和配對條件
 const checkSexInfo = async (req, res, next) => {
-  const { userId } = req.body;
+  // 從來自客戶端請求的 header 取得和擷取 JWT
+  const token = req.header("Authorization").replace("Bearer ", "");
 
   try {
-    const sexInfo = await getUserSexId(userId);
+    // 解開 token
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
+    // 拿 token 去 DB 撈 sexInfo
+    const sexInfo = await getUserSexId(decoded.id);
 
     if (sexInfo) {
       res.json({ data: "Detail user-info already existed." });
       return;
     } else {
       res.json({ data: "User hasn't filled out the survey." });
+      return;
     }
   } catch (error) {
     console.error("cannot get user's sex id");
     next(error);
+    return;
   }
 };
 
@@ -314,35 +322,42 @@ const saveTags = async (req, res) => {
   }
 };
 
-// FIXME: 取得特定使用者的詳細資訊 (取 DB 資料應該不能在 catch 內)
-const getDetailInfo = async (userId) => {
+// FIXME: 取得特定使用者的詳細資訊 (從 DB 拿詳細資訊而不是 cache ??)
+const getDetailInfo = async (req, res, next) => {
+  // 從來自客戶端請求的 header 取得和擷取 JWT
+  const token = req.header("Authorization").replace("Bearer ", "");
+
   let detailInfo;
   try {
-    detailInfo = await getCandidateInfoFromCache(userId);
-  } catch (error) {
-    console.error(`cannot get detail info of user from cache:`, error);
+    // 解開 token
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
 
-    console.log("get detail info of user from DB");
-    detailInfo = await getUserDetailInfo(userId);
+    // 從 cache 拿詳細資料會沒有生日
+    // detailInfo = await getCandidateInfoFromCache(decoded.id);
+    detailInfo = await getUserDetailInfo(decoded.id);
 
     const candidateBirthday = `${detailInfo.birth_year}/${detailInfo.birth_month}/${detailInfo.birth_date}`;
-    const age = getAge(candidateBirthday);
-    const sex = sexType[detailInfo.sex_id];
     const imageUrl = `images/${detailInfo.main_image}`;
-    detailInfo.age = age;
-    detailInfo.sex = sex;
+    detailInfo.birthday = candidateBirthday;
     detailInfo.main_image = imageUrl;
-    delete detailInfo.sex_id;
     delete detailInfo.birth_year;
     delete detailInfo.birth_month;
     delete detailInfo.birth_date;
+
+    // FIXME: 取得使用者的 tags (目前從 DB 拿，可以從 cache 拿 ??)
+    const tags = await getMatchTagTitles(decoded.id);
+    const desireAgeRange = await getUserDesireAgeRange(decoded.id);
+    detailInfo.tagList = tags;
+    detailInfo.seek_age_min = desireAgeRange.seek_age_min;
+    detailInfo.seek_age_max = desireAgeRange.seek_age_max;
+
+    res.json({ data: detailInfo });
+    return;
+  } catch (error) {
+    console.error("cannot get user's detail info");
+    next(error);
+    return;
   }
-
-  // FIXME: 取得使用者的 tags (目前從 DB 拿，可以從 cache 拿 ??)
-  const tags = await getMatchTagTitles(userId);
-  detailInfo.tagList = tags;
-
-  return detailInfo;
 };
 
 export {
