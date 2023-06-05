@@ -13,6 +13,7 @@ import {
   getAllUsers,
   getUserBasicInfo,
   getUserDetailInfo,
+  getUserSexId,
   getMatchTagTitles,
   saveMatchTagIds,
   getMultiCandidatesDetailInfo,
@@ -203,6 +204,25 @@ const verify = async (req, res) => {
   }
 };
 
+// 檢查使用者是否已經填過詳細資訊和配對條件
+const checkSexInfo = async (req, res, next) => {
+  const { userId } = req.body;
+
+  try {
+    const sexInfo = await getUserSexId(userId);
+
+    if (sexInfo) {
+      res.json({ data: "Detail user-info already existed." });
+      return;
+    } else {
+      res.json({ data: "User hasn't filled out the survey." });
+    }
+  } catch (error) {
+    console.error("cannot get user's sex id");
+    next(error);
+  }
+};
+
 // 儲存使用者的詳細資料
 const saveDetailInfo = async (req, res) => {
   const {
@@ -294,7 +314,7 @@ const saveTags = async (req, res) => {
   }
 };
 
-// 取得特定使用者的詳細資訊
+// FIXME: 取得特定使用者的詳細資訊 (取 DB 資料應該不能在 catch 內)
 const getDetailInfo = async (userId) => {
   let detailInfo;
   try {
@@ -305,17 +325,17 @@ const getDetailInfo = async (userId) => {
     console.log("get detail info of user from DB");
     detailInfo = await getUserDetailInfo(userId);
 
-    const candidateBirthday = `${detailInfoFromDB.birth_year}/${detailInfoFromDB.birth_month}/${detailInfoFromDB.birth_date}`;
+    const candidateBirthday = `${detailInfo.birth_year}/${detailInfo.birth_month}/${detailInfo.birth_date}`;
     const age = getAge(candidateBirthday);
-    const sex = sexType[detailInfoFromDB.sex_id];
-    const imageUrl = `images/${detailInfoFromDB.main_image}`;
-    detailInfoFromDB.age = age;
-    detailInfoFromDB.sex = sex;
-    detailInfoFromDB.main_image = imageUrl;
-    delete detailInfoFromDB.sex_id;
-    delete detailInfoFromDB.birth_year;
-    delete detailInfoFromDB.birth_month;
-    delete detailInfoFromDB.birth_date;
+    const sex = sexType[detailInfo.sex_id];
+    const imageUrl = `images/${detailInfo.main_image}`;
+    detailInfo.age = age;
+    detailInfo.sex = sex;
+    detailInfo.main_image = imageUrl;
+    delete detailInfo.sex_id;
+    delete detailInfo.birth_year;
+    delete detailInfo.birth_month;
+    delete detailInfo.birth_date;
   }
 
   // FIXME: 取得使用者的 tags (目前從 DB 拿，可以從 cache 拿 ??)
@@ -331,6 +351,7 @@ export {
   signIn,
   signUp,
   verify,
+  checkSexInfo,
   saveDetailInfo,
   saveTags,
   getDetailInfo,

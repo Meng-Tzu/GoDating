@@ -82,7 +82,7 @@ $("#match-info").click(async function () {
   // }
 
   fetchOption.body = formData;
-  userApi = "/api/1.0/user/profile";
+  userApi = "/api/1.0/user/survey";
 
   // 使者資訊存進資料庫
   const result = await getApi(userApi, fetchOption);
