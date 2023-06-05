@@ -1,3 +1,4 @@
+$("#loading").hide();
 // ----------------------- Function 區塊 --------------------------
 
 // Function1: 取得 API 資料
@@ -504,7 +505,7 @@ let fetchOption = {
       const certainPartnerList = userPartnerList[0];
       createAllPartnerDiv(certainPartnerList);
 
-      const { potentialInfoList } = msg;
+      const { pursuerList, potentialInfoList } = msg;
 
       // 如果沒有任何推薦的人選
       if (!potentialInfoList.length) {
@@ -524,6 +525,12 @@ let fetchOption = {
 
       // 顯示目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (Object.keys(pursuerList).length) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current").css("display", "flex");
       $("#current-recommend").css("display", "flex");
       // $(".next-recommend").css("display", "flex");
@@ -566,7 +573,7 @@ let fetchOption = {
     });
 
     socket.on("response-all-potential", (msg) => {
-      const { potentialInfoList } = msg;
+      const { pursuerList, potentialInfoList } = msg;
 
       // 如果沒有任何推薦的人選
       if (!potentialInfoList.length) {
@@ -586,6 +593,12 @@ let fetchOption = {
 
       // 顯示目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (Object.keys(pursuerList).length) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current").css("display", "flex");
       $("#current-recommend").css("display", "flex");
       // $(".next-recommend").css("display", "flex");
@@ -673,16 +686,30 @@ let fetchOption = {
 
     // 主動配對成功
     socket.on("success-match", async (msg) => {
-      const { userId, partnerInfo, roomId, potentialInfoList } = msg;
+      const { userId, partnerInfo, roomId, pursuerList, potentialInfoList } =
+        msg;
       createPartnerDiv(roomId, partnerInfo);
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (Object.keys(pursuerList).length) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#loading").hide();
+      $("#front-cover").show();
       $(".candidate-name")
+        .show()
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
+      $("#sex-age").show();
+      $("#current-recommend-detail-info").show();
+      $("#choose-btn").show();
+
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -720,7 +747,6 @@ let fetchOption = {
       const { userId, partnerInfo, roomId } = msg;
       createPartnerDiv(roomId, partnerInfo);
 
-      // alert(`與 ${partnerInfo.nick_name} 成功配對！`);
       Swal.fire({
         position: "top",
         icon: "success",
@@ -733,15 +759,29 @@ let fetchOption = {
 
     // 新增誰喜歡我的下拉選單
     socket.on("who-like-me", (msg) => {
-      const { userId, pursuerId, pursuerName, potentialInfoList } = msg;
+      const { userId, pursuerId, pursuerName, pursuerList, potentialInfoList } =
+        msg;
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (Object.keys(pursuerList).length) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#loading").hide();
+      $("#front-cover").show();
       $(".candidate-name")
+        .show()
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
+      $("#sex-age").show();
+      $("#current-recommend-detail-info").show();
+      $("#choose-btn").show();
+
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -822,14 +862,19 @@ let fetchOption = {
       $("#candidate-picture")
         .attr("src", currentRecommend.main_image)
         .css("background-color", "none");
+      $("#loading").hide();
+      $("#front-cover").show();
       $(".candidate-name")
+        .show()
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
       $("#sex-age").show();
+      $("#current-recommend-detail-info").show();
       $("#candidate-tags").show();
       $("#intro-title").show();
       $("#candidate-intro").show();
       $("#choose-btn").show();
+
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -859,6 +904,7 @@ let fetchOption = {
         unlikeId,
         unlikeName,
         isPursuerExist,
+        pursuerList,
         potentialInfoList,
       } = msg;
 
@@ -880,18 +926,29 @@ let fetchOption = {
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (Object.keys(pursuerList).length) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current-recommend").css("display", "flex");
       $("#candidate-picture")
         .attr("src", currentRecommend.main_image)
         .css("background-color", "none");
+      $("#loading").hide();
+      $("#front-cover").show();
       $(".candidate-name")
+        .show()
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
       $("#sex-age").show();
       $("#candidate-tags").show();
       $("#intro-title").show();
       $("#candidate-intro").show();
+      $("#current-recommend-detail-info").show();
       $("#choose-btn").show();
+
       if (currentRecommend.sex == "女性") {
         $("#candidate-sex")
           .attr("src", "./images/female.png")
@@ -916,16 +973,17 @@ let fetchOption = {
 
     // 被不喜歡後，刪掉該推薦者人
     socket.on("send-be-unlike-signal", (msg) => {
-      const {
-        userId,
-        unlikeId,
-        unlikeName,
-        isPursuerExist,
-        potentialInfoList,
-      } = msg;
+      const { userId, unlikeId, unlikeName, pursuerList, potentialInfoList } =
+        msg;
 
       // 更新目前推薦人選
       const currentRecommend = potentialInfoList[0];
+      if (Object.keys(pursuerList).length) {
+        $("#like-signal").show();
+      } else {
+        $("#like-signal").hide();
+      }
+
       $("#current-recommend").css("display", "flex");
       $("#candidate-picture").attr("src", currentRecommend.main_image);
       $(".candidate-name")
@@ -1027,8 +1085,13 @@ $("#profile").click(function () {
 });
 
 // 把想配對的 candidate 資訊送給 server 儲存
-$("#btn-like").click(function (e) {
-  e.preventDefault();
+$("#btn-like").click(function () {
+  $("#loading").show();
+  $("#front-cover").hide();
+  $(".candidate-name").hide();
+  $("#sex-age").hide();
+  $("#current-recommend-detail-info").hide();
+  $("#choose-btn").hide();
 
   if (socket === null) {
     alert("Please connect first");
@@ -1046,8 +1109,13 @@ $("#btn-like").click(function (e) {
 });
 
 // 不喜歡對方
-$("#unlike").click(function (e) {
-  e.preventDefault();
+$("#unlike").click(function () {
+  $("#loading").show();
+  $("#front-cover").hide();
+  $(".candidate-name").hide();
+  $("#sex-age").hide();
+  $("#current-recommend-detail-info").hide();
+  $("#choose-btn").hide();
 
   if (socket === null) {
     alert("Please connect first");

@@ -396,13 +396,10 @@ const getPursuerFromCache = async (userId) => {
   try {
     if (Cache.ready) {
       const pursuerIds = await Cache.hkeys(`who_like_me_of_userid#${userId}`);
-      const pursuerNames = await Cache.hvals(`who_like_me_of_userid#${userId}`);
 
       const pursuerList = {};
 
-      pursuerIds.forEach((id, index) => {
-        pursuerList[id] = pursuerNames[index];
-      });
+      pursuerIds.forEach((id) => (pursuerList[id] = null));
       return pursuerList;
     }
   } catch (error) {
