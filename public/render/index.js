@@ -468,7 +468,9 @@ let fetchOption = {
     });
   } else {
     const { id, name, image } = userData;
-    $("#profile-img").attr("src", `images/${image}`);
+    if (image) {
+      $("#profile-img").attr("src", `images/${image}`).css("border", "none");
+    }
     $(".user-name").text(name).attr("id", id);
     $("#chat-block").hide();
 
@@ -510,6 +512,7 @@ let fetchOption = {
       // 如果沒有任何推薦的人選
       if (!potentialInfoList.length) {
         $("#current-recommend").css("display", "flex");
+        $("#like-signal").text("趕緊填寫問卷吧！");
         $("#candidate-picture")
           .attr("src", "images/user_upload.png")
           .css("background-color", "white");
@@ -578,6 +581,7 @@ let fetchOption = {
       // 如果沒有任何推薦的人選
       if (!potentialInfoList.length) {
         $("#current-recommend").css("display", "flex");
+        $("#like-signal").text("趕緊填寫問卷吧！");
         $("#candidate-picture")
           .attr("src", "images/user_upload.png")
           .css("background-color", "white");
@@ -911,6 +915,7 @@ let fetchOption = {
       // 如果沒有任何推薦的人選
       if (!potentialInfoList.length) {
         $("#current-recommend").css("display", "flex");
+        $("#like-signal").text("趕緊填寫問卷吧！");
         $("#candidate-picture")
           .attr("src", "images/user_upload.png")
           .css("background-color", "white");

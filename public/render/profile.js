@@ -57,7 +57,9 @@ let fetchOption = {
     });
   } else {
     const { id, name, image } = userData;
-    $("#profile-img").attr("src", `images/${image}`).css("border", "none");
+    if (image) {
+      $("#profile-img").attr("src", `images/${image}`).css("border", "none");
+    }
     $(".user-name").text(name).attr("id", id);
   }
 
