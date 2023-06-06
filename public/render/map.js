@@ -1,35 +1,14 @@
 // ----------------------- Function 區塊 --------------------------
 
 // Function1: 取得 API 資料
-const getApi = async (url) => {
-  let response = await fetch(url);
+const getApi = async (url, option) => {
+  let response = await fetch(url, option);
   response = await response.json();
 
   return response.data;
 };
 
-// FIXME: Function2: 動態製造 DOM 物件 (和 match 的方式不一樣)
-const createUserOption = async (users, elementName) => {
-  // 選擇要當模板的 element tag
-  const $userTemplete = $(`.${elementName}`);
-
-  // 選取要被插入 child 的 parant element
-  const $parent = $(`#${elementName}s`);
-
-  // 依據 group array 的長度，產生多少個選項
-  for (const id in users) {
-    // 複製出一個下拉式選單的 option element tag
-    const $newDom = $userTemplete.clone();
-
-    // 把新的 option 的 value 和 text 改掉
-    $newDom.attr("value", id).text(users[id].name).css("display", "inline");
-
-    // 把新的 option 加入 parant element
-    $newDom.appendTo($parent);
-  }
-};
-
-// FIXME: 顯示地圖中心點
+// FIXME: Function2: 顯示地圖中心點
 const markCenter = (userCoordinate, zoom, name) => {
   // 更換地圖中心點為使用者位置
   const map = L.map("map").setView(userCoordinate, zoom);
@@ -67,7 +46,7 @@ const markCenter = (userCoordinate, zoom, name) => {
 };
 
 // Function3: 顯示地圖中心位置
-const showMyLocation = (zoom, name) => {
+const showMyLocation = async (zoom, name) => {
   if (!navigator.geolocation) {
     Swal.fire({
       icon: "info",
@@ -79,16 +58,29 @@ const showMyLocation = (zoom, name) => {
     return;
   }
 
-  function success(position) {
+  const success = async (position) => {
     const userCoordinate = [
       position.coords.latitude,
       position.coords.longitude,
     ];
 
     markCenter(userCoordinate, zoom, name);
-  }
 
-  function error() {
+    // 更新 DB 內使用者的當前位置
+    const locationApi = "/api/1.0/user/location";
+    const option = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: "",
+    };
+    option.body = JSON.stringify({ location: userCoordinate });
+    await getApi(locationApi, option);
+  };
+
+  const error = () => {
     Swal.fire({
       icon: "info",
       title: "無法取得您的位置",
@@ -96,77 +88,96 @@ const showMyLocation = (zoom, name) => {
     });
 
     markCenter([25.0480075, 121.5170613], zoom, "台北車站");
-  }
+  };
 
   navigator.geolocation.getCurrentPosition(success, error);
 };
 
-// ------------------------------ 前端渲染區塊 --------------------------------
+// ----------------------- Display Map ---------------------------
+// 從 JWT token 取得使用者 id
+const token = localStorage.getItem("token");
 
-// TODO: 取得所有使用者 id 和 nickname (不需要下拉選單)
-const allUsersUrl = `/api/1.0/user/userslist`;
-const userIdNicknamePair = {}; // {id: nickname}
+const userApi = "/api/1.0/user/verify";
+let fetchOption = {
+  method: "POST",
+  headers: { Authorization: `Bearer ${token}` },
+};
 
+// 驗證 token
+let userData;
 (async () => {
-  // 取得所有使用者
-  const idNameList = await getApi(allUsersUrl);
-  idNameList.forEach((userObj) => {
-    const name = userObj.nick_name;
-    const coordinate = userObj.coordinate;
-    userIdNicknamePair[userObj.id] = { name, coordinate };
-  });
+  userData = await getApi(userApi, fetchOption);
 
-  // 動態產生下拉式選單的選項
-  await createUserOption(userIdNicknamePair, "user");
+  if (!userData) {
+    // token 錯誤
+    Swal.fire({
+      icon: "warning",
+      title: "您尚未登入喔！",
+      text: "請再嘗試登入 / 註冊",
+    }).then(() => {
+      localStorage.removeItem("token");
+      window.location.href = "/login.html";
+    });
+  } else {
+    const { id, name, image } = userData;
+    if (image) {
+      $("#profile-img").attr("src", `images/${image}`).css("border", "none");
+    }
+    $(".user-name").text(name).attr("id", id);
+
+    // 詢問使用者是否能取得當前位置
+    const zoom = 14;
+    showMyLocation(zoom, name);
+  }
 })();
 
-// ----------------------- Display Map ---------------------------
-$("#btnSearch").click(function (e) {
-  e.preventDefault();
+// TODO: mark candidate position
+// (async () => {
+//   // 取得所有連線者的候選人名單
+//   const candidatesUrl = `/api/1.0/user/matchcandidate`;
+//   const userCandidateList = await getApi(candidatesUrl);
+//   const userIdCandidateIdPair = {}; // {id: candidateList}
+//   userCandidateList.forEach((userObj) => {
+//     userIdCandidateIdPair[userObj.id] = userObj.candidateIdList;
+//   });
+//   // 取得該連線者的候選人名單
+//   const certainCandidateList = userIdCandidateIdPair[id];
+//   certainCandidateList.forEach((candidateId) => {
+//     const candidateName = userIdNicknamePair[candidateId].name;
+//     // 取得候選人位置
+//     const candidateCoordinate = JSON.parse(
+//       userIdNicknamePair[candidateId].coordinate
+//     );
+//     // add marker of user position
+//     const candidateMarker = L.marker(candidateCoordinate).addTo(map);
+//     // TODO: tooltip setting of candidate (更換照片來源)
+//     candidateMarker
+//       .bindTooltip(
+//         `<b>${candidateName}</b></br><img src="/test1.jpg" style="height: 20px">`,
+//         {
+//           direction: "bottom", // default: auto
+//           sticky: false, // true 跟著滑鼠移動。default: false
+//           permanent: false, // 是滑鼠移過才出現(false)，還是一直出現(true)
+//           opacity: 1.0,
+//         }
+//       )
+//       .openTooltip();
+//   });
+// })();
 
-  // 取得是誰上線
-  const id = +$("#users").val();
-  const name = $("#users option:selected").text();
-  const zoom = 14;
+// TODO: 點擊聊天室導到聊天室頁面
+$(".chatroom").click(function () {
+  Swal.fire({
+    icon: "info",
+    title: "聊天室頁面功能待開發",
+    text: "感謝您的耐心等待！",
+  });
+  // window.location.href = "/chatroom.html";
+});
 
-  // 取得使用者位置
-  showMyLocation(zoom, name);
-
-  // mark candidate position
-  // (async () => {
-  //   // 取得所有連線者的候選人名單
-  //   const candidatesUrl = `/api/1.0/user/matchcandidate`;
-  //   const userCandidateList = await getApi(candidatesUrl);
-  //   const userIdCandidateIdPair = {}; // {id: candidateList}
-  //   userCandidateList.forEach((userObj) => {
-  //     userIdCandidateIdPair[userObj.id] = userObj.candidateIdList;
-  //   });
-
-  //   // 取得該連線者的候選人名單
-  //   const certainCandidateList = userIdCandidateIdPair[id];
-  //   certainCandidateList.forEach((candidateId) => {
-  //     const candidateName = userIdNicknamePair[candidateId].name;
-  //     // 取得候選人位置
-  //     const candidateCoordinate = JSON.parse(
-  //       userIdNicknamePair[candidateId].coordinate
-  //     );
-
-  //     // add marker of user position
-  //     const candidateMarker = L.marker(candidateCoordinate).addTo(map);
-  //     // TODO: tooltip setting of candidate (更換照片來源)
-  //     candidateMarker
-  //       .bindTooltip(
-  //         `<b>${candidateName}</b></br><img src="/test1.jpg" style="height: 20px">`,
-  //         {
-  //           direction: "bottom", // default: auto
-  //           sticky: false, // true 跟著滑鼠移動。default: false
-  //           permanent: false, // 是滑鼠移過才出現(false)，還是一直出現(true)
-  //           opacity: 1.0,
-  //         }
-  //       )
-  //       .openTooltip();
-  //   });
-  // })();
+// 點擊地圖重新載入
+$(".map").click(function () {
+  location.reload();
 });
 
 // FIXME: 取得所有人的位置

@@ -362,13 +362,13 @@ const getDetailInfo = async (req, res, next) => {
 const updateUserLocation = async (req, res, next) => {
   // 從來自客戶端請求的 header 取得和擷取 JWT
   const token = req.header("Authorization").replace("Bearer ", "");
-  const { location } = req.body;
+  let { location } = req.body;
 
   try {
     // 解開 token
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
 
-    await updateUserLocationFromDB(decoded.id, location);
+    await updateUserLocationFromDB(decoded.id, JSON.stringify(location));
 
     res.json({ data: `successfully update location of user-id#${decoded.id}` });
     return;
