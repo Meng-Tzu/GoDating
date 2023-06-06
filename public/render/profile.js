@@ -56,7 +56,8 @@ let fetchOption = {
       return;
     });
   } else {
-    const { id, name } = userData;
+    const { id, name, image } = userData;
+    $("#profile-img").attr("src", `images/${image}`).css("border", "none");
     $(".user-name").text(name).attr("id", id);
   }
 
@@ -70,7 +71,7 @@ let fetchOption = {
     $(".avatar-edit").hide();
     $("#birthday").prop("disabled", true);
     $("input[type=radio]").attr("disabled", true);
-    $("ul li").css("pointer-events", "none");
+    $(".container ul li").css("pointer-events", "none");
     $("#self-intro").prop("disabled", true);
     $("#slider-range").hide();
     $("#title").text("我的檔案");
@@ -278,9 +279,29 @@ $("#match-info").click(async function () {
   });
 });
 
+// TODO: 點擊聊天室導到聊天室頁面
+$(".chatroom").click(function () {
+  Swal.fire({
+    icon: "info",
+    title: "聊天室頁面功能待開發",
+    text: "感謝您的耐心等待！",
+  });
+  // window.location.href = "/chatroom.html";
+});
+
+// TODO: 點擊地圖導到地圖頁面
+$(".map").click(function () {
+  Swal.fire({
+    icon: "info",
+    title: "地圖功能待開發",
+    text: "感謝您的耐心等待！",
+  });
+  // window.location.href = "/map.html";
+});
+
 // 點擊右上個人照人名跳重整 profile page
 $("#profile").click(function () {
-  window.location.href = "/profile.html";
+  location.reload();
 });
 
 // 登出
