@@ -40,6 +40,25 @@ header section.left a.logo {
 header section.left a.logo img {
   width: 15vw;
 }
+header section.left nav {
+  flex: 1 1 100px;
+  align-items: center;
+}
+header section.left nav ul {
+  display: flex;
+  list-style-type: none;
+  align-items: center;
+  justify-content: space-around;
+}
+header section.left nav ul li a {
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+}
+header section.left nav ul li.line {
+  font-size: 2rem;
+}
 header section.right {
   flex: 1 1 100px;
   display: flex;

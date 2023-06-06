@@ -14,6 +14,23 @@ const getApi = async (url, option) => {
   return response.data;
 };
 
+// Function2: 動態增加 tags
+const addTags = (detailInfo) => {
+  const $dropDownMenu = $("#drop-down-menu");
+  $dropDownMenu.empty().css("flex-direction", "row");
+
+  const $div = $("<div>");
+  $div.addClass(
+    "flex justify-center items-center m-1 font-medium py-1 px-2 bg-white rounded-full text-teal-700 bg-teal-100 border border-teal-300 "
+  );
+
+  for (const tag of detailInfo.tagList) {
+    const $newDom = $div.clone();
+    $newDom.text(tag.title);
+    $dropDownMenu.append($newDom);
+  }
+};
+
 // 從 JWT token 取得使用者 id 去做 socketIO 連線
 const token = localStorage.getItem("token");
 
@@ -36,10 +53,59 @@ let fetchOption = {
     }).then(() => {
       localStorage.removeItem("token");
       window.location.href = "/login.html";
+      return;
     });
   } else {
-    const { id, name } = userData;
+    const { id, name, image } = userData;
+    if (image) {
+      $("#profile-img").attr("src", `images/${image}`).css("border", "none");
+    }
     $(".user-name").text(name).attr("id", id);
+  }
+
+  const profileApi = "/api/1.0/user/profile";
+  const isProfileExist = await getApi(profileApi, fetchOption);
+  $("#loading").hide();
+  $("#content").css("display", "block");
+
+  if (isProfileExist === "Detail user-info already existed.") {
+    $("#match-info").hide();
+    $(".avatar-edit").hide();
+    $("#birthday").prop("disabled", true);
+    $("input[type=radio]").attr("disabled", true);
+    $(".container ul li").css("pointer-events", "none");
+    $("#self-intro").prop("disabled", true);
+    $("#slider-range").hide();
+    $("#title").text("我的檔案");
+    $("#picture-label").text("個人照");
+    $("#tag-label").text("個性化標籤");
+
+    const detailInfoApi = "/api/1.0/user/detailinfo";
+    const detailInfo = await getApi(detailInfoApi, fetchOption);
+    $("#imagePreview").css("background-image", `url(${detailInfo.main_image})`);
+    $("#birthday").val(detailInfo.birthday);
+    if (detailInfo.sex_id === 1) {
+      $("#male-option").prop("checked", true);
+    } else if (detailInfo.sex_id === 2) {
+      $("#female-option").prop("checked", true);
+    }
+
+    if (detailInfo.orientation_id === 1) {
+      $("#hetro-option").prop("checked", true);
+    } else if (detailInfo.orientation_id === 2) {
+      $("#homo-option").prop("checked", true);
+    } else if (detailInfo.orientation_id === 3) {
+      $("#bio-option").prop("checked", true);
+    } else if (detailInfo.orientation_id === 4) {
+      $("#explore-option").prop("checked", true);
+    }
+    addTags(detailInfo);
+    $("#amount").val(
+      detailInfo.seek_age_min + "歲 ～ " + detailInfo.seek_age_max + " 歲"
+    );
+    $("#self-intro").text(detailInfo.self_intro);
+
+    return;
   }
 })();
 
@@ -82,7 +148,7 @@ $("#match-info").click(async function () {
   // }
 
   fetchOption.body = formData;
-  userApi = "/api/1.0/user/profile";
+  userApi = "/api/1.0/user/survey";
 
   // 使者資訊存進資料庫
   const result = await getApi(userApi, fetchOption);
@@ -215,9 +281,29 @@ $("#match-info").click(async function () {
   });
 });
 
+// TODO: 點擊聊天室導到聊天室頁面
+$(".chatroom").click(function () {
+  Swal.fire({
+    icon: "info",
+    title: "聊天室頁面功能待開發",
+    text: "感謝您的耐心等待！",
+  });
+  // window.location.href = "/chatroom.html";
+});
+
+// TODO: 點擊地圖導到地圖頁面
+$(".map").click(function () {
+  Swal.fire({
+    icon: "info",
+    title: "地圖功能待開發",
+    text: "感謝您的耐心等待！",
+  });
+  // window.location.href = "/map.html";
+});
+
 // 點擊右上個人照人名跳重整 profile page
 $("#profile").click(function () {
-  window.location.href = "/profile.html";
+  location.reload();
 });
 
 // 登出

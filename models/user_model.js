@@ -125,7 +125,8 @@ const getUserDetailInfo = async (id) => {
   const queryStr = `
   SELECT id, nick_name, 
   birth_year, birth_month, birth_date,
-  sex_id, main_image, self_intro
+  sex_id, sexual_orientation_id AS orientation_id, 
+  main_image, self_intro
   FROM user
   WHERE id = ?
   `;
@@ -146,6 +147,19 @@ const getMultiCandidatesDetailInfo = async (candidateIds) => {
 
   const [result] = await pool.query(queryStr, [candidateIds]);
   return result;
+};
+
+// 取得使用者的性別 (用來確認使用者是否已經填過問卷)
+const getUserSexId = async (id) => {
+  const queryStr = `
+  SELECT id, sex_id 
+  FROM user
+  WHERE id = ?
+  `;
+
+  const [[result]] = await pool.query(queryStr, [id]);
+
+  return result.sex_id;
 };
 
 // 取得使用者想要的年齡區間
@@ -465,6 +479,7 @@ export {
   getUserMatchInfo,
   getUserDetailInfo,
   getMultiCandidatesDetailInfo,
+  getUserSexId,
   getUserDesireAgeRange,
   saveMatchTagIds,
   getMatchTagIds,
