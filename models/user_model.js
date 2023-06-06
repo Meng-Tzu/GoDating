@@ -337,6 +337,15 @@ const getPursuersFromDB = async (userId) => {
   return pursuerList;
 };
 
+// 更新使用者的經緯度
+const updateUserLocationFromDB = async (userId, location) => {
+  const queryStr = `
+  UPDATE user SET location = ? WHERE id = ?
+  `;
+
+  await pool.query(queryStr, [location, userId]);
+};
+
 // FIXME: 把所有使用者的 candidate 存進 cache (放在 model ??)
 const saveCandidatesToCache = async (match_pair) => {
   for (const userId in match_pair) {
@@ -490,6 +499,7 @@ export {
   deleteAllRowInTable,
   savePursuersToDB,
   getPursuersFromDB,
+  updateUserLocationFromDB,
   saveCandidatesToCache,
   saveCandidatesOfCertainUserToCache,
   getAllCandidateFromCache,
