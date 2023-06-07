@@ -346,6 +346,18 @@ const updateUserLocationFromDB = async (userId, location) => {
   await pool.query(queryStr, [location, userId]);
 };
 
+// 取得使用者所有 candidate 的經緯度
+const getMultiUserLocationFromDB = async (candidateIds) => {
+  const queryStr = `
+  SELECT id, nick_name AS name, main_image AS image, location 
+  FROM user
+  WHERE id in (?)
+  `;
+
+  const [result] = await pool.query(queryStr, [candidateIds]);
+  return result;
+};
+
 // FIXME: 把所有使用者的 candidate 存進 cache (放在 model ??)
 const saveCandidatesToCache = async (match_pair) => {
   for (const userId in match_pair) {
@@ -500,6 +512,7 @@ export {
   savePursuersToDB,
   getPursuersFromDB,
   updateUserLocationFromDB,
+  getMultiUserLocationFromDB,
   saveCandidatesToCache,
   saveCandidatesOfCertainUserToCache,
   getAllCandidateFromCache,
