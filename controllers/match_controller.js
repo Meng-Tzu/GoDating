@@ -101,7 +101,7 @@ const preSexMatching = async (selfId, allUserIds) => {
 
 // Function2: 排序規則
 const compareNumbers = (a, b) => {
-  return b.tagCount - a.tagCount;
+  return b.jaccardIndex - a.jaccardIndex;
 };
 
 // Function3: 確認對方的候選人清單有沒有自己
@@ -214,29 +214,33 @@ const getCandidateIdList = (userCandidatesPair) => {
 };
 
 // Function8: 把使用者的候選人名單加上相同興趣 tag 數量
-const addCandidateTagCount = (userCandidatesPair, userTagPair) => {
+const addCandidateJaccardIndex = (userCandidatesPair, userTagPair) => {
   for (const userId in userCandidatesPair) {
     // 取得使用者的候選人名單
     const candidateIdList = userCandidatesPair[userId];
+    // 使用者自己的 tags
+    const userTagIds = userTagPair[userId];
 
     candidateIdList.forEach((candidateId, index) => {
+      // candidate 有哪些 tags
+      const candidateTagIds = new Set(userTagPair[candidateId]);
+
       // 計算有多少個相同的 tag 數量
-      let tagCount = 0;
+      const intersection = new Set(
+        userTagIds.filter((tagId) => candidateTagIds.has(tagId))
+      );
+      const intersectionCount = intersection.size;
 
-      // candidate 有哪些 tag_id
-      const candidateTagIds = userTagPair[candidateId];
-      candidateTagIds.forEach((tagId) => {
-        // 如果 candidate 的 tag 有在使用者的 tag list 裡面，count 就加一
-        if (userTagPair[userId].includes(tagId)) {
-          tagCount++;
-        }
-      });
+      // 計算Jaccard index
+      const unionCount =
+        userTagIds.length + candidateTagIds.size - intersectionCount;
+      const jaccardIndex = intersectionCount / unionCount;
 
-      // 創造 key-value pair: {candidateId: tagCount}
-      const candidate_TagCount_pair = { candidateId, tagCount };
+      // 把 candidateId, jaccardIndex 加回 candidateIdList
+      const candidateIdWithJaccardIndex = { candidateId, jaccardIndex };
 
       // 把使用者的候選人名單加上相同的 tag 數量
-      candidateIdList[index] = candidate_TagCount_pair;
+      candidateIdList[index] = candidateIdWithJaccardIndex;
     });
   }
 
@@ -289,7 +293,7 @@ const suggestCandidateToAllUsers = async (req, res) => {
   // Step3: 以相同 tag 的數量去排序候選人
 
   // 把使用者的候選人名單加上相同興趣 tag 數量
-  potentialList = addCandidateTagCount(potentialList, userTagPair);
+  potentialList = addCandidateJaccardIndex(potentialList, userTagPair);
   // console.log("step3-1 potentialList", potentialList);
 
   // 依照 tag 數量去排序
@@ -369,7 +373,7 @@ const suggestCandidateToNewOne = async (req, res) => {
   // Step3: 以相同 tag 的數量去排序候選人
 
   // 把使用者的候選人名單加上相同興趣 tag 數量
-  potentialList = addCandidateTagCount(potentialList, userTagPair);
+  potentialList = addCandidateJaccardIndex(potentialList, userTagPair);
   // console.log("step3-1 potentialList", potentialList);
 
   // 依照 tag 數量去排序
