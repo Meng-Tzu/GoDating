@@ -19,6 +19,7 @@ import {
   saveDetailInfo,
   saveTags,
   getDetailInfo,
+  updateUserLocation,
 } from "../controllers/user_controller.js";
 
 import {
@@ -70,6 +71,9 @@ userRouter.post("/user/pursuer", certainUserPursuerList);
 
 // FIXME:: 特定使用者的候選人名單 (需要增加權限管理)
 userRouter.post("/user/partner", certainUserPartnerList);
+
+// FIXME:: 特定使用者的候選人名單 (需要增加權限管理)
+userRouter.post("/user/location", updateUserLocation);
 
 // 輸出路由
 export default userRouter;

@@ -12,6 +12,7 @@ const __dirname = path.dirname(__filename);
 import {
   getUserDetailInfo,
   getMatchTagTitles,
+  getMultiUserLocationFromDB,
   getAllCandidateFromCache,
   getCandidateInfoFromCache,
   getPursuerFromCache,
@@ -37,7 +38,7 @@ import {
 } from "./models/chat_record_model.js";
 
 // ------------------- Function 區塊 ------------------------
-// Function1: potentialInfoList = pursuer + candidate list
+// TODO: Function1: potentialInfoList = pursuer + candidate list
 const getPotentialInfoList = async (id) => {
   const candidateList = await getAllCandidateFromCache(id);
   const candidateIdList = Object.keys(candidateList);
@@ -56,7 +57,7 @@ const getPotentialInfoList = async (id) => {
     potentialInfoList.push(potentialInfo);
   }
 
-  return { pursuerList, candidateIdList, potentialInfoList };
+  return { pursuerList, candidateIdList, integratedIdList, potentialInfoList };
 };
 
 // Function2: check if you are my candidate not pursuer
@@ -139,7 +140,7 @@ const connectToSocketIO = (webSrv) => {
 
     // 儲存連線者
     socket.on("online", async (user) => {
-      const { id, name, update } = user;
+      const { id, name, update, isMap } = user;
 
       connections[id] = { name, socket };
       // console.log("connections", connections);
@@ -179,6 +180,24 @@ const connectToSocketIO = (webSrv) => {
             responseForOtherSide
           );
         }
+      }
+
+      // TODO: 取得這個使用者的人選經緯度
+      if (isMap) {
+        const potentialLocationList = await getMultiUserLocationFromDB(
+          myPotentialInfoList.integratedIdList
+        );
+
+        const response = {
+          id,
+          pursuerList: myPotentialInfoList.pursuerList,
+          potentialLocationList,
+          potentialInfoList: myPotentialInfoList.potentialInfoList,
+        };
+
+        // 告知使用者已成功連線
+        socket.emit("user-connect", response);
+        return;
       }
 
       // 告知使用者已成功連線

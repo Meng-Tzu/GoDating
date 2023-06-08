@@ -4,8 +4,23 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Map</title>
+    <title>GoDating</title>
+    <link rel="icon" href="images/favicon.png" type="image/png" />
     <meta name="author" content="Meng-Tzu Tsai" />
+
+    <!-- google font setting -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+    />
 
     <!-- Leaflet official css style -->
     <link
@@ -14,29 +29,59 @@
       integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
       crossorigin=""
     />
+
+    <link rel="stylesheet" href="./default_style/style.css" />
+    <link rel="stylesheet" href="./map_style/style.css" />
   </head>
   <body>
-    <h1>Search Candidates on Map</h1>
+    <!-- header -->
+    <header class="bg-yellow-200 shadow-md">
+      <section class="left">
+        <a href="/" class="logo"><img src="images/logo.png" alt="Logo" /></a>
 
-    <form action="" method="post">
-      <label for="users">名字:</label>
-      <select name="users" id="users">
-        <option value="" class="user" style="display: none"></option>
-      </select>
-      <button type="submit" id="btnSearch">Search</button>
-    </form>
-    <br />
-    <div id="map" style="height: 70vh"></div>
+        <nav>
+          <ul class="text-2xl text-yellow-950">
+            <li class="chatroom">
+              <a>聊天室</a>
+            </li>
+            <li class="line">|</li>
+            <li class="map"><a>地圖</a></li>
+          </ul>
+        </nav>
+      </section>
+
+      <section class="right">
+        <div id="profile">
+          <img
+            id="profile-img"
+            src="images/user_upload.png"
+            alt="profile"
+            style="border: 2px solid black"
+          />
+          <h1
+            class="user-name text-lime-600 text-yellow-950 text-center text-2xl"
+          ></h1>
+        </div>
+        <div id="logout">登出</div>
+      </section>
+    </header>
+
+    <main>
+      <div id="map"></div>
+    </main>
   </body>
   <script
     src="https://code.jquery.com/jquery-3.6.3.min.js"
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
     crossorigin="anonymous"
   ></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script
     src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
     crossorigin=""
   ></script>
-  <script src="./map.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="./render/map.js"></script>
 </html>

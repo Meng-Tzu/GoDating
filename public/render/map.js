@@ -1,66 +1,22 @@
 // ----------------------- Function 區塊 --------------------------
 
 // Function1: 取得 API 資料
-const getApi = async (url) => {
-  let response = await fetch(url);
+const getApi = async (url, option) => {
+  let response = await fetch(url, option);
   response = await response.json();
 
   return response.data;
 };
 
-// FIXME: Function2: 動態製造 DOM 物件 (和 match 的方式不一樣)
-const createUserOption = async (users, elementName) => {
-  // 選擇要當模板的 element tag
-  const $userTemplete = $(`.${elementName}`);
-
-  // 選取要被插入 child 的 parant element
-  const $parent = $(`#${elementName}s`);
-
-  // 依據 group array 的長度，產生多少個選項
-  for (const id in users) {
-    // 複製出一個下拉式選單的 option element tag
-    const $newDom = $userTemplete.clone();
-
-    // 把新的 option 的 value 和 text 改掉
-    $newDom.attr("value", id).text(users[id].name).css("display", "inline");
-
-    // 把新的 option 加入 parant element
-    $newDom.appendTo($parent);
-  }
-};
-
-// ------------------------------ 前端渲染區塊 --------------------------------
-
-// 取得所有使用者 id 和 nickname
-const allUsersUrl = `/api/1.0/user/userslist`;
-const userIdNicknamePair = {}; // {id: nickname}
-
-(async () => {
-  // 取得所有使用者
-  const idNameList = await getApi(allUsersUrl);
-  idNameList.forEach((userObj) => {
-    const name = userObj.nick_name;
-    const coordinate = userObj.coordinate;
-    userIdNicknamePair[userObj.id] = { name, coordinate };
-  });
-
-  // 動態產生下拉式選單的選項
-  await createUserOption(userIdNicknamePair, "user");
-})();
-
-// ----------------------- Dispaly Map ---------------------------
-$("#btnSearch").click(function (e) {
-  e.preventDefault();
-
-  // 取得是誰上線
-  const id = +$("#users").val();
-  const name = $("#users option:selected").text();
-
-  // 取得使用者位置
-  const userCoordinate = JSON.parse(userIdNicknamePair[id].coordinate);
-
+// FIXME: Function2: 顯示地圖中心點
+const markCenter = (
+  userCoordinate,
+  zoom,
+  name,
+  image,
+  potentialLocationList
+) => {
   // 更換地圖中心點為使用者位置
-  const zoom = 14;
   const map = L.map("map").setView(userCoordinate, zoom);
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19, // 最大可放大的 scale
@@ -68,9 +24,9 @@ $("#btnSearch").click(function (e) {
       '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
 
-  // TODO: 客製 school Maker 圖示 (更換照片來源)
+  // 客製 user Maker 圖示
   const userIcon = L.icon({
-    iconUrl: "/test1.jpg",
+    iconUrl: `images/${image}`,
     iconSize: [42, 42],
   });
 
@@ -79,65 +35,174 @@ $("#btnSearch").click(function (e) {
     icon: userIcon,
   }).addTo(map);
 
-  // display range
-  const circle = L.circle(userCoordinate, {
+  // popup setting user
+  if (name === "台北車站") {
+    userMarker.bindPopup(`<b>台北車站</b>`).openPopup();
+  } else {
+    userMarker.bindPopup(`<b>${name}</b><br>你在這！`).openPopup();
+  }
+
+  for (const potential of potentialLocationList) {
+    const location = JSON.parse(potential.location);
+    const candidateMarker = L.marker(location).addTo(map);
+    // tooltip setting of candidate
+    candidateMarker
+      .bindTooltip(
+        `<b>${potential.name}</b></br><img src="images/${potential.image}" style="height: 20px">`,
+        {
+          direction: "bottom", // default: auto
+          sticky: false, // true 跟著滑鼠移動。default: false
+          permanent: false, // 是滑鼠移過才出現(false)，還是一直出現(true)
+          opacity: 1.0,
+        }
+      )
+      .openTooltip();
+  }
+
+  // TODO: 客製化 display range
+  L.circle(userCoordinate, {
     color: "#3f8aff",
     fillColor: "#3f8aff",
     fillOpacity: 0.5,
     radius: 1500,
   }).addTo(map);
 
-  // popup setting user
-  userMarker.bindPopup(`<b>${name}</b><br>You are here !!!`).openPopup();
+  return map;
+};
 
-  // mark candidate position
-  (async () => {
-    // 取得所有連線者的候選人名單
-    const candidatesUrl = `/api/1.0/user/matchcandidate`;
-    const userCandidateList = await getApi(candidatesUrl);
-    const userIdCandidateIdPair = {}; // {id: candidateList}
-    userCandidateList.forEach((userObj) => {
-      userIdCandidateIdPair[userObj.id] = userObj.candidateIdList;
+// Function3: 顯示地圖中心位置
+const showMyLocation = async (zoom, name, image, potentialLocationList) => {
+  if (!navigator.geolocation) {
+    Swal.fire({
+      icon: "info",
+      title: "您的瀏覽器不支援取得當前位置",
+      text: "搜尋中心預設為台北車站",
     });
 
-    // 取得該連線者的候選人名單
-    const certainCandidateList = userIdCandidateIdPair[id];
-    certainCandidateList.forEach((candidateId) => {
-      const candidateName = userIdNicknamePair[candidateId].name;
-      // 取得候選人位置
-      const candidateCoordinate = JSON.parse(
-        userIdNicknamePair[candidateId].coordinate
-      );
+    markCenter(
+      [25.0480075, 121.5170613],
+      zoom,
+      "台北車站",
+      image,
+      potentialLocationList
+    );
+  }
 
-      // add marker of user position
-      const candidateMarker = L.marker(candidateCoordinate).addTo(map);
-      // TODO: tooltip setting of candidate (更換照片來源)
-      candidateMarker
-        .bindTooltip(
-          `<b>${candidateName}</b></br><img src="/test1.jpg" style="height: 20px">`,
-          {
-            direction: "bottom", // default: auto
-            sticky: false, // true 跟著滑鼠移動。default: false
-            permanent: false, // 是滑鼠移過才出現(false)，還是一直出現(true)
-            opacity: 1.0,
-          }
-        )
-        .openTooltip();
+  const success = async (position) => {
+    const userCoordinate = [
+      position.coords.latitude,
+      position.coords.longitude,
+    ];
+
+    // 更新 DB 內使用者的當前位置
+    const locationApi = "/api/1.0/user/location";
+    const option = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: "",
+    };
+    option.body = JSON.stringify({ location: userCoordinate });
+    await getApi(locationApi, option);
+
+    markCenter(userCoordinate, zoom, name, image, potentialLocationList);
+  };
+
+  const error = () => {
+    Swal.fire({
+      icon: "info",
+      title: "無法取得您的位置",
+      text: "搜尋中心預設為台北車站",
     });
-  })();
 
-  // 客製 school Maker 圖示
-  const school = [25.0384803, 121.5323711]; // AppWorks School
-  const schoolIcon = L.icon({
-    iconUrl:
-      "https://school.appworks.tw/wp-content/uploads/2018/09/cropped-AppWorks-School-Logo-thumb.png",
-    iconSize: [42, 42],
+    markCenter(
+      [25.0480075, 121.5170613],
+      zoom,
+      "台北車站",
+      image,
+      potentialLocationList
+    );
+  };
+
+  navigator.geolocation.getCurrentPosition(success, error);
+};
+
+// ----------------------- Display Map ---------------------------
+// 從 JWT token 取得使用者 id
+const token = localStorage.getItem("token");
+
+const userApi = "/api/1.0/user/verify";
+let fetchOption = {
+  method: "POST",
+  headers: { Authorization: `Bearer ${token}` },
+};
+
+// 驗證 token
+(async () => {
+  const userData = await getApi(userApi, fetchOption);
+
+  if (!userData) {
+    // token 錯誤
+    Swal.fire({
+      icon: "warning",
+      title: "您尚未登入喔！",
+      text: "請再嘗試登入 / 註冊",
+    }).then(() => {
+      localStorage.removeItem("token");
+      window.location.href = "/login.html";
+      return;
+    });
+  } else {
+    const { id, name, image } = userData;
+    if (image) {
+      $("#profile-img").attr("src", `images/${image}`).css("border", "none");
+    }
+    $(".user-name").text(name).attr("id", id);
+
+    // 連上 SocketIO server
+    const socket = io();
+    // 傳送連線者資訊給 server
+    const user = { id, name, isMap: true };
+    socket.emit("online", user);
+
+    // 連線建立後，取得推薦人選
+    socket.on("user-connect", async (msg) => {
+      console.log("open connection to server");
+      const { potentialInfoList } = msg;
+
+      if (!potentialInfoList.length) {
+        Swal.fire({
+          icon: "info",
+          title: "目前沒有符合的推薦人選喔！",
+          text: "請填寫問卷或放寬篩選條件",
+        });
+      }
+
+      // TODO: 標示出推薦人選的位置 (標出誰是追求者)
+      const { pursuerList, potentialLocationList } = msg;
+
+      // 詢問使用者是否能取得當前位置
+      const zoom = 14;
+      await showMyLocation(zoom, name, image, potentialLocationList);
+    });
+  }
+})();
+
+// TODO: 點擊聊天室導到聊天室頁面
+$(".chatroom").click(function () {
+  Swal.fire({
+    icon: "info",
+    title: "聊天室頁面功能待開發",
+    text: "感謝您的耐心等待！",
   });
+  // window.location.href = "/chatroom.html";
+});
 
-  // add marker of school position
-  const schoolMarker = L.marker(school, {
-    icon: schoolIcon,
-  }).addTo(map);
+// 點擊地圖重新載入
+$(".map").click(function () {
+  location.reload();
 });
 
 // FIXME: 取得所有人的位置

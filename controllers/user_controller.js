@@ -18,8 +18,8 @@ import {
   getMatchTagTitles,
   saveMatchTagIds,
   getMultiCandidatesDetailInfo,
+  updateUserLocationFromDB,
   getPartnerFromCache,
-  getCandidateInfoFromCache,
 } from "../models/user_model.js";
 
 import { getAge } from "../util/util.js";
@@ -322,7 +322,7 @@ const saveTags = async (req, res) => {
   }
 };
 
-// FIXME: 取得特定使用者的詳細資訊 (從 DB 拿詳細資訊而不是 cache ??)
+// FIXME: 取得特定使用者的詳細資訊 (要一直解 token?) (從 DB 拿詳細資訊而不是 cache ??)
 const getDetailInfo = async (req, res, next) => {
   // 從來自客戶端請求的 header 取得和擷取 JWT
   const token = req.header("Authorization").replace("Bearer ", "");
@@ -332,8 +332,6 @@ const getDetailInfo = async (req, res, next) => {
     // 解開 token
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
 
-    // 從 cache 拿詳細資料會沒有生日
-    // detailInfo = await getCandidateInfoFromCache(decoded.id);
     detailInfo = await getUserDetailInfo(decoded.id);
 
     const candidateBirthday = `${detailInfo.birth_year}/${detailInfo.birth_month}/${detailInfo.birth_date}`;
@@ -360,6 +358,27 @@ const getDetailInfo = async (req, res, next) => {
   }
 };
 
+// FIXME: 更新使用者的經緯度 (要一直解 token?)
+const updateUserLocation = async (req, res, next) => {
+  // 從來自客戶端請求的 header 取得和擷取 JWT
+  const token = req.header("Authorization").replace("Bearer ", "");
+  let { location } = req.body;
+
+  try {
+    // 解開 token
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
+    await updateUserLocationFromDB(decoded.id, JSON.stringify(location));
+
+    res.json({ data: `successfully update location of user-id#${decoded.id}` });
+    return;
+  } catch (error) {
+    console.error("cannot update user's location");
+    next(error);
+    return;
+  }
+};
+
 export {
   getUserIdName,
   certainUserPartnerList,
@@ -370,4 +389,5 @@ export {
   saveDetailInfo,
   saveTags,
   getDetailInfo,
+  updateUserLocation,
 };
