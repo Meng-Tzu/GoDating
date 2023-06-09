@@ -22,11 +22,7 @@ import {
   updateUserLocation,
 } from "../controllers/user_controller.js";
 
-import {
-  AllUserCandidateList,
-  certainUserCandidateList,
-  certainUserPursuerList,
-} from "../controllers/match_controller.js";
+import { certainUserPursuerList } from "../controllers/match_controller.js";
 
 import { upload } from "../util/util.js";
 
