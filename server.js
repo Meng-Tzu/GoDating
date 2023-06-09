@@ -59,7 +59,7 @@ const getPotentialInfoList = async (id) => {
   return { pursuerList, candidateIdList, integratedIdList, potentialInfoList };
 };
 
-// Function2: check if you are my candidate not pursuer
+// TODO: Function2: check if you are my candidate not pursuer (以後若是追求者是 Jaccard 增加，不喜歡才直接刪除)
 const updateCandidateList = async (userId, candidateId) => {
   // 從快取把雙方的 "candidate" 刪除彼此
   await deleteCandidateOfUser(userId, candidateId);
@@ -307,7 +307,7 @@ const connectToSocketIO = (webSrv) => {
         // 更新自己的 pursuer + candidate list
         const myPotentialInfoList = await getPotentialInfoList(userId);
 
-        // 拿到 partner-detail-info (加上 indexId key)
+        // 拿到 partner-detail-info
         const partnerInfo = await getCandidateInfoFromCache(candidateId);
         partnerInfo.indexId = indexId;
 
@@ -325,7 +325,7 @@ const connectToSocketIO = (webSrv) => {
 
         // 當對方在線上，才立即傳送資訊給對方
         if (candidateId in connections) {
-          // 給對方自己的 detail-info (加上 indexId key)
+          // 給對方自己的 detail-info
           const selfInfo = await getCandidateInfoFromCache(userId);
           selfInfo.indexId = indexId;
 
