@@ -304,19 +304,6 @@ const suggestCandidateToAllUsers = async (req, res) => {
   }
   // console.log("step3-2 potentialList", potentialList);
 
-  // potentialList 改回原本的格式
-  for (const userId in potentialList) {
-    // 取得使用者的候選人名單，並只留下候選人 id
-    const candidateIdList = potentialList[userId].map(
-      (candidate) => candidate.candidateId
-    );
-    // console.log("userId", userId, "candidateIdList", candidateIdList);
-
-    // potentialList 改回原本的格式
-    potentialList[userId] = candidateIdList;
-  }
-  // console.log("step3-3 potentialList", potentialList);
-
   // ------------------------- 篩選結束 -------------------------
 
   // TODO: 驗證 token 是否正確
@@ -384,18 +371,6 @@ const suggestCandidateToNewOne = async (req, res) => {
   }
   // console.log("step3-2 potentialList", potentialList);
 
-  // potentialList 改回原本的格式
-  for (const userId in potentialList) {
-    // 取得使用者的候選人名單，並只留下候選人 id
-    const candidateIdList = potentialList[userId].map(
-      (candidate) => candidate.candidateId
-    );
-    // console.log("userId", userId, "candidateIdList", candidateIdList);
-
-    // potentialList 改回原本的格式
-    potentialList[userId] = candidateIdList;
-  }
-  // console.log("step3-3 potentialList", potentialList);
   // ------------------------- 篩選結束 -------------------------
 
   // TODO: 驗證 token 是否正確
@@ -440,31 +415,6 @@ const suggestCandidateToNewOne = async (req, res) => {
   res.json({ data: { userId: newuserid, potentialListOfCertainUser } });
 };
 
-// 輸出特定使用者的候選人 API ( cache miss 時改撈 DB)
-const certainUserCandidateList = async (req, res) => {
-  // FIXME: 改從 authentication 拿 user id
-  const { userid } = req.body;
-  let candidateList;
-  try {
-    candidateList = await getAllCandidateFromCache(userid);
-  } catch (error) {
-    console.error("Cannot get candidate list from cache. Error:", error);
-
-    console.log("Get candidate list from DB");
-    candidateList = await getCandidatesFromDB(userid);
-  }
-
-  const userCandidatePair = {};
-  userCandidatePair[userid] = candidateList;
-
-  const response = { data: [] };
-
-  response.data.push(userCandidatePair);
-
-  res.status(200).json(response);
-  return;
-};
-
 // 輸出特定使用者的追求者 API ( cache miss 時改撈 DB)
 const certainUserPursuerList = async (req, res) => {
   // FIXME: 改從 authentication 拿 user id
@@ -492,29 +442,11 @@ const certainUserPursuerList = async (req, res) => {
   return;
 };
 
-//  FIXME: 輸出成 API 格式 (要改成輸入進去 DB 和 cache，而非直接餵給 API)
-const AllUserCandidateList = async (req, res) => {
-  const response = { data: [] };
-
-  for (const userId in sex_match_pair) {
-    const userId_candidateIds_pair = {
-      id: userId,
-      candidateIdList: sex_match_pair[userId],
-    };
-    response.data.push(userId_candidateIds_pair);
-  }
-
-  res.status(200).json(response);
-  return;
-};
-
 // TODO: 反註解
 export {
   suggestCandidateToAllUsers,
   suggestCandidateToNewOne,
-  certainUserCandidateList,
   certainUserPursuerList,
-  AllUserCandidateList,
   // excludeMyselfId,
   // selectBySexualOrientation,
   preSexMatching,

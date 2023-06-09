@@ -38,10 +38,9 @@ import {
 } from "./models/chat_record_model.js";
 
 // ------------------- Function 區塊 ------------------------
-// TODO: Function1: potentialInfoList = pursuer + candidate list
+// Function1: potentialInfoList = pursuer + candidate list
 const getPotentialInfoList = async (id) => {
-  const candidateList = await getAllCandidateFromCache(id);
-  const candidateIdList = Object.keys(candidateList);
+  const candidateIdList = await getAllCandidateFromCache(id);
 
   const pursuerList = await getPursuerFromCache(id);
   const pursuerIdList = Object.keys(pursuerList);
@@ -71,8 +70,8 @@ const updateCandidateList = async (userId, candidateId) => {
   await saveNeverMatchOfUser(candidateId, userId);
 
   // 更新自己的 candidate list
-  const candidateList = await getAllCandidateFromCache(userId);
-  const candidateIdList = Object.keys(candidateList);
+  const candidateIdList = await getAllCandidateFromCache(userId);
+
   const candidateInfoList = [];
   for (const candidateId of candidateIdList) {
     const candidateInfo = await getCandidateInfoFromCache(candidateId);
@@ -182,7 +181,7 @@ const connectToSocketIO = (webSrv) => {
         }
       }
 
-      // TODO: 取得這個使用者的人選經緯度
+      // 取得這個使用者的人選經緯度
       if (isMap) {
         const potentialLocationList = await getMultiUserLocationFromDB(
           myPotentialInfoList.integratedIdList
