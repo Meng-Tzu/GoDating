@@ -225,7 +225,7 @@ const getMatchTagTitles = async (userId) => {
 };
 
 // 存入所有使用者的 candidates 到 DB
-const saveCandidatesToDB = async (match_pair) => {
+const saveCandidatesToDB = async (potentialList) => {
   const queryStr = `
   INSERT INTO user_candidate
   (user_id, candidate_id)
@@ -234,9 +234,9 @@ const saveCandidatesToDB = async (match_pair) => {
 
   const values = [];
 
-  for (const userId in match_pair) {
-    match_pair[userId].forEach((candidateId) => {
-      values.push([+userId, candidateId]);
+  for (const userId in potentialList) {
+    potentialList[userId].forEach((candidate) => {
+      values.push([+userId, candidate.candidateId]);
     });
   }
 
@@ -245,7 +245,7 @@ const saveCandidatesToDB = async (match_pair) => {
   return result;
 };
 
-// FIXME: 將新註冊者與其配對者互相存彼此為 candidates 到 DB
+// 將新註冊者與其配對者互相存彼此為 candidates 到 DB
 const saveCandidatesOfCertainUser = async (userId, potentialList) => {
   const queryStr = `
   INSERT INTO user_candidate
@@ -254,9 +254,9 @@ const saveCandidatesOfCertainUser = async (userId, potentialList) => {
   `;
 
   const values = [];
-  potentialList.forEach((candidateId) => {
-    values.push([+userId, candidateId]);
-    values.push([candidateId, +userId]);
+  potentialList.forEach((candidate) => {
+    values.push([+userId, candidate.candidateId]);
+    values.push([candidate.candidateId, +userId]);
   });
 
   const [result] = await pool.query(queryStr, [values]);
@@ -359,50 +359,17 @@ const getMultiUserLocationFromDB = async (candidateIds) => {
 };
 
 // FIXME: 把所有使用者的 candidate 存進 cache (放在 model ??)
-const saveCandidatesToCache = async (match_pair) => {
-  for (const userId in match_pair) {
-    // 要幫每一個候選人加上 nickname
-    for (const candidateId of match_pair[userId]) {
-      // 取得 candidate 的基本資訊
-      const candidateInfo = await getUserMatchInfo(candidateId);
-
-      try {
-        if (Cache.ready) {
-          await Cache.hset(
-            `candidates_of_userid#${userId}`,
-            candidateId,
-            candidateInfo.nick_name
-          );
-        }
-      } catch (error) {
-        console.error(`cannot save candidates into cache:`, error);
-      }
-    }
-  }
-};
-
-// FIXME: 將新註冊者與其配對者互相存彼此為 candidates 到 cache (放在 model ??)
-const saveCandidatesOfCertainUserToCache = async (userId, potentialList) => {
-  // 取得 user 的基本資訊
-  const userInfo = await getUserMatchInfo(userId);
-
-  // 要幫每一個候選人加上 nickname
-  for (const candidateId of potentialList) {
-    // 取得 candidate 的基本資訊
-    const candidateInfo = await getUserMatchInfo(candidateId);
+const saveCandidatesToCache = async (potentialList) => {
+  for (const userId in potentialList) {
+    const candidateWithJaccardIndex = potentialList[userId].flatMap(
+      ({ jaccardIndex, candidateId }) => [jaccardIndex, candidateId]
+    );
 
     try {
       if (Cache.ready) {
-        await Cache.hset(
+        await Cache.zadd(
           `candidates_of_userid#${userId}`,
-          candidateId,
-          candidateInfo.nick_name
-        );
-
-        await Cache.hset(
-          `candidates_of_userid#${candidateId}`,
-          userId,
-          userInfo.nick_name
+          candidateWithJaccardIndex
         );
       }
     } catch (error) {
@@ -411,18 +378,38 @@ const saveCandidatesOfCertainUserToCache = async (userId, potentialList) => {
   }
 };
 
-// FIXME: 從 cache 取出特定使用者的 "candidate" (改成取 sorted set) (放在 model ?)
+// FIXME: 將新註冊者與其配對者互相存彼此為 candidates 到 cache (放在 model ??)
+const saveCandidatesOfCertainUserToCache = async (userId, potentialList) => {
+  for (const candidate of potentialList) {
+    try {
+      if (Cache.ready) {
+        await Cache.zadd(
+          `candidates_of_userid#${userId}`,
+          candidate.jaccardIndex,
+          candidate.candidateId
+        );
+
+        await Cache.zadd(
+          `candidates_of_userid#${candidate.candidateId}`,
+          candidate.jaccardIndex,
+          userId
+        );
+      }
+    } catch (error) {
+      console.error(`cannot save candidates into cache:`, error);
+    }
+  }
+};
+
+// FIXME: 從 cache 取出特定使用者的 "candidate" (放在 model ?)
 const getAllCandidateFromCache = async (userId) => {
   if (Cache.ready) {
-    const candidateIds = await Cache.hkeys(`candidates_of_userid#${userId}`);
-    const candidateNames = await Cache.hvals(`candidates_of_userid#${userId}`);
-
-    const candidateList = {};
-
-    candidateIds.forEach((id, index) => {
-      candidateList[id] = candidateNames[index];
-    });
-    return candidateList;
+    const sortedCandidateIds = await Cache.zrevrange(
+      `candidates_of_userid#${userId}`,
+      0,
+      -1
+    );
+    return sortedCandidateIds;
   }
 };
 

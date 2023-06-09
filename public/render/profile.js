@@ -224,6 +224,24 @@ $("#match-info").click(async function () {
     return;
   }
 
+  // 選擇標籤
+  const tagApi = "/api/1.0/user/tags";
+  fetchOption = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: "",
+  };
+
+  const tags = {
+    userid: $(".user-name").attr("id"),
+    tags: $("#tags-selected").val(),
+  };
+  fetchOption.body = JSON.stringify(tags);
+  await getApi(tagApi, fetchOption);
+
   // 取得新註冊者的 candidate list
   const data = { newuserid: $(".user-name").attr("id") };
   fetchOption = {
@@ -250,24 +268,6 @@ $("#match-info").click(async function () {
     userApi = "/api/1.0/user/verify";
     return;
   }
-
-  // FIXME: 選擇標籤 (等可使用標籤去排權重，再規劃重新排序候選人名單)
-  const tagApi = "/api/1.0/user/tags";
-  fetchOption = {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: "",
-  };
-
-  const tags = {
-    userid: $(".user-name").attr("id"),
-    tags: $("#tags-selected").val(),
-  };
-  fetchOption.body = JSON.stringify(tags);
-  await getApi(tagApi, fetchOption);
 
   // 新註冊者的資料存到 localstorage
   const update = {

@@ -38,10 +38,9 @@ import {
 } from "./models/chat_record_model.js";
 
 // ------------------- Function 區塊 ------------------------
-// TODO: Function1: potentialInfoList = pursuer + candidate list
+// Function1: potentialInfoList = pursuer + candidate list
 const getPotentialInfoList = async (id) => {
-  const candidateList = await getAllCandidateFromCache(id);
-  const candidateIdList = Object.keys(candidateList);
+  const candidateIdList = await getAllCandidateFromCache(id);
 
   const pursuerList = await getPursuerFromCache(id);
   const pursuerIdList = Object.keys(pursuerList);
@@ -60,7 +59,7 @@ const getPotentialInfoList = async (id) => {
   return { pursuerList, candidateIdList, integratedIdList, potentialInfoList };
 };
 
-// Function2: check if you are my candidate not pursuer
+// TODO: Function2: check if you are my candidate not pursuer (以後若是追求者是 Jaccard 增加，不喜歡才直接刪除)
 const updateCandidateList = async (userId, candidateId) => {
   // 從快取把雙方的 "candidate" 刪除彼此
   await deleteCandidateOfUser(userId, candidateId);
@@ -71,8 +70,8 @@ const updateCandidateList = async (userId, candidateId) => {
   await saveNeverMatchOfUser(candidateId, userId);
 
   // 更新自己的 candidate list
-  const candidateList = await getAllCandidateFromCache(userId);
-  const candidateIdList = Object.keys(candidateList);
+  const candidateIdList = await getAllCandidateFromCache(userId);
+
   const candidateInfoList = [];
   for (const candidateId of candidateIdList) {
     const candidateInfo = await getCandidateInfoFromCache(candidateId);
@@ -182,7 +181,7 @@ const connectToSocketIO = (webSrv) => {
         }
       }
 
-      // TODO: 取得這個使用者的人選經緯度
+      // 取得這個使用者的人選經緯度
       if (isMap) {
         const potentialLocationList = await getMultiUserLocationFromDB(
           myPotentialInfoList.integratedIdList
@@ -308,7 +307,7 @@ const connectToSocketIO = (webSrv) => {
         // 更新自己的 pursuer + candidate list
         const myPotentialInfoList = await getPotentialInfoList(userId);
 
-        // 拿到 partner-detail-info (加上 indexId key)
+        // 拿到 partner-detail-info
         const partnerInfo = await getCandidateInfoFromCache(candidateId);
         partnerInfo.indexId = indexId;
 
@@ -326,7 +325,7 @@ const connectToSocketIO = (webSrv) => {
 
         // 當對方在線上，才立即傳送資訊給對方
         if (candidateId in connections) {
-          // 給對方自己的 detail-info (加上 indexId key)
+          // 給對方自己的 detail-info
           const selfInfo = await getCandidateInfoFromCache(userId);
           selfInfo.indexId = indexId;
 

@@ -39,7 +39,7 @@ const deletePursuerOfUser = async (userId, suitorId) => {
       await Cache.hdel(`who_like_me_of_userid#${userId}`, suitorId);
     }
   } catch (error) {
-    console.error(`cannot delete suitors from cache:`, error);
+    console.error(`cannot delete pursuer from cache:`, error);
   }
 };
 
@@ -47,7 +47,7 @@ const deletePursuerOfUser = async (userId, suitorId) => {
 const deleteCandidateOfUser = async (userId, candidateId) => {
   try {
     if (Cache.ready) {
-      await Cache.hdel(`candidates_of_userid#${userId}`, candidateId);
+      await Cache.zrem(`candidates_of_userid#${userId}`, candidateId);
     }
   } catch (error) {
     console.error(`cannot delete candidates from cache:`, error);
