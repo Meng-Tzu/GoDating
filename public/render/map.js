@@ -10,6 +10,7 @@ const getApi = async (url, option) => {
 
 // FIXME: Function2: 顯示地圖中心點
 const markCenter = (
+  socket,
   userCoordinate,
   zoom,
   name,
@@ -44,7 +45,18 @@ const markCenter = (
 
   for (const potential of potentialLocationList) {
     const location = JSON.parse(potential.location);
-    const candidateMarker = L.marker(location).addTo(map);
+    if (!location) continue;
+
+    const candidateMarker = L.marker(location, { userId: potential.id }).addTo(
+      map
+    );
+
+    // 點擊 candidate 可以跑出詳細資訊
+    candidateMarker.on("click", () => {
+      const candidateId = candidateMarker.options.userId;
+      socket.emit("map-candidate", candidateId);
+    });
+
     // tooltip setting of candidate
     candidateMarker
       .bindTooltip(
@@ -71,7 +83,13 @@ const markCenter = (
 };
 
 // Function3: 顯示地圖中心位置
-const showMyLocation = async (zoom, name, image, potentialLocationList) => {
+const showMyLocation = async (
+  socket,
+  zoom,
+  name,
+  image,
+  potentialLocationList
+) => {
   if (!navigator.geolocation) {
     Swal.fire({
       icon: "info",
@@ -80,6 +98,7 @@ const showMyLocation = async (zoom, name, image, potentialLocationList) => {
     });
 
     markCenter(
+      socket,
       [25.0480075, 121.5170613],
       zoom,
       "台北車站",
@@ -107,7 +126,14 @@ const showMyLocation = async (zoom, name, image, potentialLocationList) => {
     option.body = JSON.stringify({ location: userCoordinate });
     await getApi(locationApi, option);
 
-    markCenter(userCoordinate, zoom, name, image, potentialLocationList);
+    markCenter(
+      socket,
+      userCoordinate,
+      zoom,
+      name,
+      image,
+      potentialLocationList
+    );
   };
 
   const error = () => {
@@ -118,6 +144,7 @@ const showMyLocation = async (zoom, name, image, potentialLocationList) => {
     });
 
     markCenter(
+      socket,
       [25.0480075, 121.5170613],
       zoom,
       "台北車站",
@@ -185,7 +212,12 @@ let fetchOption = {
 
       // 詢問使用者是否能取得當前位置
       const zoom = 14;
-      await showMyLocation(zoom, name, image, potentialLocationList);
+      await showMyLocation(socket, zoom, name, image, potentialLocationList);
+    });
+
+    // TODO: 接收推薦人選的詳細資訊
+    socket.on("map-candidate", (potentialInfo) => {
+      console.log("potentialInfo", potentialInfo);
     });
   }
 })();
@@ -204,25 +236,3 @@ $(".chatroom").click(function () {
 $(".map").click(function () {
   location.reload();
 });
-
-// FIXME: 取得所有人的位置
-// const allUsersUrl = `/api/1.0/user/userslist`;
-// (async () => {
-//   // 取得所有使用者的位置
-//   const idCoordinateList = await getApi(allUsersUrl);
-//   idCoordinateList.forEach((user) => {
-//     // mark setting
-//     const position = JSON.parse(user.coordinate);
-//     const otherMark = L.marker(position).addTo(map);
-
-//     // tooltip setting
-//     otherMark
-//       .bindTooltip(`<b>${user.nick_name}</b>`, {
-//         direction: "bottom", // right、left、top、bottom、center。default: auto
-//         sticky: false, // true 跟著滑鼠移動。default: false
-//         permanent: false, // 是滑鼠移過才出現，還是一直出現
-//         opacity: 1.0,
-//       })
-//       .openTooltip();
-//   });
-// })();

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { writeFile, createReadStream } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { getAge } from "./util/util.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -217,6 +218,22 @@ const connectToSocketIO = (webSrv) => {
       socket.emit("response-all-potential", response);
     });
 
+    // 監聽到使用者想查看地圖上的推薦人資訊
+    socket.on("map-candidate", async (candidateId) => {
+      const potentialInfo = await getUserDetailInfo(candidateId);
+      const birthday = `${potentialInfo.birth_year}/${potentialInfo.birth_month}/${potentialInfo.birth_date}`;
+      const age = getAge(birthday);
+      delete potentialInfo.birth_year;
+      delete potentialInfo.birth_month;
+      delete potentialInfo.birth_date;
+      potentialInfo.age = age;
+      const potentialTags = await getMatchTagTitles(candidateId);
+      potentialInfo.tags = potentialTags;
+      const response = potentialInfo;
+
+      socket.emit("map-candidate", response);
+    });
+
     // 監聽到使用者喜歡候選人
     socket.on("desired-candidate", async (msg) => {
       const { userId, userName, candidateId, candidateName } = msg;
@@ -415,7 +432,7 @@ const connectToSocketIO = (webSrv) => {
       }
     });
 
-    // 監聽到使用者想要 partner 詳細資訊
+    // TODO: 監聽到使用者想要 partner 詳細資訊 (getDetailInfo function 被改掉了)
     socket.on("ask-for-partner-info", async (partnerId) => {
       const response = await getDetailInfo(+partnerId);
 
