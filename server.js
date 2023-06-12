@@ -19,7 +19,7 @@ import {
   getPursuerFromCache,
 } from "./models/user_model.js";
 
-import { getDetailInfo } from "./controllers/user_controller.js";
+import { getPartnerInfo } from "./controllers/user_controller.js";
 
 import {
   getWhoLikeMeOfSelf,
@@ -434,7 +434,7 @@ const connectToSocketIO = (webSrv) => {
 
     // TODO: 監聽到使用者想要 partner 詳細資訊 (getDetailInfo function 被改掉了)
     socket.on("ask-for-partner-info", async (partnerId) => {
-      const response = await getDetailInfo(+partnerId);
+      const response = await getPartnerInfo(+partnerId);
 
       socket.emit("get-partner-info", response);
     });

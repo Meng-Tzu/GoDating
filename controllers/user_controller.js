@@ -24,6 +24,7 @@ import {
 
 import { getAge } from "../util/util.js";
 
+// TODO:  (沒有用到?)
 const getUserIdName = async (req, res) => {
   const data = await getAllUsers();
   const response = { data: data };
@@ -49,7 +50,6 @@ const certainUserPartnerList = async (req, res) => {
 };
 
 // FIXME: 把候選人資料從 DB 存進 cache (何時觸發 ?)
-
 const saveCandidateInfoFromDBtoCache = async (candidateIds) => {
   // 整理從 DB 拿到的候選人詳細資料
   const cadidateList = await getMultiCandidatesDetailInfo(candidateIds);
@@ -80,6 +80,29 @@ const saveCandidateInfoFromDBtoCache = async (candidateIds) => {
 // } catch (error) {
 //   console.error(`cannot save candidate detail info into cache:`, error);
 // }
+
+// 取得 partner info
+const getPartnerInfo = async (partnerId) => {
+  try {
+    const detailInfo = await getUserDetailInfo(partnerId);
+
+    const candidateBirthday = `${detailInfo.birth_year}/${detailInfo.birth_month}/${detailInfo.birth_date}`;
+    const age = getAge(candidateBirthday);
+    detailInfo.age = age;
+    const imageUrl = `images/${detailInfo.main_image}`;
+    detailInfo.main_image = imageUrl;
+    delete detailInfo.birth_year;
+    delete detailInfo.birth_month;
+    delete detailInfo.birth_date;
+    // FIXME: 取得使用者的 tags (目前從 DB 拿，可以從 cache 拿 ??)
+    const tags = await getMatchTagTitles(partnerId);
+    detailInfo.tagList = tags;
+
+    return detailInfo;
+  } catch (error) {
+    console.error("cannot get user's detail info");
+  }
+};
 
 // 登入驗證
 const signIn = async (req, res) => {
@@ -382,6 +405,7 @@ const updateUserLocation = async (req, res, next) => {
 export {
   getUserIdName,
   certainUserPartnerList,
+  getPartnerInfo,
   signIn,
   signUp,
   verify,
