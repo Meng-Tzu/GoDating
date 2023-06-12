@@ -69,17 +69,6 @@ const saveUserDetailInfo = async (
   ]);
 };
 
-// FIXME: 取得 DB 裡的所有使用者 id + nick_name
-const getAllUsers = async () => {
-  const queryStr = `
-    SELECT id, nick_name FROM user
-    `;
-
-  let [result] = await pool.query(queryStr);
-
-  return result;
-};
-
 // FIXME: 取得 DB 裡的所有使用者 id (優化：遍歷 array，效能差)
 const getAllUserIds = async () => {
   const queryStr = `
@@ -481,7 +470,6 @@ const getCandidateInfoFromCache = async (candidateId) => {
 export {
   saveUserBasicInfo,
   saveUserDetailInfo,
-  getAllUsers,
   getAllUserIds,
   getUserBasicInfo,
   getUserMatchInfo,

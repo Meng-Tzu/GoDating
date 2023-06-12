@@ -7,10 +7,8 @@ import * as argon2 from "argon2";
 import Cache from "../util/cache.js";
 
 import {
-  getAllUserIds,
   saveUserBasicInfo,
   saveUserDetailInfo,
-  getAllUsers,
   getUserBasicInfo,
   getUserDetailInfo,
   getUserSexId,
@@ -24,16 +22,7 @@ import {
 
 import { getAge } from "../util/util.js";
 
-// TODO:  (沒有用到?)
-const getUserIdName = async (req, res) => {
-  const data = await getAllUsers();
-  const response = { data: data };
-  res.status(200).json(response);
-  return;
-};
-
 const sexType = { 1: "男性", 2: "女性" };
-const allUserIds = await getAllUserIds();
 
 // FIXME: 輸出特定使用者的 partner API ( cache miss 時改撈 DB)
 const certainUserPartnerList = async (req, res) => {
@@ -403,7 +392,6 @@ const updateUserLocation = async (req, res, next) => {
 };
 
 export {
-  getUserIdName,
   certainUserPartnerList,
   getPartnerInfo,
   signIn,
