@@ -156,6 +156,30 @@ const showMyLocation = async (
   navigator.geolocation.getCurrentPosition(success, error);
 };
 
+// Function4: 動態製造 DOM 物件 (create p element for tags)
+const createTags = (tagList, elementName) => {
+  // 移除先前渲染過的 tags，避免重複渲染
+  $(`.${elementName}s`).remove();
+  // 選擇要當模板的 element tag
+  const $tagTemplete = $(`.templete-${elementName}`);
+
+  // 選取要被插入 child 的 parant element
+  const $parent = $(`#${elementName}s`);
+
+  // 依據 tagList array 的長度，產生多少個 p element
+  tagList.forEach((tag) => {
+    // 複製出一個下拉式選單的 p element tag
+    const $newDom = $tagTemplete.clone();
+    $newDom
+      .attr("class", `${elementName} ${tag.tag_id}`)
+      .text(tag.title)
+      .css("display", "inline");
+
+    // 把新的 p element 加入 parant element
+    $newDom.appendTo($parent);
+  });
+};
+
 // ----------------------- Display Map ---------------------------
 // 從 JWT token 取得使用者 id
 const token = localStorage.getItem("token");
@@ -215,9 +239,32 @@ let fetchOption = {
       await showMyLocation(socket, zoom, name, image, potentialLocationList);
     });
 
-    // TODO: 接收推薦人選的詳細資訊
+    // 接收推薦人選的詳細資訊
     socket.on("map-candidate", (potentialInfo) => {
-      console.log("potentialInfo", potentialInfo);
+      const { id, nick_name, main_image, sex_id, age, self_intro, tags } =
+        potentialInfo;
+
+      $("#candidate-picture")
+        .attr("src", `images/${main_image}`)
+        .attr("alt", nick_name);
+      $("#candidate-name").text(nick_name);
+
+      if (sex_id == 2) {
+        $("#candidate-sex")
+          .attr("src", "./images/female.png")
+          .attr("alt", "女性")
+          .css("fill", "#FA76AD");
+        $("#candidate-age").text(age).css("color", "#FA76AD");
+      } else if (sex_id == 1) {
+        $("#candidate-sex")
+          .attr("src", "./images/male.png")
+          .attr("alt", "男性")
+          .css("fill", "#0086DE");
+        $("#candidate-age").text(age).css("color", "#0086DE");
+      }
+
+      createTags(tags, "tag");
+      $("#candidate-intro").text(self_intro);
     });
   }
 })();
@@ -235,4 +282,10 @@ $(".chatroom").click(function () {
 // 點擊地圖重新載入
 $(".map").click(function () {
   location.reload();
+});
+
+// 登出
+$("#logout").click(function () {
+  localStorage.removeItem("token");
+  window.location.href = "/login.html";
 });

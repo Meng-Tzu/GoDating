@@ -226,6 +226,7 @@ const connectToSocketIO = (webSrv) => {
       delete potentialInfo.birth_year;
       delete potentialInfo.birth_month;
       delete potentialInfo.birth_date;
+      delete potentialInfo.orientation_id;
       potentialInfo.age = age;
       const potentialTags = await getMatchTagTitles(candidateId);
       potentialInfo.tags = potentialTags;
@@ -432,7 +433,7 @@ const connectToSocketIO = (webSrv) => {
       }
     });
 
-    // TODO: 監聽到使用者想要 partner 詳細資訊 (getDetailInfo function 被改掉了)
+    // 監聽到使用者想要 partner 詳細資訊
     socket.on("ask-for-partner-info", async (partnerId) => {
       const response = await getPartnerInfo(+partnerId);
 
