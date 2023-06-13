@@ -8,7 +8,7 @@ const getApi = async (url, option) => {
   return response.data;
 };
 
-// FIXME: Function2: 顯示地圖中心點
+// Function2: 顯示地圖中心點
 const markCenter = (
   socket,
   userCoordinate,
@@ -51,11 +51,9 @@ const markCenter = (
       map
     );
 
-    // 點擊 candidate 可以跑出詳細資訊
-    candidateMarker.on("click", () => {
-      const candidateId = candidateMarker.options.userId;
-      socket.emit("map-candidate", candidateId);
-    });
+    // TODO: 被通知已配對成功
+
+    // TODO: 被通知對方不喜歡自己，刪除對方
 
     // tooltip setting of candidate
     candidateMarker
@@ -69,17 +67,79 @@ const markCenter = (
         }
       )
       .openTooltip();
+
+    // 點擊 candidate 可以跑出詳細資訊
+    candidateMarker.on("click", () => {
+      const candidateId = candidateMarker.options.userId;
+      socket.emit("map-candidate", candidateId);
+
+      // 點擊喜歡後，關閉候選人資訊與把候選人從地圖刪除
+      $("#like")
+        .unbind("click")
+        .click(function () {
+          $("#candidate-info").css("display", "none");
+          if (socket === null) {
+            alert("Please connect first");
+            return;
+          }
+
+          const candidateId = $(".candidate-name").attr("id");
+          if (candidateMarker.options.userId === +candidateId) {
+            map.removeLayer(candidateMarker);
+          }
+
+          const userId = $(".user-name").attr("id");
+          const userName = $(".user-name").text();
+          const candidateName = $(".candidate-name").text();
+
+          const messages = {
+            isMap: true,
+            userId,
+            userName,
+            candidateId,
+            candidateName,
+          };
+          socket.emit("desired-candidate", messages);
+        });
+
+      // 點擊不喜歡後，關閉候選人資訊與把候選人從地圖刪除
+      $("#unlike")
+        .unbind("click")
+        .click(function () {
+          $("#candidate-info").css("display", "none");
+          if (socket === null) {
+            alert("Please connect first");
+            return;
+          }
+
+          const unlikeId = $(".candidate-name").attr("id");
+          if (candidateMarker.options.userId === +unlikeId) {
+            map.removeLayer(candidateMarker);
+          }
+
+          const userId = $(".user-name").attr("id");
+          const userName = $(".user-name").text();
+          const unlikeName = $(".candidate-name").text();
+
+          const messages = {
+            isMap: true,
+            userId,
+            userName,
+            unlikeId,
+            unlikeName,
+          };
+          socket.emit("unlike", messages);
+        });
+    });
   }
 
-  // TODO: 客製化 display range
+  // FIXME: 客製化 display range
   L.circle(userCoordinate, {
     color: "#3f8aff",
     fillColor: "#3f8aff",
     fillOpacity: 0.5,
     radius: 1500,
   }).addTo(map);
-
-  return map;
 };
 
 // Function3: 顯示地圖中心位置
@@ -181,6 +241,8 @@ const createTags = (tagList, elementName) => {
 };
 
 // ----------------------- Display Map ---------------------------
+let socket = null;
+
 // 從 JWT token 取得使用者 id
 const token = localStorage.getItem("token");
 
@@ -213,7 +275,7 @@ let fetchOption = {
     $(".user-name").text(name).attr("id", id);
 
     // 連上 SocketIO server
-    const socket = io();
+    socket = io();
     // 傳送連線者資訊給 server
     const user = { id, name, isMap: true };
     socket.emit("online", user);
@@ -221,14 +283,14 @@ let fetchOption = {
     // 連線建立後，取得推薦人選
     socket.on("user-connect", async (msg) => {
       console.log("open connection to server");
-      const { potentialInfoList } = msg;
-
-      if (!potentialInfoList.length) {
+      if (!msg) {
         Swal.fire({
           icon: "info",
           title: "目前沒有符合的推薦人選喔！",
           text: "請填寫問卷或放寬篩選條件",
         });
+        $("#map").text("目前沒有符合的推薦人選喔！");
+        return;
       }
 
       // TODO: 標示出推薦人選的位置 (標出誰是追求者)
@@ -244,10 +306,13 @@ let fetchOption = {
       const { id, nick_name, main_image, sex_id, age, self_intro, tags } =
         potentialInfo;
 
+      $("#candidate-info").css("display", "block");
+      $("#cross").css("display", "block");
+
       $("#candidate-picture")
         .attr("src", `images/${main_image}`)
         .attr("alt", nick_name);
-      $("#candidate-name").text(nick_name);
+      $(".candidate-name").text(nick_name).attr("id", id);
 
       if (sex_id == 2) {
         $("#candidate-sex")
@@ -266,10 +331,40 @@ let fetchOption = {
       createTags(tags, "tag");
       $("#candidate-intro").text(self_intro);
     });
+
+    // 通知已傳送喜歡的訊息給對方
+    socket.on("success-send-like-signal", (msg) => {
+      const { candidateName } = msg;
+
+      Swal.fire({
+        position: "top",
+        icon: "success",
+        title: `已傳送喜歡的訊息給${candidateName}！`,
+        showCloseButton: true,
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    });
+
+    // TODO: 通知已配對成功
+
+    // 通知再也見不到對方
+    socket.on("send-unlike-signal", (msg) => {
+      const { unlikeName } = msg;
+
+      Swal.fire({
+        position: "top",
+        icon: "info",
+        title: `再也見不到${unlikeName}囉！`,
+        showCloseButton: true,
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    });
   }
 })();
 
-// TODO: 點擊聊天室導到聊天室頁面
+// FIXME: 點擊聊天室導到聊天室頁面
 $(".chatroom").click(function () {
   Swal.fire({
     icon: "info",
