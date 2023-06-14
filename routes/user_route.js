@@ -14,7 +14,6 @@ import {
   signUp,
   verify,
   checkSexInfo,
-  getUserIdName,
   certainUserPartnerList,
   saveDetailInfo,
   saveTags,
@@ -52,9 +51,6 @@ userRouter.post("/user/tags", saveTags);
 
 // FIXME: 所有使用者名單(需要增加權限管理)
 userRouter.post("/user/detailinfo", getDetailInfo);
-
-// FIXME: 所有使用者名單 (post 改成 get)
-userRouter.get("/user/userslist", getUserIdName);
 
 // FIXME: 特定使用者的候選人名單 (需要增加權限管理)
 userRouter.post("/user/pursuer", certainUserPursuerList);

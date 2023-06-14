@@ -343,20 +343,20 @@ const openChatroom = async function ($this) {
   // 取得目前聊天者的詳細資訊
   socket.emit("ask-for-partner-info", partnerId);
   socket.on("get-partner-info", (msg) => {
-    const { id, nick_name, main_image, sex, age, self_intro, tagList } = msg;
+    const { id, nick_name, main_image, sex_id, age, self_intro, tagList } = msg;
 
     $("#partner-name").text(nick_name);
     $("#partner-cantainer img").attr("src", main_image).attr("alt", nick_name);
-    if (sex == "女性") {
+    if (sex_id == 2) {
       $("#partner-sex")
         .attr("src", "./images/female.png")
-        .attr("alt", sex)
+        .attr("alt", "女性")
         .css("fill", "#FA76AD");
       $("#partner-age").text(age).css("color", "#FA76AD");
-    } else if (sex == "男性") {
+    } else if (sex_id == 1) {
       $("#partner-sex")
         .attr("src", "./images/male.png")
-        .attr("alt", sex)
+        .attr("alt", "男性")
         .css("fill", "#0086DE");
       $("#partner-age").text(age).css("color", "#0086DE");
     }
