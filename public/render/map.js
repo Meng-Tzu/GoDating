@@ -51,8 +51,6 @@ const markCenter = (
       map
     );
 
-    // TODO: 被通知對方不喜歡自己，刪除對方
-
     // tooltip setting of candidate
     candidateMarker
       .bindTooltip(
@@ -65,6 +63,14 @@ const markCenter = (
         }
       )
       .openTooltip();
+
+    // 被通知對方不喜歡自己，刪除對方
+    socket.on("send-be-unlike-signal", (msg) => {
+      const { unlikeId } = msg;
+      if (candidateMarker.options.userId === +unlikeId) {
+        map.removeLayer(candidateMarker);
+      }
+    });
 
     // 點擊 candidate 可以跑出詳細資訊
     candidateMarker.on("click", () => {

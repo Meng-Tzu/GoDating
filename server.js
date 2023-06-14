@@ -521,9 +521,7 @@ const connectToSocketIO = (webSrv) => {
             `userId#${userId}(${userName}) unlike userId#${unlikeId}(${unlikeName})`
           );
 
-          // TODO: (地圖)如果對方在線上，才立即傳送資訊給對方
-
-          // (首頁)如果對方在線上，才立即傳送資訊給對方
+          // TODO: 如果對方在線上，才立即傳送資訊給對方 (地圖不需要太多資訊)
           if (unlikeId in connections) {
             // 更新對方的 pursuer + candidate list
             const yourPotentialInfoList = await getPotentialInfoList(unlikeId);
