@@ -51,8 +51,6 @@ const markCenter = (
       map
     );
 
-    // TODO: 被通知已配對成功
-
     // TODO: 被通知對方不喜歡自己，刪除對方
 
     // tooltip setting of candidate
@@ -346,7 +344,50 @@ let fetchOption = {
       });
     });
 
-    // TODO: 通知已配對成功
+    // 通知已配對成功
+    socket.on("success-match", (msg) => {
+      Swal.fire({
+        position: "top",
+        icon: "success",
+        showCloseButton: true,
+        title: `與 ${msg.partnerName} 成功配對！`,
+        text: "進入聊天室和對方打聲招呼吧！",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    });
+
+    // 通知有人喜歡自己
+    socket.on("who-like-me", (msg) => {
+      Swal.fire({
+        title:
+          "<h5 style='margin: 0'>" + `${msg.pursuerName} 喜歡你！` + "</h5>",
+        position: "top-end",
+        showCloseButton: true,
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        customClass: {
+          title: "my-swal-title-class",
+          cancelButton: "my-swal-cancel-button-class",
+          container: "my-swal-container-class",
+          popup: "my-swal-popup-class",
+        },
+      });
+    });
+
+    // 通知已被配對成功
+    socket.on("success-be-matched", (msg) => {
+      Swal.fire({
+        position: "top",
+        icon: "success",
+        showCloseButton: true,
+        title: `與 ${msg.partnerName} 成功配對！`,
+        text: "進入聊天室和對方打聲招呼吧！",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    });
 
     // 通知再也見不到對方
     socket.on("send-unlike-signal", (msg) => {

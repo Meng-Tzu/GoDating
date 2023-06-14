@@ -250,7 +250,7 @@ const connectToSocketIO = (webSrv) => {
       // 確認目前推薦者是否為使用者的 pursuer
       const isPursuer = await getWhoLikeMeOfSelf(userId, candidateId);
 
-      // TODO: 是否從地圖頁面按喜歡
+      // 是否從地圖頁面按喜歡
       if (isMap) {
         if (!isPursuer) {
           // 對方尚未喜歡自己，把自己儲存到對方的 "who_like_me" 快取
@@ -263,9 +263,7 @@ const connectToSocketIO = (webSrv) => {
           const responseForSelf = { userId, candidateId, candidateName };
           socket.emit("success-send-like-signal", responseForSelf);
 
-          // TODO: (地圖)當對方在線上，再傳送到對方前端
-
-          // (首頁)當對方在線上，再傳送到對方前端
+          // TODO: 當對方在線上，再傳送到對方前端 (地圖不需要太多資訊)
           if (candidateId in connections) {
             // 更新對方的 pursuer + candidate list
             const yourPotentialInfoList = await getPotentialInfoList(
@@ -325,26 +323,16 @@ const connectToSocketIO = (webSrv) => {
             indexId
           );
 
-          // 更新自己的 pursuer + candidate list
-          const myPotentialInfoList = await getPotentialInfoList(userId);
-
-          // 拿到 partner-detail-info
-          const partnerInfo = await getCandidateInfoFromCache(candidateId);
-          partnerInfo.indexId = indexId;
-
           const responseForSelf = {
             userId,
-            partnerInfo,
-            roomId,
-            pursuerList: myPotentialInfoList.pursuerList,
-            candidateIdList: myPotentialInfoList.candidateIdList,
-            potentialInfoList: myPotentialInfoList.potentialInfoList,
+            partnerId: candidateId,
+            partnerName: candidateName,
           };
 
           // 傳給自己
           socket.emit("success-match", responseForSelf);
 
-          // 當對方在線上，才立即傳送資訊給對方
+          // TODO: 當對方在線上，才立即傳送資訊給對方 (地圖不需要太多資訊)
           if (candidateId in connections) {
             // 給對方自己的 detail-info
             const selfInfo = await getCandidateInfoFromCache(userId);
@@ -352,6 +340,7 @@ const connectToSocketIO = (webSrv) => {
 
             const responseForOtherSide = {
               userId: candidateId,
+              partnerName: userName,
               partnerInfo: selfInfo,
               roomId,
             };
