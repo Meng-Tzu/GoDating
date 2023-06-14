@@ -140,18 +140,18 @@ const connectToSocketIO = (webSrv) => {
     count++;
     console.log(`One client has connected. 目前連線數: ${count}`);
 
-    // 儲存連線者
     socket.on("online", async (user) => {
       const { id, name, update, isMap } = user;
-
-      connections[id] = { name, socket };
-      console.log(`user id #${id} successfully connect.`);
 
       // TODO: 更新自己的 pursuer + candidate list (early return null of response)
       const myPotentialInfoList = await getPotentialInfoList(id);
 
-      // 取得這個使用者的人選經緯度
+      // FIXME: 使用者進入地圖頁面進行 socketIO 連線 (要同步更新其他使用者的 marker 位置嗎?)
       if (isMap) {
+        // 儲存連線者
+        connections[`map-${id}`] = { name, socket };
+        console.log(`user id #${id} successfully connect on map page.`);
+
         if (!myPotentialInfoList.integratedIdList.length) {
           socket.emit("user-connect", null);
           return;
@@ -172,7 +172,11 @@ const connectToSocketIO = (webSrv) => {
         return;
       }
 
-      // 新註冊者資訊，渲染到符合條件的其他使用者的「猜你會喜歡」
+      // FIXME: 使用者進入配對頁面或聊天室頁面進行 socketIO 連線 (聊天室頁面不需 candidate 資訊??)
+      connections[id] = { name, socket };
+      console.log(`user id #${id} successfully connect.`);
+
+      // 新註冊者資訊，渲染到符合條件的其他使用者的配對頁面
       if (update) {
         const { newUserId, otherUserIdsList } = update;
 
@@ -250,8 +254,9 @@ const connectToSocketIO = (webSrv) => {
       // 確認目前推薦者是否為使用者的 pursuer
       const isPursuer = await getWhoLikeMeOfSelf(userId, candidateId);
 
-      // 是否從地圖頁面按喜歡
+      // [在地圖頁面操作] 是否從地圖頁面按喜歡
       if (isMap) {
+        // 檢查被按喜歡的人是否為 pursuer
         if (!isPursuer) {
           // 對方尚未喜歡自己，把自己儲存到對方的 "who_like_me" 快取
           await saveWhoLikeMeOfOtherSide(candidateId, userId, userName);
@@ -263,7 +268,21 @@ const connectToSocketIO = (webSrv) => {
           const responseForSelf = { userId, candidateId, candidateName };
           socket.emit("success-send-like-signal", responseForSelf);
 
-          // TODO: 當對方在線上，再傳送到對方前端 (地圖不需要太多資訊)
+          // [地圖] 當對方在線上，再傳送到對方前端
+          if (`map-${candidateId}` in connections) {
+            const responseForOtherSide = {
+              userId: candidateId,
+              pursuerId: userId,
+              pursuerName: userName,
+            };
+
+            connections[`map-${candidateId}`].socket.emit(
+              "who-like-me",
+              responseForOtherSide
+            );
+          }
+
+          // [首頁] 當對方在線上，再傳送到對方前端
           if (candidateId in connections) {
             // 更新對方的 pursuer + candidate list
             const yourPotentialInfoList = await getPotentialInfoList(
@@ -332,7 +351,26 @@ const connectToSocketIO = (webSrv) => {
           // 傳給自己
           socket.emit("success-match", responseForSelf);
 
-          // TODO: 當對方在線上，才立即傳送資訊給對方 (地圖不需要太多資訊)
+          // [地圖] 當對方在線上，再傳送到對方前端
+          if (`map-${candidateId}` in connections) {
+            // 給對方自己的 detail-info
+            const selfInfo = await getCandidateInfoFromCache(userId);
+            selfInfo.indexId = indexId;
+
+            const responseForOtherSide = {
+              userId: candidateId,
+              partnerId: userId,
+              partnerName: userName,
+            };
+
+            // 傳給對方
+            connections[`map-${candidateId}`].socket.emit(
+              "success-be-matched",
+              responseForOtherSide
+            );
+          }
+
+          // [首頁] 當對方在線上，再傳送到對方前端
           if (candidateId in connections) {
             // 給對方自己的 detail-info
             const selfInfo = await getCandidateInfoFromCache(userId);
@@ -340,7 +378,6 @@ const connectToSocketIO = (webSrv) => {
 
             const responseForOtherSide = {
               userId: candidateId,
-              partnerName: userName,
               partnerInfo: selfInfo,
               roomId,
             };
@@ -360,7 +397,7 @@ const connectToSocketIO = (webSrv) => {
         return;
       }
 
-      // TODO: (首頁)檢查被按喜歡的人是否為 pursuer
+      // [在配對頁面操作] 檢查被按喜歡的人是否為 pursuer
       if (!isPursuer) {
         // 對方尚未喜歡自己，把自己儲存到對方的 "who_like_me" 快取
         await saveWhoLikeMeOfOtherSide(candidateId, userId, userName);
@@ -381,7 +418,21 @@ const connectToSocketIO = (webSrv) => {
         };
         socket.emit("success-send-like-signal", responseForSelf);
 
-        // 當對方在線上，再傳送到對方前端
+        // [地圖] 當對方在線上，再傳送到對方前端
+        if (`map-${candidateId}` in connections) {
+          const responseForOtherSide = {
+            userId: candidateId,
+            pursuerId: userId,
+            pursuerName: userName,
+          };
+
+          connections[`map-${candidateId}`].socket.emit(
+            "who-like-me",
+            responseForOtherSide
+          );
+        }
+
+        // [首頁] 當對方在線上，再傳送到對方前端
         if (candidateId in connections) {
           // 更新對方的 pursuer + candidate list
           const yourPotentialInfoList = await getPotentialInfoList(candidateId);
@@ -458,7 +509,26 @@ const connectToSocketIO = (webSrv) => {
         // 傳給自己
         socket.emit("success-match", responseForSelf);
 
-        // 當對方在線上，才立即傳送資訊給對方
+        // [地圖] 當對方在線上，再傳送到對方前端
+        if (`map-${candidateId}` in connections) {
+          // 給對方自己的 detail-info
+          const selfInfo = await getCandidateInfoFromCache(userId);
+          selfInfo.indexId = indexId;
+
+          const responseForOtherSide = {
+            userId: candidateId,
+            partnerId: userId,
+            partnerName: userName,
+          };
+
+          // 傳給對方
+          connections[`map-${candidateId}`].socket.emit(
+            "success-be-matched",
+            responseForOtherSide
+          );
+        }
+
+        // [首頁] 當對方在線上，才立即傳送資訊給對方
         if (candidateId in connections) {
           // 給對方自己的 detail-info
           const selfInfo = await getCandidateInfoFromCache(userId);
@@ -488,7 +558,7 @@ const connectToSocketIO = (webSrv) => {
       const { isMap, userId, userName, unlikeId, unlikeName } = msg;
       const originPursuerListOfSelf = await getPursuerFromCache(userId);
 
-      // TODO: 是否從地圖按不喜歡
+      // [在地圖頁面操作] 是否從地圖按不喜歡
       if (isMap) {
         // 檢查被按不喜歡的人是否為 pursuer
         if (unlikeId in originPursuerListOfSelf) {
@@ -521,7 +591,20 @@ const connectToSocketIO = (webSrv) => {
             `userId#${userId}(${userName}) unlike userId#${unlikeId}(${unlikeName})`
           );
 
-          // TODO: 如果對方在線上，才立即傳送資訊給對方 (地圖不需要太多資訊)
+          // [地圖] 當對方在線上，再傳送到對方前端
+          if (`map-${unlikeId}` in connections) {
+            // 把重新整理的名單送到對方的前端
+            const responseForOtherSide = {
+              userId: unlikeId,
+              unlikeId: userId,
+            };
+            connections[`map-${unlikeId}`].socket.emit(
+              "send-be-unlike-signal",
+              responseForOtherSide
+            );
+          }
+
+          // [首頁] 當對方在線上，再傳送到對方前端
           if (unlikeId in connections) {
             // 更新對方的 pursuer + candidate list
             const yourPotentialInfoList = await getPotentialInfoList(unlikeId);
@@ -545,7 +628,7 @@ const connectToSocketIO = (webSrv) => {
         return;
       }
 
-      // TODO: (首頁)檢查被按不喜歡的人是否為 pursuer
+      // [在配對頁面操作] 檢查被按不喜歡的人是否為 pursuer
       if (unlikeId in originPursuerListOfSelf) {
         // 從快取把對方從自己的 "pursuer" 刪除
         await deletePursuerOfUser(userId, unlikeId);
@@ -589,7 +672,20 @@ const connectToSocketIO = (webSrv) => {
           `userId#${userId}(${userName}) unlike userId#${unlikeId}(${unlikeName})`
         );
 
-        // 如果對方在線上，才立即傳送資訊給對方
+        // [地圖] 當對方在線上，再傳送到對方前端
+        if (`map-${unlikeId}` in connections) {
+          // 把重新整理的名單送到對方的前端
+          const responseForOtherSide = {
+            userId: unlikeId,
+            unlikeId: userId,
+          };
+          connections[`map-${unlikeId}`].socket.emit(
+            "send-be-unlike-signal",
+            responseForOtherSide
+          );
+        }
+
+        // [首頁] 當對方在線上，再傳送到對方前端
         if (unlikeId in connections) {
           // 更新對方的 pursuer + candidate list
           const yourPotentialInfoList = await getPotentialInfoList(unlikeId);
