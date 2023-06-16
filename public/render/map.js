@@ -26,9 +26,10 @@ const markCenter = (
   }).addTo(map);
 
   // 客製 user Maker 圖示
-  const userIcon = L.icon({
-    iconUrl: `images/${image}`,
-    iconSize: [42, 42],
+  const userIcon = L.divIcon({
+    className: "user-icon",
+    html: `<img src="images/${image}" style="width: 50px; height: 50px; border-radius: 50%" />`,
+    iconSize: [50, 50],
   });
 
   // add marker of user position
@@ -40,7 +41,7 @@ const markCenter = (
   if (name === "台北車站") {
     userMarker.bindPopup(`<b>台北車站</b>`).openPopup();
   } else {
-    userMarker.bindPopup(`<b>${name}</b><br>你在這！`).openPopup();
+    userMarker.bindPopup(`<h1>${name}</h1><p>你在這!<p>`).openPopup();
   }
 
   for (const potential of potentialLocationList) {
@@ -54,12 +55,13 @@ const markCenter = (
     // tooltip setting of candidate
     candidateMarker
       .bindTooltip(
-        `<b>${potential.name}</b></br><img src="images/${potential.image}" style="height: 20px">`,
+        `<h1>${potential.name}</h1><img src="images/${potential.image}" />`,
         {
           direction: "bottom", // default: auto
           sticky: false, // true 跟著滑鼠移動。default: false
           permanent: false, // 是滑鼠移過才出現(false)，還是一直出現(true)
           opacity: 1.0,
+          className: "leaflet-tooltip-own",
         }
       )
       .openTooltip();
@@ -81,7 +83,9 @@ const markCenter = (
       $("#like")
         .unbind("click")
         .click(function () {
-          $("#candidate-info").css("display", "none");
+          $("main").removeClass("menu-active");
+          $("#candidate-info").hide();
+
           if (socket === null) {
             alert("Please connect first");
             return;
@@ -110,7 +114,9 @@ const markCenter = (
       $("#unlike")
         .unbind("click")
         .click(function () {
-          $("#candidate-info").css("display", "none");
+          $("main").removeClass("menu-active");
+          $("#candidate-info").hide();
+
           if (socket === null) {
             alert("Please connect first");
             return;
@@ -223,7 +229,7 @@ const showMyLocation = async (
 // Function4: 動態製造 DOM 物件 (create p element for tags)
 const createTags = (tagList, elementName) => {
   // 移除先前渲染過的 tags，避免重複渲染
-  $(`.${elementName}s`).remove();
+  $(`.${elementName}`).remove();
   // 選擇要當模板的 element tag
   const $tagTemplete = $(`.templete-${elementName}`);
 
@@ -305,13 +311,10 @@ let fetchOption = {
       await showMyLocation(socket, zoom, name, image, potentialLocationList);
     });
 
-    // 接收推薦人選的詳細資訊
+    // TODO: 接收推薦人選的詳細資訊 (會重複產生 tags)
     socket.on("map-candidate", (potentialInfo) => {
       const { id, nick_name, main_image, sex_id, age, self_intro, tags } =
         potentialInfo;
-
-      $("#candidate-info").css("display", "block");
-      $("#cross").css("display", "block");
 
       $("#candidate-picture")
         .attr("src", `images/${main_image}`)
@@ -334,6 +337,9 @@ let fetchOption = {
 
       createTags(tags, "tag");
       $("#candidate-intro").text(self_intro);
+
+      $("main").addClass("menu-active");
+      $("#candidate-info").show();
     });
 
     // 通知已傳送喜歡的訊息給對方
@@ -411,6 +417,11 @@ let fetchOption = {
   }
 })();
 
+$("#cross").click(function () {
+  $("main").removeClass("menu-active");
+  $("#candidate-info").hide();
+});
+
 // FIXME: 點擊聊天室導到聊天室頁面
 $(".chatroom").click(function () {
   Swal.fire({
@@ -424,6 +435,11 @@ $(".chatroom").click(function () {
 // 點擊地圖重新載入
 $(".map").click(function () {
   location.reload();
+});
+
+// 點擊右上個人照人名跳轉到 profile page
+$("#profile").click(function () {
+  window.location.href = "/profile.html";
 });
 
 // 登出
