@@ -437,6 +437,11 @@ $(".map").click(function () {
   location.reload();
 });
 
+// 點擊右上個人照人名跳轉到 profile page
+$("#profile").click(function () {
+  window.location.href = "/profile.html";
+});
+
 // 登出
 $("#logout").click(function () {
   localStorage.removeItem("token");

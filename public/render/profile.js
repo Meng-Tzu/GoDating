@@ -291,16 +291,6 @@ $(".chatroom").click(function () {
   // window.location.href = "/chatroom.html";
 });
 
-// TODO: 點擊地圖導到地圖頁面
-$(".map").click(function () {
-  Swal.fire({
-    icon: "info",
-    title: "地圖功能待開發",
-    text: "感謝您的耐心等待！",
-  });
-  // window.location.href = "/map.html";
-});
-
 // 點擊右上個人照人名跳重整 profile page
 $("#profile").click(function () {
   location.reload();
