@@ -156,3 +156,51 @@ main.menu-active section#map {
 main.menu-active section#partner-info div#cross {
   right: 294px;
 }
+
+.user-icon {
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.leaflet-popup-content {
+  display: flex;
+  flex-direction: column;
+  margin: 7px 13px 0 10px;
+
+  h1 {
+    font-size: 1rem;
+    font-weight: bolder;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+  p {
+    margin: 0;
+    padding: 0.2rem 0;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+}
+
+.leaflet-tooltip-own {
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  height: 150px;
+  border-radius: 12px;
+
+  h1 {
+    font-size: 1rem;
+    font-weight: bolder;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+  img {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    border-radius: 12px;
+    padding: 0.2rem 0;
+  }
+}
