@@ -81,7 +81,9 @@ const markCenter = (
       $("#like")
         .unbind("click")
         .click(function () {
-          $("#candidate-info").css("display", "none");
+          $("main").removeClass("menu-active");
+          $("#candidate-info").hide();
+
           if (socket === null) {
             alert("Please connect first");
             return;
@@ -110,7 +112,9 @@ const markCenter = (
       $("#unlike")
         .unbind("click")
         .click(function () {
-          $("#candidate-info").css("display", "none");
+          $("main").removeClass("menu-active");
+          $("#candidate-info").hide();
+
           if (socket === null) {
             alert("Please connect first");
             return;
@@ -305,13 +309,10 @@ let fetchOption = {
       await showMyLocation(socket, zoom, name, image, potentialLocationList);
     });
 
-    // 接收推薦人選的詳細資訊
+    // TODO: 接收推薦人選的詳細資訊 (會重複產生 tags)
     socket.on("map-candidate", (potentialInfo) => {
       const { id, nick_name, main_image, sex_id, age, self_intro, tags } =
         potentialInfo;
-
-      $("#candidate-info").css("display", "block");
-      $("#cross").css("display", "block");
 
       $("#candidate-picture")
         .attr("src", `images/${main_image}`)
@@ -334,6 +335,9 @@ let fetchOption = {
 
       createTags(tags, "tag");
       $("#candidate-intro").text(self_intro);
+
+      $("main").addClass("menu-active");
+      $("#candidate-info").show();
     });
 
     // 通知已傳送喜歡的訊息給對方
@@ -410,6 +414,11 @@ let fetchOption = {
     });
   }
 })();
+
+$("#cross").click(function () {
+  $("main").removeClass("menu-active");
+  $("#candidate-info").hide();
+});
 
 // FIXME: 點擊聊天室導到聊天室頁面
 $(".chatroom").click(function () {
