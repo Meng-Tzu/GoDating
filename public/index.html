@@ -34,12 +34,12 @@
   </head>
   <body>
     <!-- header -->
-    <header class="bg-yellow-200 shadow-md">
+    <header class="shadow-md">
       <section class="left">
         <a href="#" class="logo"><img src="images/logo.png" alt="Logo" /></a>
 
         <nav>
-          <ul class="text-2xl text-yellow-950">
+          <ul class="">
             <li class="chatroom">
               <a>聊天室</a>
             </li>
@@ -57,16 +57,14 @@
             alt="profile"
             style="border: 2px solid black"
           />
-          <h1
-            class="user-name text-lime-600 text-yellow-950 text-center text-2xl"
-          ></h1>
+          <h1 class="user-name"></h1>
         </div>
         <div id="logout">登出</div>
       </section>
     </header>
-    <main class="flex flex-row justify-between bg-white">
-      <section id="match" class="flex flex-col w-2/5 border-r overflow-y-auto">
-        <h3 class="text-xl font-bold">配對成功！</h3>
+    <main class="">
+      <section id="match" class="">
+        <h3 class="">配對成功！</h3>
         <!-- search compt -->
         <!-- <div class="py-4 px-2">
           <input
@@ -77,25 +75,20 @@
         </div> -->
         <!-- end search compt -->
       </section>
-      <section id="chatroom" class="w-full px-5 flex flex-col justify-between">
-        <div
-          id="current-recommend"
-          class="bg-orange-50 shadow-xl shadow-orange-50 border-orange-200"
-          style="display: none"
-        >
+      <section id="chatroom" class="w-full px-5">
+        <div id="current-recommend" class="" style="display: none">
           <div id="loading"></div>
 
           <div id="front-cover">
             <div id="like-signal">對方喜歡你唷！</div>
-            <div id="candidate-cantainer">
-              <img id="candidate-picture" src="" alt="personal picture" />
-            </div>
           </div>
-          <h2 id="" class="candidate-name text-2xl"></h2>
 
-          <div id="sex-age">
-            <img id="candidate-sex" src="" alt="" />
-            <p id="candidate-age"></p>
+          <div class="name-sex-age">
+            <h2 id="" class="candidate-name"></h2>
+            <div id="sex-age">
+              <img id="candidate-sex" src="" alt="" />
+              <p id="candidate-age"></p>
+            </div>
           </div>
 
           <div id="current-recommend-detail-info">
@@ -107,8 +100,8 @@
           </div>
 
           <div id="choose-btn">
-            <button id="btn-like">喜歡</button>
-            <button id="unlike">略過</button>
+            <button id="btn-like"><img src="images/like.png" /></button>
+            <button id="unlike"><img src="images/unlike.png" /></button>
           </div>
         </div>
 
@@ -148,7 +141,7 @@
           </div>
         </div>
       </section>
-      <section id="current" class="bg-yellow-100 w-2/5 border-l-2s border-l">
+      <section id="current" class="">
         <div id="more-info">
           <h3 class="">猜你會喜歡...</h3>
           <div id="cross" style="display: none">
