@@ -1,5 +1,6 @@
 :root {
   --header-height: 66px;
+  --subtitle-height: 44px;
 }
 
 * {
@@ -12,9 +13,7 @@
 html,
 body {
   height: 100vh;
-}
-
-body {
+  background-color: #ececec;
   position: relative;
 }
 
@@ -109,7 +108,7 @@ header section.right div#logout {
 main {
   display: flex;
   flex-wrap: wrap;
-  height: 100vh;
+  height: calc(100vh - var(--header-height));
 }
 main section#match {
   flex: 1 1 100px;
@@ -130,6 +129,7 @@ main section#match h3 {
   padding: 0.5rem 0;
   width: 100%;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  max-height: var(--subtitle-height);
 }
 main section#match div.partner {
   width: 100%;
@@ -159,17 +159,15 @@ main section#match div.partner .name-msg-container span {
   letter-spacing: 1px;
 }
 main section#chatroom {
-  background-color: #ececec;
   position: relative;
   flex: 1 1 600px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 main section#chatroom div#current-recommend {
+  position: relative;
   background-color: #f8f0ff;
-  margin: 2rem 0;
   width: 50%;
   min-height: 480px;
   max-height: 80vh;
@@ -258,9 +256,11 @@ main section#chatroom div#current-recommend div#current-recommend-detail-info {
   width: 100%;
   max-height: 200px;
   overflow-y: auto;
+  box-sizing: border-box;
+  padding-bottom: 80px;
 }
 main section#chatroom div#current-recommend div#current-recommend-detail-info div#candidate-tags {
-  padding: 0.5rem 0;
+  padding: 0.7rem 0;
   display: flex;
   justify-content: center;
   gap: 4px;
@@ -287,12 +287,17 @@ main section#chatroom div#current-recommend div#current-recommend-detail-info p#
 }
 main section#chatroom div#current-recommend div#choose-btn {
   display: flex;
+  justify-content: center;
   width: 100%;
+  padding: 0.5rem 0;
+  position: absolute;
+  bottom: 0;
 }
 main section#chatroom div#current-recommend div#choose-btn button {
-  flex: 1 1 auto;
-  padding: 0.5rem 1rem;
-  margin: 0 0.3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 1rem;
   background-color: white;
   height: 60px;
   width: 60px;
@@ -301,7 +306,10 @@ main section#chatroom div#current-recommend div#choose-btn button {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 main section#chatroom div#current-recommend div#choose-btn button img {
-  max-width: 50%;
+  max-width: 55%;
+}
+main section#chatroom div#current-recommend div#choose-btn button#unlike img {
+  max-width: 45%;
 }
 main section#chatroom div#chat-block {
   display: none;
@@ -484,6 +492,7 @@ main section#current {
   border-color: #aea19b;
 }
 main section#current div#more-info {
+  height: var(--subtitle-height);
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -504,8 +513,6 @@ main section#current div#more-info div#cross {
   justify-content: center;
   align-items: center;
   margin: 0 5px;
-}
-main section#current div#more-info div#cross {
   flex: 1 1 10px;
   cursor: pointer;
 }
@@ -521,6 +528,7 @@ main section#current div#partner-info {
   max-height: 80vh;
   overflow-y: auto;
   gap: 2rem;
+  padding-top: 10px;
 }
 main section#current div#partner-info img#partner-img {
   height: 120px;
@@ -553,16 +561,14 @@ main section#current div#partner-info div#tags {
   gap: 4px;
   align-items: center;
   flex-wrap: wrap;
-  margin: 0.3rem 0;
 }
 main section#current div#partner-info div#tags p.tag {
   text-align: center;
   font-size: 1rem;
-  padding: 0.2rem 0.6rem;
+  padding: 1px 0.3rem;
   margin: 0.3rem 0.3rem;
-  border: 1.5px solid #fff7ed;
+  border: 1.5px solid #f372a7;
   border-radius: 20px;
-  background-color: #fff7ed;
   color: rgb(66, 32, 6);
 }
 main section#current div#partner-info div#partner-intro {
@@ -575,9 +581,8 @@ main section#current div#next-recommend-list {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-height: 80vh;
+  max-height: calc(100vh - (var(--header-height) + var(--subtitle-height)));
   overflow-y: auto;
-  padding-left: 20px;
   padding-top: 10px;
 }
 main section#current div#next-recommend-list div.next-recommend {

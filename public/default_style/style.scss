@@ -1,5 +1,6 @@
 :root {
   --header-height: 66px;
+  --subtitle-height: 44px;
 }
 
 * {
@@ -12,9 +13,7 @@
 html,
 body {
   height: 100vh;
-}
-
-body {
+  background-color: #ececec;
   position: relative;
 }
 
@@ -128,7 +127,7 @@ header {
 main {
   display: flex;
   flex-wrap: wrap;
-  height: 100vh;
+  height: calc(100vh - var(--header-height));
 
   section#match {
     // border: 2px solid red;
@@ -151,6 +150,7 @@ main {
       width: 100%;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
         0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      max-height: var(--subtitle-height);
     }
 
     div.partner {
@@ -189,18 +189,16 @@ main {
   }
 
   section#chatroom {
-    background-color: #ececec;
     position: relative;
     flex: 1 1 600px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 
     div#current-recommend {
       // border: 1px solid gray;
+      position: relative;
       background-color: #f8f0ff;
-      margin: 2rem 0;
       width: 50%;
       min-height: 480px;
       max-height: 80vh;
@@ -300,10 +298,12 @@ main {
         width: 100%;
         max-height: 200px;
         overflow-y: auto;
+        box-sizing: border-box;
+        padding-bottom: 80px;
 
         div#candidate-tags {
           // border: 1px solid red;
-          padding: 0.5rem 0;
+          padding: 0.7rem 0;
           display: flex;
           justify-content: center;
           gap: 4px;
@@ -336,12 +336,17 @@ main {
 
       div#choose-btn {
         display: flex;
+        justify-content: center;
         width: 100%;
+        padding: 0.5rem 0;
+        position: absolute;
+        bottom: 0;
 
         button {
-          flex: 1 1 auto;
-          padding: 0.5rem 1rem;
-          margin: 0 0.3rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 0 1rem;
           background-color: white;
           height: 60px;
           width: 60px;
@@ -350,7 +355,13 @@ main {
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 
           img {
-            max-width: 50%;
+            max-width: 55%;
+          }
+        }
+
+        button#unlike {
+          img {
+            max-width: 45%;
           }
         }
       }
@@ -460,7 +471,7 @@ main {
           }
         }
 
-        // TODO: 新的 chat bubble
+        // 新的 chat bubble
         div.wrap {
           padding: 0.5rem;
           div.message-in-dialogue {
@@ -573,6 +584,7 @@ main {
 
     div#more-info {
       // border: 1px solid blue;
+      height: var(--subtitle-height);
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -591,14 +603,10 @@ main {
       }
 
       div#cross {
-        // flex: 1 1 50px;
         display: flex;
         justify-content: center;
         align-items: center;
         margin: 0 5px;
-      }
-
-      div#cross {
         flex: 1 1 10px;
         img {
           height: 10px;
@@ -610,16 +618,14 @@ main {
 
     div#partner-info {
       // border: 1px solid blue;
-      // width: 100%;
-      // max-height: 60vh;
       display: flex;
       flex-direction: column;
-      // justify-content: space-around;
       justify-content: center;
       align-items: center;
       max-height: 80vh;
       overflow-y: auto;
       gap: 2rem;
+      padding-top: 10px;
 
       img#partner-img {
         height: 120px;
@@ -636,7 +642,6 @@ main {
         font-weight: bolder;
         letter-spacing: 2px;
         color: rgb(66 32 6);
-        // margin: 0.5rem 0;
       }
 
       div#partner-sex-age {
@@ -657,18 +662,15 @@ main {
         gap: 4px;
         align-items: center;
         flex-wrap: wrap;
-        margin: 0.3rem 0;
+        // margin: 0.3rem 0;
 
         p.tag {
-          // width: 60px;
           text-align: center;
-          // flex: 1 1 60px;
           font-size: 1rem;
-          padding: 0.2rem 0.6rem;
+          padding: 1px 0.3rem;
           margin: 0.3rem 0.3rem;
-          border: 1.5px solid #fff7ed;
+          border: 1.5px solid #f372a7;
           border-radius: 20px;
-          background-color: #fff7ed;
           color: rgb(66 32 6);
         }
       }
@@ -686,9 +688,8 @@ main {
       display: flex;
       flex-direction: column;
       align-items: center;
-      max-height: 80vh;
+      max-height: calc(100vh - (var(--header-height) + var(--subtitle-height)));
       overflow-y: auto;
-      padding-left: 20px;
       padding-top: 10px;
 
       div.next-recommend {
@@ -767,7 +768,7 @@ main {
   }
 }
 
-// TODO: sweet alert
+// sweet alert
 .my-swal-title-class {
   font-size: 1.2rem !important;
   text-align: center !important;
