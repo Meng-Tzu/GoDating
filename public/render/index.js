@@ -154,9 +154,9 @@ const createNextRecommendDiv = (candidateInfoList) => {
     const $img = $("<img>");
     const $h2 = $("<h2>");
 
-    $div.addClass("next-recommend text-xl");
+    $div.addClass("next-recommend");
     $img.addClass("next-picture").attr("src", candidateInfo.main_image);
-    $h2.addClass("next-name text-center").text(candidateInfo.nick_name);
+    $h2.addClass("next-name").text(candidateInfo.nick_name);
 
     // 增加 tags
     const $tags = $("<div>");
@@ -374,7 +374,7 @@ const openChatroom = async function ($this) {
   $("#current-recommend").css("display", "none");
   $("#next-recommend-list").css("display", "none");
   $(".next-recommend").remove();
-  $("#chat-block").show();
+  $("#chat-block").css("display", "flex");
   $("#title").css("display", "flex");
   $("#dialogue").css("display", "flex");
   // $("#pass-msg").css("display", "flex");
@@ -472,7 +472,7 @@ let fetchOption = {
       $("#profile-img").attr("src", `images/${image}`).css("border", "none");
     }
     $(".user-name").text(name).attr("id", id);
-    $("#chat-block").hide();
+    $("#chat-block").css("display", "none");
 
     // 建立一個 io 物件(?)，並連上 SocketIO server
     socket = io();
@@ -513,9 +513,9 @@ let fetchOption = {
       if (!potentialInfoList.length) {
         $("#current-recommend").css("display", "flex");
         $("#like-signal").text("趕緊填寫問卷吧！");
-        $("#candidate-picture")
-          .attr("src", "images/user_upload.png")
-          .css("background-color", "white");
+        $("#front-cover")
+          .css("background-color", "white")
+          .css("background-image", "url(images/user_upload.png)");
         $(".candidate-name").text("目前沒有符合的推薦人選喔！");
         $("#sex-age").hide();
         $("#candidate-tags").hide();
@@ -536,11 +536,11 @@ let fetchOption = {
 
       $("#current").css("display", "flex");
       $("#current-recommend").css("display", "flex");
-      // $(".next-recommend").css("display", "flex");
       $("#who-like-me").css("display", "block");
-      $("#candidate-picture")
-        .attr("src", currentRecommend.main_image)
-        .css("background-color", "none");
+      $("#front-cover").css(
+        "background-image",
+        `url(${currentRecommend.main_image})`
+      );
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
@@ -582,9 +582,9 @@ let fetchOption = {
       if (!potentialInfoList.length) {
         $("#current-recommend").css("display", "flex");
         $("#like-signal").text("趕緊填寫問卷吧！");
-        $("#candidate-picture")
-          .attr("src", "images/user_upload.png")
-          .css("background-color", "white");
+        $("#front-cover")
+          .css("background-color", "white")
+          .css("background-image", "url(images/user_upload.png)");
         $(".candidate-name").text("目前沒有符合的推薦人選喔！");
         $("#sex-age").hide();
         $("#candidate-tags").hide();
@@ -605,11 +605,11 @@ let fetchOption = {
 
       $("#current").css("display", "flex");
       $("#current-recommend").css("display", "flex");
-      // $(".next-recommend").css("display", "flex");
       $("#who-like-me").css("display", "block");
-      $("#candidate-picture")
-        .attr("src", currentRecommend.main_image)
-        .css("background-color", "none");
+      $("#front-cover").css(
+        "background-image",
+        `url(${currentRecommend.main_image})`
+      );
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
@@ -703,7 +703,10 @@ let fetchOption = {
       }
 
       $("#current-recommend").css("display", "flex");
-      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#front-cover").css(
+        "background-image",
+        `url(${currentRecommend.main_image})`
+      );
       $("#loading").hide();
       $("#front-cover").show();
       $(".candidate-name")
@@ -775,7 +778,10 @@ let fetchOption = {
       }
 
       $("#current-recommend").css("display", "flex");
-      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#front-cover").css(
+        "background-image",
+        `url(${currentRecommend.main_image})`
+      );
       $("#loading").hide();
       $("#front-cover").show();
       $(".candidate-name")
@@ -847,9 +853,9 @@ let fetchOption = {
       // 如果沒有任何推薦的人選
       if (!candidateInfoList.length) {
         $("#current-recommend").css("display", "flex");
-        $("#candidate-picture")
-          .attr("src", "images/user_upload.png")
-          .css("background-color", "white");
+        $("#front-cover")
+          .css("background-color", "white")
+          .css("background-image", "url(images/user_upload.png)");
         $(".candidate-name").text("目前沒有符合的推薦人選喔！");
         $("#sex-age").hide();
         $("#candidate-tags").hide();
@@ -863,9 +869,10 @@ let fetchOption = {
       // 更新目前推薦人選
       const currentRecommend = candidateInfoList[0];
       $("#current-recommend").css("display", "flex");
-      $("#candidate-picture")
-        .attr("src", currentRecommend.main_image)
-        .css("background-color", "none");
+      $("#front-cover").css(
+        "background-image",
+        `url(${currentRecommend.main_image})`
+      );
       $("#loading").hide();
       $("#front-cover").show();
       $(".candidate-name")
@@ -916,9 +923,9 @@ let fetchOption = {
       if (!potentialInfoList.length) {
         $("#current-recommend").css("display", "flex");
         $("#like-signal").text("趕緊填寫問卷吧！");
-        $("#candidate-picture")
-          .attr("src", "images/user_upload.png")
-          .css("background-color", "white");
+        $("#front-cover")
+          .css("background-color", "white")
+          .css("background-image", "url(images/user_upload.png)");
         $(".candidate-name").text("目前沒有符合的推薦人選喔！");
         $("#sex-age").hide();
         $("#candidate-tags").hide();
@@ -938,9 +945,10 @@ let fetchOption = {
       }
 
       $("#current-recommend").css("display", "flex");
-      $("#candidate-picture")
-        .attr("src", currentRecommend.main_image)
-        .css("background-color", "none");
+      $("#front-cover").css(
+        "background-image",
+        `url(${currentRecommend.main_image})`
+      );
       $("#loading").hide();
       $("#front-cover").show();
       $(".candidate-name")
@@ -990,7 +998,10 @@ let fetchOption = {
       }
 
       $("#current-recommend").css("display", "flex");
-      $("#candidate-picture").attr("src", currentRecommend.main_image);
+      $("#front-cover").css(
+        "background-image",
+        `url(${currentRecommend.main_image})`
+      );
       $(".candidate-name")
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
@@ -1065,7 +1076,7 @@ $(".logo").click(function (e) {
   // 隱藏聊天室窗
   $("#connection").css("display", "none");
   $("#short-list").css("display", "block");
-  $("#chat-block").hide();
+  $("#chat-block").css("display", "none");
   $("#picture-msg").css("display", "none");
   $("#current h3").text("猜你會喜歡...");
   $("#partner-info").css("display", "none");
