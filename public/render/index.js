@@ -1076,7 +1076,7 @@ $(".logo").click(function (e) {
   // 隱藏聊天室窗
   $("#connection").css("display", "none");
   $("#short-list").css("display", "block");
-  $("#chat-block").css("display", "flex");
+  $("#chat-block").css("display", "none");
   $("#picture-msg").css("display", "none");
   $("#current h3").text("猜你會喜歡...");
   $("#partner-info").css("display", "none");
