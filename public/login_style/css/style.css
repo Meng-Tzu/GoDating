@@ -10679,10 +10679,6 @@ h5,
   background: #e3b04b !important;
 }
 
-.ftco-section {
-  padding: 2rem 0;
-}
-
 .ftco-no-pt {
   padding-top: 0;
 }
@@ -10742,7 +10738,7 @@ h5,
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #000;
+  color: #302529;
   font-weight: 700;
 }
 .form-group a {
@@ -10752,7 +10748,7 @@ h5,
 .form-control {
   height: 48px;
   background: #fff;
-  color: #000;
+  color: #302529;
   font-size: 16px;
   border-radius: 5px;
   -webkit-box-shadow: none;
@@ -10888,22 +10884,22 @@ h5,
   outline: none;
 }
 .btn.btn-primary {
-  background: #e3b04b !important;
-  border: 1px solid #e3b04b !important;
+  background: #302529 !important;
+  border: 1px solid #302529 !important;
   color: #fff !important;
 }
 .btn.btn-primary:hover {
-  border: 1px solid #e3b04b;
+  border: 1px solid #302529;
   background: transparent;
-  color: #e3b04b;
+  color: #302529;
 }
 .btn.btn-primary.btn-outline-primary {
-  border: 1px solid #e3b04b;
+  border: 1px solid #302529;
   background: transparent;
-  color: #e3b04b;
+  color: #302529;
 }
 .btn.btn-primary.btn-outline-primary:hover {
   border: 1px solid transparent;
-  background: #e3b04b;
+  background: #302529;
   color: #fff;
 }
