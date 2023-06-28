@@ -1,4 +1,13 @@
+body {
+  height: 100vh;
+  background-color: #ececec;
+  position: relative;
+}
+
 main.ftco-section {
+  flex-wrap: wrap;
+  height: calc(100vh - var(--header-height));
+  display: flex;
   justify-content: center;
   align-items: center;
 
