@@ -4,7 +4,7 @@
   --space-between: 20px;
   --font-size: 16px;
 
-  --color-1: #feeecd;
+  --color-1: #f8f0ff;
   --color-2: #c5c3c6;
   --color-3: #422006;
   --color-4: #67320a;
@@ -24,6 +24,10 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center;
+}
+
+header section a:hover {
+  color: #fff;
 }
 
 #survey-container {
@@ -65,7 +69,8 @@ body {
   margin: 30px 0;
   text-align: center;
   font-family: "Kumbh Sans", sans-serif;
-  font-size: 2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
   text-transform: capitalize;
   color: var(--color-3);
   letter-spacing: 2px;
@@ -107,9 +112,9 @@ body {
 
 #self-intro {
   padding: 10px;
-  margin: 0;
+  margin: 0 1.5rem;
   height: 300px;
-  width: 100%;
+  width: 95%;
   background: white;
   border: none;
   border-radius: var(--border-radius);
@@ -206,7 +211,7 @@ h1 small {
   height: 192px;
   position: relative;
   border-radius: 100%;
-  border: 6px solid #f8f8f8;
+  border: 6px solid #fff;
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
 }
 .avatar-upload .avatar-preview > div {
@@ -217,6 +222,11 @@ h1 small {
   background-repeat: no-repeat;
   background-position: center;
 } /*# sourceMappingURL=survey1.css.map */
+
+/* 生日 */
+.calendar {
+  padding: 0 1.3rem;
+}
 
 /* 性別 */
 @import url("https://fonts.googleapis.com/css?family=Lato");
@@ -305,15 +315,23 @@ h2 {
 }
 
 input[type="radio"]:checked ~ .check {
-  border: 5px solid #67320a;
+  border: 5px solid var(--color-4);
 }
 
 input[type="radio"]:checked ~ .check::before {
-  background: #67320a;
+  background: var(--color-4);
 }
 
 input[type="radio"]:checked ~ label {
-  color: #67320a;
+  color: var(--color-4);
+}
+
+.container ul li:hover input[type="radio"]:checked ~ .check {
+  border-color: var(--color-4);
+}
+
+.container ul li:hover input[type="radio"]:checked ~ label {
+  color: var(--color-4);
 }
 
 /* 性傾向 */
@@ -346,7 +364,7 @@ input[type="radio"]:checked ~ label {
 .age-range-slider .range-value input {
   width: 100%;
   background: none;
-  color: #000;
+  color: var(--color-4);
   font-size: 16px;
   font-weight: initial;
   box-shadow: none;
@@ -362,18 +380,24 @@ input[type="radio"]:checked ~ label {
   margin: 0 auto;
 }
 .age-range-slider .range-bar .ui-slider-range {
-  background: #67320a;
+  background: var(--color-4);
 }
 .age-range-slider .range-bar .ui-slider-handle {
   border: none;
   border-radius: 25px;
   background: #fff;
-  border: 2px solid #67320a;
+  border: 2px solid var(--color-4);
   height: 17px;
   width: 17px;
   top: -0.52em;
   cursor: pointer;
 }
 .age-range-slider .range-bar .ui-slider-handle + span {
-  background: #67320a;
+  background: var(--color-4);
+}
+
+/* 個性化標籤 */
+#drop-down-menu {
+  display: flex;
+  justify-content: center;
 }

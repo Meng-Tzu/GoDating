@@ -27,10 +27,8 @@
       rel="stylesheet"
     />
 
-    <!-- For sweet alert -->
-    <link rel="stylesheet" href="sweetalert2.min.css" />
-
     <link rel="stylesheet" href="./default_style/style.css" />
+    <link rel="stylesheet" href="./index_style/style.css" />
   </head>
   <body>
     <!-- header -->
@@ -53,9 +51,9 @@
         <div id="profile">
           <img
             id="profile-img"
-            src="images/user_upload.png"
+            src="images/user.png"
             alt="profile"
-            style="border: 2px solid black"
+            style="border: 2px solid #fff"
           />
           <h1 class="user-name"></h1>
         </div>
@@ -65,15 +63,6 @@
     <main class="">
       <section id="match" class="">
         <h3 class="">配對成功！</h3>
-        <!-- search compt -->
-        <!-- <div class="py-4 px-2">
-          <input
-            type="text"
-            placeholder="搜尋人名"
-            class="py-2 px-2 border border-gray-200 rounded-2xl w-full"
-          />
-        </div> -->
-        <!-- end search compt -->
       </section>
       <section id="chatroom" class="w-full px-5">
         <div id="current-recommend" class="" style="display: none">
@@ -177,7 +166,5 @@
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="sweetalert2.all.min.js"></script>
-  <script src="sweetalert2.min.js"></script>
   <script src="./render/index.js"></script>
 </html>
