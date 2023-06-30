@@ -2,9 +2,15 @@ body::-webkit-scrollbar {
   display: none;
 }
 
+main {
+  display: flex;
+  flex-wrap: wrap;
+  height: calc(100vh - var(--header-height));
+}
 main section#map {
+  flex: 1 1 700px;
   position: fixed;
-  margin-top: 66px;
+  padding-top: 66px;
   top: 0;
   right: 0;
   width: 100%;
@@ -12,110 +18,118 @@ main section#map {
   transition: all 300ms;
 }
 main section#candidate-info {
+  flex: 1 1 200px;
   position: fixed;
-  margin-top: 66px;
-  padding: 2rem 0.5rem;
+  padding-top: 66px;
   top: 0;
-  right: -100px;
-  float: right;
   width: 100%;
   max-width: 284px;
   height: 100%;
-  overflow: scroll;
-  background-color: #ffd1d1;
+  transition: all 300ms;
+}
+main section#candidate-info div#candidate-detail-info {
+  width: 100%;
+  height: 100%;
+  background-color: #f8f0ff;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: all 300ms;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-bottom: 100px;
 }
-main section#candidate-info div#cross {
+main section#candidate-info div#candidate-detail-info div#cross {
   position: fixed;
-  margin-top: 66px;
-  padding: 0.2rem 1rem;
+  padding: 4.5rem 0.4rem;
   top: 10px;
   right: 10px;
   cursor: pointer;
 }
-main section#candidate-info div#cross img {
-  height: 25px;
-  width: 25px;
+main section#candidate-info div#candidate-detail-info div#cross img {
+  height: 20px;
+  width: 20px;
 }
-main section#candidate-info div#candidate-cantainer {
+main section#candidate-info div#candidate-detail-info div#candidate-container {
   padding-top: 1rem;
 }
-main section#candidate-info div#candidate-cantainer img#candidate-picture {
-  height: 150px;
-  width: 150px;
+main section#candidate-info div#candidate-detail-info div#candidate-container img#candidate-picture {
+  height: 120px;
+  width: 120px;
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 50%;
   background-position: center;
 }
-main section#candidate-info div.candidate-name {
+main section#candidate-info div#candidate-detail-info div.candidate-name {
   padding-top: 0.4rem;
   font-size: 1.5rem;
   font-weight: bolder;
   letter-spacing: 2px;
   color: rgb(66, 32, 6);
 }
-main section#candidate-info div#candidate-sex-age {
+main section#candidate-info div#candidate-detail-info div#candidate-sex-age {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 20%;
   margin: 0 auto;
 }
-main section#candidate-info div#candidate-sex-age img#candidate-sex {
+main section#candidate-info div#candidate-detail-info div#candidate-sex-age img#candidate-sex {
   height: 20px;
 }
-main section#candidate-info div#tags {
+main section#candidate-info div#candidate-detail-info div#tags {
   display: flex;
   justify-content: center;
   gap: 4px;
   align-items: center;
   flex-wrap: wrap;
-  margin: 0.3rem 0;
+  padding: 0 1rem;
+  padding-top: 0.5rem;
 }
-main section#candidate-info div#tags p.tag {
+main section#candidate-info div#candidate-detail-info div#tags p.tag {
   text-align: center;
-  font-size: 1rem;
-  padding: 0.2rem 0.6rem;
-  margin: 0.3rem 0.3rem;
-  border: 1.5px solid #fff7ed;
+  padding: 1px 0.3rem;
+  border: 1.5px solid #f372a7;
   border-radius: 20px;
-  background-color: #fff7ed;
   color: rgb(66, 32, 6);
 }
-main section#candidate-info h3#intro-title {
+main section#candidate-info div#candidate-detail-info h3#intro-title {
   font-size: 1rem;
   color: rgb(66, 32, 6);
+  padding-top: 0.5rem;
 }
-main section#candidate-info div#candidate-intro {
-  font-size: 1.1rem;
+main section#candidate-info div#candidate-detail-info div#candidate-intro {
+  font-size: 1rem;
   text-align: center;
   padding: 0.2rem 1.5rem;
   color: rgb(66, 32, 6);
 }
 main section#candidate-info div#choose-btn {
   display: flex;
+  justify-content: center;
   width: 100%;
-  padding-top: 0.2rem;
-  padding-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  position: absolute;
+  bottom: 0;
 }
 main section#candidate-info div#choose-btn button {
-  flex: 1 1 auto;
-  padding: 0.5rem 1rem;
-  margin: 0 0.3rem;
-  background-color: rgb(255, 247, 165);
-  color: #313538;
-  border-radius: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 1rem;
+  background-color: white;
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: rgb(66, 32, 6);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+main section#candidate-info div#choose-btn button img {
+  max-width: 50%;
+}
+main section#candidate-info div#choose-btn button#unlike img {
+  max-width: 40%;
 }
 
 main.menu-active section#candidate-info {
@@ -159,8 +173,33 @@ main.menu-active section#partner-info div#cross {
   display: flex;
   flex-direction: column;
   width: 150px;
-  height: 150px;
   border-radius: 12px;
+  position: relative;
+}
+.leaflet-tooltip-own div#like-signal {
+  text-align: center;
+  margin: 0.5rem 0;
+  padding: 0.2rem 0.3rem;
+  background-color: rgba(243, 114, 167, 0.3);
+  border-radius: 8px;
+  letter-spacing: 2px;
+  color: rgb(66, 32, 6);
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: moveLikeSignal 2s infinite;
+}
+@keyframes moveLikeSignal {
+  0% {
+    transform: translate(-50%, -50%) translateX(-10px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateX(10px);
+  }
+  100% {
+    transform: translate(-50%, -50%) translateX(-10px);
+  }
 }
 .leaflet-tooltip-own h1 {
   font-size: 1rem;
@@ -168,10 +207,32 @@ main.menu-active section#partner-info div#cross {
   text-align: center;
   letter-spacing: 2px;
 }
+.leaflet-tooltip-own h1.pursuer {
+  font-size: 1rem;
+  font-weight: bolder;
+  text-align: center;
+  letter-spacing: 2px;
+  margin-top: 1.5rem;
+}
 .leaflet-tooltip-own img {
   width: 80px;
   height: 80px;
   margin: 0 auto;
   border-radius: 12px;
   padding: 0.2rem 0;
+}
+.leaflet-tooltip-own div.candidate-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding-top: 0.2rem;
+}
+.leaflet-tooltip-own div.candidate-tags p {
+  text-align: center;
+  padding: 1px 0.3rem;
+  border: 1.5px solid #f372a7;
+  border-radius: 20px;
+  color: rgb(66, 32, 6);
 }/*# sourceMappingURL=style.css.map */

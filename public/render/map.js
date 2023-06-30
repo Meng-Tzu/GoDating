@@ -1,5 +1,14 @@
 // ----------------------- Function 區塊 --------------------------
 
+const tagTitles = {
+  1: "吃貨",
+  2: "貓奴",
+  3: "寫 code",
+  9: "裝文青",
+  16: "運動仔",
+  17: "看電影",
+};
+
 // Function1: 取得 API 資料
 const getApi = async (url, option) => {
   let response = await fetch(url, option);
@@ -15,7 +24,8 @@ const markCenter = (
   zoom,
   name,
   image,
-  potentialLocationList
+  potentialLocationList,
+  pursuerList
 ) => {
   // 更換地圖中心點為使用者位置
   const map = L.map("map").setView(userCoordinate, zoom);
@@ -52,19 +62,47 @@ const markCenter = (
       map
     );
 
+    const tagIds = potential.tag_ids.split(",");
+    let tags = "";
+
+    tagIds.forEach((tagId) => {
+      const tag = `<p>${tagTitles[+tagId]}</p>`;
+      tags += tag;
+    });
+
     // tooltip setting of candidate
-    candidateMarker
-      .bindTooltip(
-        `<h1>${potential.name}</h1><img src="images/${potential.image}" />`,
-        {
-          direction: "bottom", // default: auto
-          sticky: false, // true 跟著滑鼠移動。default: false
-          permanent: false, // 是滑鼠移過才出現(false)，還是一直出現(true)
-          opacity: 1.0,
-          className: "leaflet-tooltip-own",
-        }
-      )
-      .openTooltip();
+    if (potential.id in pursuerList) {
+      candidateMarker
+        .bindTooltip(
+          `<div id="like-signal">對方喜歡你唷！</div>
+          <h1 class="pursuer">${potential.name}</h1>
+          <img src="images/${potential.image}" />
+          <div class="candidate-tags">${tags}</div>`,
+          {
+            direction: "bottom", // default: auto
+            sticky: false, // true 跟著滑鼠移動。default: false
+            permanent: false, // 是滑鼠移過才出現(false)，還是一直出現(true)
+            opacity: 1.0,
+            className: "leaflet-tooltip-own",
+          }
+        )
+        .openTooltip();
+    } else {
+      candidateMarker
+        .bindTooltip(
+          `<h1>${potential.name}</h1>
+          <img src="images/${potential.image}" />
+          <div class="candidate-tags">${tags}</div>`,
+          {
+            direction: "bottom", // default: auto
+            sticky: false, // true 跟著滑鼠移動。default: false
+            permanent: false, // 是滑鼠移過才出現(false)，還是一直出現(true)
+            opacity: 1.0,
+            className: "leaflet-tooltip-own",
+          }
+        )
+        .openTooltip();
+    }
 
     // 被通知對方不喜歡自己，刪除對方
     socket.on("send-be-unlike-signal", (msg) => {
@@ -142,14 +180,6 @@ const markCenter = (
         });
     });
   }
-
-  // FIXME: 客製化 display range
-  L.circle(userCoordinate, {
-    color: "#3f8aff",
-    fillColor: "#3f8aff",
-    fillOpacity: 0.5,
-    radius: 1500,
-  }).addTo(map);
 };
 
 // Function3: 顯示地圖中心位置
@@ -158,7 +188,8 @@ const showMyLocation = async (
   zoom,
   name,
   image,
-  potentialLocationList
+  potentialLocationList,
+  pursuerList
 ) => {
   if (!navigator.geolocation) {
     Swal.fire({
@@ -173,7 +204,8 @@ const showMyLocation = async (
       zoom,
       "台北車站",
       image,
-      potentialLocationList
+      potentialLocationList,
+      pursuerList
     );
   }
 
@@ -202,7 +234,8 @@ const showMyLocation = async (
       zoom,
       name,
       image,
-      potentialLocationList
+      potentialLocationList,
+      pursuerList
     );
   };
 
@@ -219,7 +252,8 @@ const showMyLocation = async (
       zoom,
       "台北車站",
       image,
-      potentialLocationList
+      potentialLocationList,
+      pursuerList
     );
   };
 
@@ -303,15 +337,22 @@ let fetchOption = {
         return;
       }
 
-      // TODO: 標示出推薦人選的位置 (標出誰是追求者)
+      // 標示出推薦人選的位置 (標出誰是追求者)
       const { pursuerList, potentialLocationList } = msg;
 
       // 詢問使用者是否能取得當前位置
       const zoom = 14;
-      await showMyLocation(socket, zoom, name, image, potentialLocationList);
+      await showMyLocation(
+        socket,
+        zoom,
+        name,
+        image,
+        potentialLocationList,
+        pursuerList
+      );
     });
 
-    // TODO: 接收推薦人選的詳細資訊 (會重複產生 tags)
+    // 接收推薦人選的詳細資訊
     socket.on("map-candidate", (potentialInfo) => {
       const { id, nick_name, main_image, sex_id, age, self_intro, tags } =
         potentialInfo;
