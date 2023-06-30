@@ -1,5 +1,14 @@
 // ----------------------- Function 區塊 --------------------------
 
+const tagTitles = {
+  1: "吃貨",
+  2: "貓奴",
+  3: "寫 code",
+  9: "裝文青",
+  16: "運動仔",
+  17: "看電影",
+};
+
 // Function1: 取得 API 資料
 const getApi = async (url, option) => {
   let response = await fetch(url, option);
@@ -52,10 +61,18 @@ const markCenter = (
       map
     );
 
+    const tagIds = potential.tag_ids.split(",");
+    let tags = "";
+
+    tagIds.forEach((tagId) => {
+      const tag = `<p>${tagTitles[+tagId]}</p>`;
+      tags += tag;
+    });
+
     // tooltip setting of candidate
     candidateMarker
       .bindTooltip(
-        `<h1>${potential.name}</h1><img src="images/${potential.image}" />`,
+        `<h1>${potential.name}</h1><img src="images/${potential.image}" /><div class="candidate-tags">${tags}</div>`,
         {
           direction: "bottom", // default: auto
           sticky: false, // true 跟著滑鼠移動。default: false
@@ -142,14 +159,6 @@ const markCenter = (
         });
     });
   }
-
-  // FIXME: 客製化 display range
-  L.circle(userCoordinate, {
-    color: "#3f8aff",
-    fillColor: "#3f8aff",
-    fillOpacity: 0.5,
-    radius: 1500,
-  }).addTo(map);
 };
 
 // Function3: 顯示地圖中心位置
@@ -311,7 +320,7 @@ let fetchOption = {
       await showMyLocation(socket, zoom, name, image, potentialLocationList);
     });
 
-    // TODO: 接收推薦人選的詳細資訊 (會重複產生 tags)
+    // 接收推薦人選的詳細資訊
     socket.on("map-candidate", (potentialInfo) => {
       const { id, nick_name, main_image, sex_id, age, self_intro, tags } =
         potentialInfo;

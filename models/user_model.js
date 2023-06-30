@@ -338,9 +338,13 @@ const updateUserLocationFromDB = async (userId, location) => {
 // 取得使用者所有 candidate 的經緯度
 const getMultiUserLocationFromDB = async (candidateIds) => {
   const queryStr = `
-  SELECT id, nick_name AS name, main_image AS image, location 
-  FROM user
-  WHERE id in (?)
+  SELECT U.id, U.nick_name AS name, U.main_image AS image, U.location,
+  GROUP_CONCAT(UT.tag_id) AS tag_ids
+  FROM user AS U
+  LEFT JOIN user_tag AS UT
+  ON U.id = UT.user_id
+  WHERE U.id IN (?)
+  GROUP BY U.id
   `;
 
   const [result] = await pool.query(queryStr, [candidateIds]);

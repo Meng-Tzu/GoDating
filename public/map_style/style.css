@@ -173,7 +173,6 @@ main.menu-active section#partner-info div#cross {
   display: flex;
   flex-direction: column;
   width: 150px;
-  height: 150px;
   border-radius: 12px;
 }
 .leaflet-tooltip-own h1 {
@@ -188,4 +187,19 @@ main.menu-active section#partner-info div#cross {
   margin: 0 auto;
   border-radius: 12px;
   padding: 0.2rem 0;
+}
+.leaflet-tooltip-own div.candidate-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding-top: 0.2rem;
+}
+.leaflet-tooltip-own div.candidate-tags p {
+  text-align: center;
+  padding: 1px 0.3rem;
+  border: 1.5px solid #f372a7;
+  border-radius: 20px;
+  color: rgb(66, 32, 6);
 }/*# sourceMappingURL=style.css.map */
