@@ -203,14 +203,50 @@ main.menu-active section#partner-info div#cross {
   display: flex;
   flex-direction: column;
   width: 150px;
-  // height: 150px;
   border-radius: 12px;
+  position: relative;
+
+  div#like-signal {
+    text-align: center;
+    margin: 0.5rem 0;
+    padding: 0.2rem 0.3rem;
+    background-color: rgba(243, 114, 167, 0.3);
+    border-radius: 8px;
+    letter-spacing: 2px;
+    color: rgb(66 32 6);
+
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: moveLikeSignal 2s infinite;
+  }
+
+  @keyframes moveLikeSignal {
+    0% {
+      transform: translate(-50%, -50%) translateX(-10px);
+    }
+    50% {
+      transform: translate(-50%, -50%) translateX(10px);
+    }
+    100% {
+      transform: translate(-50%, -50%) translateX(-10px);
+    }
+  }
 
   h1 {
     font-size: 1rem;
     font-weight: bolder;
     text-align: center;
     letter-spacing: 2px;
+  }
+
+  h1.pursuer {
+    font-size: 1rem;
+    font-weight: bolder;
+    text-align: center;
+    letter-spacing: 2px;
+    margin-top: 1.5rem;
   }
 
   img {
