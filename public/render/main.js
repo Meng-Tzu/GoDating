@@ -1238,7 +1238,9 @@ $("#cross").click(function () {
 // 登出
 $("#logout").click(function () {
   localStorage.removeItem("token");
-  window.location.href = "/";
+  Swal.fire("登出成功！", "即將導回首頁", "success").then(() => {
+    window.location.href = "/";
+  });
 });
 
 // FIXME: 按圖示上傳照片 (改用 multer 上傳)

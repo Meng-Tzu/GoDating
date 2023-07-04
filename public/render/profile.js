@@ -277,7 +277,7 @@ $("#match-info").click(async function () {
   localStorage.setItem("update", JSON.stringify(update));
 
   Swal.fire("感謝您填寫問卷！", "馬上進行探索吧！", "success").then(() => {
-    window.location.href = "/";
+    window.location.href = "/main.html";
   });
 });
 
@@ -299,5 +299,7 @@ $("#profile").click(function () {
 // 登出
 $("#logout").click(function () {
   localStorage.removeItem("token");
-  window.location.href = "/profile.html";
+  Swal.fire("登出成功！", "即將導回首頁", "success").then(() => {
+    window.location.href = "/";
+  });
 });
