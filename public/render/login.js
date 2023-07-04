@@ -118,7 +118,7 @@ $("#login").on("submit", function (e) {
       localStorage.setItem("token", userData.access_token);
 
       // 跳轉到配對首頁
-      window.location.href = "/";
+      window.location.href = "/main.html";
     })();
   } else {
     data.inputName = $("#loginName").val();
