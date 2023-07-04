@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html class="no-js" lang="zxx">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <title>GoDating</title>
-    <link rel="icon" href="images/favicon.png" type="image/png" />
-    <meta name="author" content="Meng-Tzu Tsai" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- google font setting -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,155 +15,248 @@
       rel="stylesheet"
     />
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
-    />
+    <link rel="icon" href="images/favicon.png" type="image/png" />
 
-    <!-- For chat bubble -->
-    <link
-      href="https://unpkg.com/tailwindcss@0.3.0/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-
-    <link rel="stylesheet" href="./default_style/style.css" />
-    <link rel="stylesheet" href="./index_style/style.css" />
+    <!-- ========================= CSS here ========================= -->
+    <link rel="stylesheet" href="./index_style/bootstrap.min.css" />
+    <link rel="stylesheet" href="./index_style/LineIcons.2.0.css" />
+    <link rel="stylesheet" href="./index_style/animate.css" />
+    <link rel="stylesheet" href="./index_style/tiny-slider.css" />
+    <link rel="stylesheet" href="./index_style/glightbox.min.css" />
+    <link rel="stylesheet" href="./index_style/main.css" />
   </head>
+
   <body>
-    <!-- header -->
-    <header class="shadow-md">
-      <section class="left">
-        <a href="#" class="logo"><img src="images/logo.png" alt="Logo" /></a>
-
-        <nav>
-          <ul class="">
-            <li class="chatroom">
-              <a>聊天室</a>
-            </li>
-            <li class="line">|</li>
-            <li class="map"><a href="/map.html">地圖</a></li>
-          </ul>
-        </nav>
-      </section>
-
-      <section class="right">
-        <div id="profile">
-          <img
-            id="profile-img"
-            src="images/user.png"
-            alt="profile"
-            style="border: 2px solid #fff"
-          />
-          <h1 class="user-name"></h1>
+    <!-- Preloader -->
+    <div class="preloader">
+      <div class="preloader-inner">
+        <div class="preloader-icon">
+          <span></span>
+          <span></span>
         </div>
-        <div id="logout">登出</div>
-      </section>
+      </div>
+    </div>
+    <!-- /End Preloader -->
+
+    <!-- Start Header Area -->
+    <header class="header navbar-area">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-12">
+            <div class="nav-inner">
+              <!-- Start Navbar -->
+              <nav class="navbar navbar-expand-lg">
+                <a class="navbar-brand" href="index.html">
+                  <img src="images/logo.png" alt="Logo" />
+                </a>
+
+                <!-- 預設 navigation bar -->
+                <div
+                  class="collapse navbar-collapse sub-menu-bar"
+                  id="navbarSupportedContent"
+                >
+                  <ul id="nav" class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                      <a
+                        href="#home"
+                        class="page-scroll active"
+                        aria-label="Toggle navigation"
+                        >為您推薦</a
+                      >
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        href="#features"
+                        class="page-scroll"
+                        aria-label="Toggle navigation"
+                        >聊天功能</a
+                      >
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        href="#pricing"
+                        class="page-scroll"
+                        aria-label="Toggle navigation"
+                        >地圖功能</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- 登入註冊按鈕 -->
+                <div class="button add-list-button">
+                  <a href="/login.html" class="btn">馬上探索</a>
+                </div>
+              </nav>
+              <!-- End Navbar -->
+            </div>
+          </div>
+        </div>
+        <!-- row -->
+      </div>
+      <!-- container -->
     </header>
-    <main class="">
-      <section id="match" class="">
-        <h3 class="">配對成功！</h3>
-      </section>
-      <section id="chatroom" class="w-full px-5">
-        <div id="current-recommend" class="" style="display: none">
-          <div id="loading"></div>
+    <!-- End Header Area -->
 
-          <div id="front-cover">
-            <div id="like-signal">對方喜歡你唷！</div>
-          </div>
-
-          <div class="name-sex-age">
-            <h2 id="" class="candidate-name"></h2>
-            <div id="sex-age">
-              <img id="candidate-sex" src="" alt="" />
-              <p id="candidate-age"></p>
+    <!-- Start Hero Area -->
+    <section id="home" class="hero-area">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-5 col-md-12 col-12">
+            <div class="hero-content">
+              <h1 class="wow fadeInLeft" data-wow-delay=".4s">
+                快速配對專屬於您的理想對象
+              </h1>
+              <p class="wow fadeInLeft" data-wow-delay=".6s">
+                依據個人化
+                tag，推薦與您興趣相近的對象，並優先顯示追求者，快速配對成功
+              </p>
             </div>
           </div>
-
-          <div id="current-recommend-detail-info">
-            <div id="candidate-tags" class="">
-              <p class="templete-candidate-tag" style="display: none"></p>
-            </div>
-            <h3 id="intro-title" class="">自我介紹</h3>
-            <p id="candidate-intro"></p>
-          </div>
-
-          <div id="choose-btn">
-            <button id="btn-like"><img src="images/like.png" /></button>
-            <button id="unlike"><img src="images/unlike.png" /></button>
-          </div>
-        </div>
-
-        <div id="chat-block">
-          <div id="title" style="display: none">
-            <h2 class="other-side text-yellow-950 text-2xl"></h2>
-            <form action="" id="search-box">
-              <input type="text" id="keyword" value="機車" />
-              <button id="btn-search" type="submit"></button>
-            </form>
-          </div>
-          <div id="dialogue" style="display: none" class="flex-1 overflow-auto">
-            <div class="message-in-dialogue" style="display: none">
-              <div class="single-message"></div>
-              <div class="timestamp"></div>
+          <div class="col-lg-7 col-md-12 col-12">
+            <div class="hero-image wow fadeInRight" data-wow-delay=".4s">
+              <img src="/images/love_in_the_air.gif" alt="#" />
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+    <!-- End Hero Area -->
 
-          <div id="pass-msg">
-            <form id="text-msg" action="" method="post" style="display: none">
-              <label for="picture-upload"></label>
-              <input
-                type="file"
-                id="picture-upload"
-                accept="image/*"
-                hidden
-                onchange=""
-              />
-              <input
-                type="text"
-                name="message"
-                id="message"
-                placeholder="訊息"
-              />
-              <button type="submit" id="btn-text"></button>
-            </form>
+    <!-- Start Features Area -->
+    <section id="features" class="features section">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="section-title">
+              <h3 class="wow zoomIn" data-wow-delay=".2s">聊天功能</h3>
+              <h2 class="wow fadeInUp" data-wow-delay=".4s">
+                即時聊天功能，讓您第一時間掌握夥伴訊息！
+              </h2>
+              <p class="wow fadeInUp" data-wow-delay=".6s">
+                除了即時通訊，搜尋對話紀錄還能支援模糊搜尋，曾聊過的相關話題都能一次到手
+              </p>
+            </div>
           </div>
         </div>
-      </section>
-      <section id="current" class="">
-        <div id="more-info">
-          <h3 class="">猜你會喜歡...</h3>
-          <div id="cross" style="display: none">
-            <img src="../images/cross.png" alt="cross" />
+        <div class="chatroom-feature row">
+          <div class="col-md-6 col-12">
+            <!-- Start Single Feature -->
+            <div class="single-feature wow fadeInUp" data-wow-delay=".2s">
+              <img src="/images/chat.gif" alt="" />
+              <h3>即時聊天</h3>
+            </div>
+            <!-- End Single Feature -->
+          </div>
+          <div class="col-md-6 col-12">
+            <!-- Start Single Feature -->
+            <div class="single-feature wow fadeInUp" data-wow-delay=".4s">
+              <img src="/images/search.gif" alt="" />
+              <h3>相關對話搜尋</h3>
+            </div>
+            <!-- End Single Feature -->
           </div>
         </div>
+      </div>
+    </section>
+    <!-- End Features Area -->
 
-        <div id="next-recommend-list" style="display: none"></div>
-        <div id="partner-info" style="display: none">
-          <div id="partner-cantainer">
-            <img id="partner-img" src="" alt="" />
+    <!-- Start Pricing Table Area -->
+    <section id="pricing" class="pricing-table section">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="section-title">
+              <h3 class="wow zoomIn" data-wow-delay=".2s">地圖功能</h3>
+              <h2 class="wow fadeInUp" data-wow-delay=".4s">
+                心動不如馬上行動，轉角遇到愛！
+              </h2>
+              <p class="wow fadeInUp" data-wow-delay=".6s">
+                附近有誰一覽無遺，快速了解每個人的興趣並進行配對
+              </p>
+            </div>
           </div>
-
-          <div id="partner-name" class="text-center"></div>
-          <div id="partner-sex-age">
-            <img id="partner-sex" src="" alt="" />
-            <p id="partner-age"></p>
-          </div>
-          <div id="tags" class="">
-            <p class="templete-tag" style="display: none"></p>
-          </div>
-
-          <div id="partner-intro"></div>
         </div>
-      </section>
-    </main>
+        <div class="map row">
+          <div class="">
+            <!-- Single Table -->
+            <div class="single-table wow fadeInUp" data-wow-delay=".2s">
+              <img class="map-img" src="/images/map.gif" alt="map" />
+            </div>
+            <!-- End Single Table-->
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--/ End Pricing Table Area -->
+
+    <!-- Start Footer Area -->
+    <footer class="footer">
+      <!-- Start Footer Top -->
+      <div class="footer-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <!-- Single Widget -->
+              <div class="single-footer f-about">
+                <div class="logo">
+                  <a href="index.html">
+                    <img src="images/logo.png" alt="logo" />
+                  </a>
+                  <p>Go easy, GO DATING!</p>
+                </div>
+
+                <ul class="social">
+                  <li>
+                    <a
+                      href="https://github.com/Meng-Tzu/Personal-Project"
+                      target="_blank"
+                      ><img src="/images/github_white.png" alt="GitHub"
+                    /></a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.linkedin.com/in/meng-tzu-tsai"
+                      target="_blank"
+                      ><img src="/images/linkedin_white.png" alt="LinkedIn"
+                    /></a>
+                  </li>
+                </ul>
+                <p class="copyright-text">
+                  &copy GoDating 2023. All Rights Reserved.
+                </p>
+              </div>
+              <!-- End Single Widget -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--/ End Footer Top -->
+    </footer>
+    <!--/ End Footer Area -->
+
+    <!-- ========================= scroll-top ========================= -->
+    <a href="#" class="scroll-top">
+      <i class="lni lni-chevron-up"></i>
+    </a>
+
+    <!-- ========================= JS here ========================= -->
+    <script src="./render/index_js/bootstrap.min.js"></script>
+    <script src="./render/index_js/wow.min.js"></script>
+    <script src="./render/index_js/tiny-slider.js"></script>
+    <script src="./render/index_js/glightbox.min.js"></script>
+    <script src="./render/index_js/count-up.min.js"></script>
+    <script src="./render/index_js/index.js"></script>
+    <script type="text/javascript">
+      //====== counter up
+      var cu = new counterUp({
+        start: 0,
+        duration: 2000,
+        intvalues: true,
+        interval: 100,
+        append: " ",
+      });
+      cu.start();
+    </script>
   </body>
-  <script
-    src="https://code.jquery.com/jquery-3.6.3.min.js"
-    integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
-    crossorigin="anonymous"
-  ></script>
-  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="./render/index.js"></script>
 </html>
