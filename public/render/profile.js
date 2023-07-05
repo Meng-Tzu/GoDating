@@ -152,7 +152,16 @@ $("#match-info").click(async function () {
 
   // 使者資訊存進資料庫
   const result = await getApi(userApi, fetchOption);
-  if (result === "error: Image is required.") {
+
+  if (result === "error: user's age is smaller than 18.") {
+    Swal.fire({
+      icon: "error",
+      title: "未滿 18 歲無法進行配對唷！",
+      text: "請確認生日是否填寫正確",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (result === "error: Image is required.") {
     Swal.fire({
       icon: "error",
       title: "您沒有上傳個人照喔！",
@@ -257,7 +266,7 @@ $("#match-info").click(async function () {
   const matchApi = "/api/1.0/match/newone";
   const candidateListOfNewUser = await getApi(matchApi, fetchOption);
 
-  // 配對條件沒有任何人符合，建議更改條件，並刪除 tags
+  // TODO: 配對條件沒有任何人符合，建議更改條件，並刪除 tags (刪除照片)
   if ("error" in candidateListOfNewUser) {
     const deleteTagsApi = "/api/1.0/user/tags";
     fetchOption.method = "DELETE";
@@ -266,7 +275,7 @@ $("#match-info").click(async function () {
     Swal.fire({
       icon: "error",
       title: candidateListOfNewUser.error,
-      text: "請確認生日日期是否小於 18 歲，或是放寬篩選條件唷！",
+      text: "放寬篩選條件可以遇見更多人唷！",
     });
 
     userApi = "/api/1.0/user/verify";

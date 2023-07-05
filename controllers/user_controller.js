@@ -2,6 +2,14 @@ import dotenv from "dotenv";
 dotenv.config();
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+let __dirname = path.dirname(__filename);
+const sep = path.sep;
+__dirname = __dirname.replace(`${sep}controllers`, "");
 
 // 快取
 import Cache from "../util/cache.js";
@@ -280,14 +288,30 @@ const saveDetailInfo = async (req, res) => {
 
   // 取得圖片檔名
   const picture = req.files.picture;
+  const pictureName = picture[0].filename;
+
+  // 取得候選人的年齡
+  const userBirthday = `${birthYear}/${birthMonth}/${birthDate}`;
+  const userAge = getAge(userBirthday);
+
+  if (userAge < 18) {
+    const imagePath = path.resolve(__dirname, `public/images/${pictureName}`);
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error(`Cannot delete image: ${err}`);
+        return;
+      }
+    });
+
+    res.status(400).json({ data: "error: user's age is smaller than 18." });
+    return;
+  }
 
   // 檢查圖片是否有填
   if (!picture) {
     res.status(400).json({ data: "error: Image is required." });
     return;
   } else {
-    const pictureName = picture[0].filename;
-
     try {
       // 存入 DB
       await saveUserDetailInfo(
