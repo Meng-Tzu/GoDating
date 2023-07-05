@@ -15,6 +15,7 @@ import {
   getUserDesireAgeRange,
   getMatchTagTitles,
   saveMatchTagIds,
+  deleteMatchTagIds,
   getMultiCandidatesDetailInfo,
   updateUserLocationFromDB,
   getPartnerFromCache,
@@ -334,6 +335,19 @@ const saveTags = async (req, res) => {
   }
 };
 
+// 刪除 tags
+const deleteTags = async (req, res) => {
+  const { newuserid } = req.body;
+  try {
+    await deleteMatchTagIds(newuserid);
+    res.json({ data: "成功刪除配對標籤！" });
+    return;
+  } catch (error) {
+    console.error("cannot delete user's tags info into DB", error);
+    return;
+  }
+};
+
 // FIXME: 取得特定使用者的詳細資訊 (要一直解 token?) (從 DB 拿詳細資訊而不是 cache ??)
 const getDetailInfo = async (req, res, next) => {
   // 從來自客戶端請求的 header 取得和擷取 JWT
@@ -400,6 +414,7 @@ export {
   checkSexInfo,
   saveDetailInfo,
   saveTags,
+  deleteTags,
   getDetailInfo,
   updateUserLocation,
 };

@@ -17,6 +17,7 @@ import {
   certainUserPartnerList,
   saveDetailInfo,
   saveTags,
+  deleteTags,
   getDetailInfo,
   updateUserLocation,
 } from "../controllers/user_controller.js";
@@ -47,7 +48,7 @@ userRouter.post("/user/profile", checkSexInfo);
 userRouter.post("/user/survey", pictureUpload, criteria, saveDetailInfo);
 
 // FIXME: 使用者上傳問卷資料 (必須有 middleware 去驗證 input 格式是正確的)
-userRouter.post("/user/tags", saveTags);
+userRouter.route("/user/tags").post(saveTags).delete(deleteTags);
 
 // FIXME: 所有使用者名單(需要增加權限管理)
 userRouter.post("/user/detailinfo", getDetailInfo);

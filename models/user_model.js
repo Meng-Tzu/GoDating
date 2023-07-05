@@ -196,6 +196,16 @@ const getMatchTagIds = async (id) => {
   return result;
 };
 
+// 刪除配對標籤 id
+const deleteMatchTagIds = async (userId) => {
+  const queryStr = `
+  DELETE FROM user_tag
+  WHERE user_id = ?
+  `;
+
+  await pool.query(queryStr, [userId]);
+};
+
 // 取得配對標籤 title
 const getMatchTagTitles = async (userId) => {
   const queryStr = `
@@ -483,6 +493,7 @@ export {
   getUserDesireAgeRange,
   saveMatchTagIds,
   getMatchTagIds,
+  deleteMatchTagIds,
   getMatchTagTitles,
   saveCandidatesToDB,
   saveCandidatesOfCertainUser,

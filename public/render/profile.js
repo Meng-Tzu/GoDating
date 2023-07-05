@@ -257,8 +257,12 @@ $("#match-info").click(async function () {
   const matchApi = "/api/1.0/match/newone";
   const candidateListOfNewUser = await getApi(matchApi, fetchOption);
 
-  // 配對條件沒有任何人符合，建議更改條件 (刪除使用者詳細資訊)
+  // 配對條件沒有任何人符合，建議更改條件，並刪除 tags
   if ("error" in candidateListOfNewUser) {
+    const deleteTagsApi = "/api/1.0/user/tags";
+    fetchOption.method = "DELETE";
+    await getApi(deleteTagsApi, fetchOption);
+
     Swal.fire({
       icon: "error",
       title: candidateListOfNewUser.error,
