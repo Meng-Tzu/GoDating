@@ -65,4 +65,31 @@ const criteria = [
   },
 ];
 
-export { imageValidator, criteria };
+// 配對條件驗證
+const matchCriteria = [
+  check("userId").exists().notEmpty().withMessage("userId is required.").bail(),
+  check("seekAgeMin")
+    .exists()
+    .notEmpty()
+    .withMessage("seeking min-age is required.")
+    .bail(),
+  check("seekAgeMax")
+    .exists()
+    .notEmpty()
+    .withMessage("seeking max-age is required.")
+    .bail(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    if (!req.body.orientationId) {
+      res.status(400).json({ error: "orientationId is required." });
+      return;
+    }
+
+    next();
+  },
+];
+
+export { imageValidator, criteria, matchCriteria };

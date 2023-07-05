@@ -69,6 +69,20 @@ const saveUserDetailInfo = async (
   ]);
 };
 
+// 修改使用者的配對資料到 DB
+const updateUserMatchInfo = async (userId, orientationId, ageMin, ageMax) => {
+  const queryStr = `
+  UPDATE user
+  SET 
+  sexual_orientation_id = ?, 
+  seek_age_min = ?, 
+  seek_age_max = ?
+  WHERE id = ?
+  `;
+
+  await pool.query(queryStr, [orientationId, ageMin, ageMax, userId]);
+};
+
 // FIXME: 取得 DB 裡的所有使用者 id (優化：遍歷 array，效能差)
 const getAllUserIds = async () => {
   const queryStr = `
@@ -259,6 +273,19 @@ const saveCandidatesOfCertainUser = async (userId, potentialList) => {
   });
 
   const [result] = await pool.query(queryStr, [values]);
+
+  return result;
+};
+
+// 從 DB 讀取特定使用者的 candidate IDs
+const getCandidateIdsFromDB = async (userId) => {
+  const queryStr = `
+  SELECT candidate_id
+  FROM user_candidate
+  WHERE user_id = ?
+  `;
+
+  const [result] = await pool.query(queryStr, [userId]);
 
   return result;
 };
@@ -484,6 +511,7 @@ const getCandidateInfoFromCache = async (candidateId) => {
 export {
   saveUserBasicInfo,
   saveUserDetailInfo,
+  updateUserMatchInfo,
   getAllUserIds,
   getUserBasicInfo,
   getUserMatchInfo,
@@ -497,6 +525,7 @@ export {
   getMatchTagTitles,
   saveCandidatesToDB,
   saveCandidatesOfCertainUser,
+  getCandidateIdsFromDB,
   getCandidatesFromDB,
   deleteAllRowInTable,
   savePursuersToDB,
