@@ -486,5 +486,7 @@ $("#profile").click(function () {
 // 登出
 $("#logout").click(function () {
   localStorage.removeItem("token");
-  window.location.href = "/login.html";
+  Swal.fire("登出成功！", "即將導回首頁", "success").then(() => {
+    window.location.href = "/";
+  });
 });
