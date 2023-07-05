@@ -41,6 +41,8 @@ let fetchOption = {
   body: "",
 };
 
+let isProfileExist = "";
+
 // 立即執行函式
 (async () => {
   const userData = await getApi(userApi, fetchOption);
@@ -64,24 +66,23 @@ let fetchOption = {
   }
 
   const profileApi = "/api/1.0/user/profile";
-  const isProfileExist = await getApi(profileApi, fetchOption);
+  isProfileExist = await getApi(profileApi, fetchOption);
   $("#loading").hide();
   $("#content").css("display", "block");
 
+  let detailInfo;
   if (isProfileExist === "Detail user-info already existed.") {
-    $("#match-info").hide();
     $(".avatar-edit").hide();
     $("#birthday").prop("disabled", true);
-    $("input[type=radio]").attr("disabled", true);
-    $(".container ul li").css("pointer-events", "none");
+    $(".sex input[type=radio]").attr("disabled", true);
+    $(".sex ul li").css("pointer-events", "none");
     $("#self-intro").prop("disabled", true);
-    $("#slider-range").hide();
+
     $("#title").text("我的檔案");
     $("#picture-label").text("個人照");
-    $("#tag-label").text("個性化標籤");
 
     const detailInfoApi = "/api/1.0/user/detailinfo";
-    const detailInfo = await getApi(detailInfoApi, fetchOption);
+    detailInfo = await getApi(detailInfoApi, fetchOption);
     $("#imagePreview").css("background-image", `url(${detailInfo.main_image})`);
     $("#birthday").val(detailInfo.birthday);
     if (detailInfo.sex_id === 1) {
@@ -90,6 +91,22 @@ let fetchOption = {
       $("#female-option").prop("checked", true);
     }
 
+    $("#self-intro").text(detailInfo.self_intro);
+  }
+
+  const candidateApi = "/api/1.0/user/candidate";
+  fetchOption = {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: "",
+  };
+  const isCandidateExist = await getApi(candidateApi, fetchOption);
+  if (isCandidateExist) {
+    $("#match-info").hide();
+    $(".sexual-orientation input[type=radio]").attr("disabled", true);
+    $(".sexual-orientation ul li").css("pointer-events", "none");
+    $("#slider-range").hide();
+    $("#tag-label").text("個性化標籤");
     if (detailInfo.orientation_id === 1) {
       $("#hetro-option").prop("checked", true);
     } else if (detailInfo.orientation_id === 2) {
@@ -103,8 +120,6 @@ let fetchOption = {
     $("#amount").val(
       detailInfo.seek_age_min + "歲 ～ " + detailInfo.seek_age_max + " 歲"
     );
-    $("#self-intro").text(detailInfo.self_intro);
-
     return;
   }
 })();
@@ -125,6 +140,121 @@ $("#match-info").click(async function () {
     alert("Sorry, you need to sign up / sign in again.");
     localStorage.removeItem("token");
     window.location.href = "/login.html";
+  }
+
+  if (isProfileExist === "Detail user-info already existed.") {
+    fetchOption = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: "",
+    };
+
+    let matchData = {};
+    matchData.userId = $(".user-name").attr("id");
+    matchData.orientationId = $(
+      "input[name='sexual-orientation']:checked"
+    ).val();
+    matchData.seekAgeMin = $("#slider-range").slider("values", 0);
+    matchData.seekAgeMax = $("#slider-range").slider("values", 1);
+
+    fetchOption.body = JSON.stringify(matchData);
+
+    // 把使用者配對資訊存進 DB
+    userApi = "/api/1.0/user/matchinfo";
+
+    // 使用者資訊存進資料庫
+    const result = await getApi(userApi, fetchOption);
+
+    if (result === "orientationId is required.") {
+      Swal.fire({
+        icon: "error",
+        title: "尚未填寫完畢喔！",
+        text: "請選擇性傾向",
+      });
+      userApi = "/api/1.0/user/verify";
+      return;
+    } else if (result === "seeking min-age is required.") {
+      Swal.fire({
+        icon: "error",
+        title: "尚未填寫完畢喔！",
+        text: "請選擇尋找的年齡範圍",
+      });
+      userApi = "/api/1.0/user/verify";
+      return;
+    } else if (result === "seeking max-age is required.") {
+      Swal.fire({
+        icon: "error",
+        title: "尚未填寫完畢喔！",
+        text: "請選擇尋找的年齡範圍",
+      });
+      userApi = "/api/1.0/user/verify";
+      return;
+    }
+
+    // 選擇標籤
+    const tagApi = "/api/1.0/user/tags";
+    fetchOption = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: "",
+    };
+
+    const tags = {
+      userid: $(".user-name").attr("id"),
+      tags: $("#tags-selected").val(),
+    };
+    fetchOption.body = JSON.stringify(tags);
+    await getApi(tagApi, fetchOption);
+
+    // 取得新註冊者的 candidate list
+    const data = { newuserid: $(".user-name").attr("id") };
+    fetchOption = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: "",
+    };
+    fetchOption.body = JSON.stringify(data);
+
+    const matchApi = "/api/1.0/match/newone";
+    const candidateListOfNewUser = await getApi(matchApi, fetchOption);
+
+    // 配對條件沒有任何人符合，建議更改條件，並刪除 tags
+    if ("error" in candidateListOfNewUser) {
+      const deleteTagsApi = "/api/1.0/user/tags";
+      fetchOption.method = "DELETE";
+      await getApi(deleteTagsApi, fetchOption);
+
+      Swal.fire({
+        icon: "error",
+        title: candidateListOfNewUser.error,
+        text: "放寬篩選條件可以遇見更多人唷！",
+      });
+
+      userApi = "/api/1.0/user/verify";
+      return;
+    }
+
+    // 新註冊者的資料存到 localstorage
+    const update = {
+      newUserId: candidateListOfNewUser.userId,
+      otherUserIdsList: candidateListOfNewUser.potentialListOfCertainUser,
+    };
+    localStorage.setItem("update", JSON.stringify(update));
+
+    Swal.fire("感謝您填寫問卷！", "馬上進行探索吧！", "success").then(() => {
+      window.location.href = "/main.html";
+    });
+
+    return;
   }
 
   formData = new FormData();
@@ -150,16 +280,25 @@ $("#match-info").click(async function () {
   fetchOption.body = formData;
   userApi = "/api/1.0/user/survey";
 
-  // 使者資訊存進資料庫
-  const result = await getApi(userApi, fetchOption);
-  if (result === "error: Image is required.") {
+  // 使用者資訊存進資料庫
+  const checkData = await getApi(userApi, fetchOption);
+
+  if (checkData === "error: user's age is smaller than 18.") {
+    Swal.fire({
+      icon: "error",
+      title: "未滿 18 歲無法進行配對唷！",
+      text: "請確認生日是否填寫正確",
+    });
+    userApi = "/api/1.0/user/verify";
+    return;
+  } else if (checkData === "error: Image is required.") {
     Swal.fire({
       icon: "error",
       title: "您沒有上傳個人照喔！",
     });
     userApi = "/api/1.0/user/verify";
     return;
-  } else if (result === "birthday is required.") {
+  } else if (checkData === "birthday is required.") {
     Swal.fire({
       icon: "error",
       title: "尚未填寫完畢喔！",
@@ -167,7 +306,7 @@ $("#match-info").click(async function () {
     });
     userApi = "/api/1.0/user/verify";
     return;
-  } else if (result === "sexId is required.") {
+  } else if (checkData === "sexId is required.") {
     Swal.fire({
       icon: "error",
       title: "尚未填寫完畢喔！",
@@ -175,7 +314,7 @@ $("#match-info").click(async function () {
     });
     userApi = "/api/1.0/user/verify";
     return;
-  } else if (result === "orientationId is required.") {
+  } else if (checkData === "orientationId is required.") {
     Swal.fire({
       icon: "error",
       title: "尚未填寫完畢喔！",
@@ -183,7 +322,7 @@ $("#match-info").click(async function () {
     });
     userApi = "/api/1.0/user/verify";
     return;
-  } else if (result === "seeking min-age is required.") {
+  } else if (checkData === "seeking min-age is required.") {
     Swal.fire({
       icon: "error",
       title: "尚未填寫完畢喔！",
@@ -191,7 +330,7 @@ $("#match-info").click(async function () {
     });
     userApi = "/api/1.0/user/verify";
     return;
-  } else if (result === "seeking max-age is required.") {
+  } else if (checkData === "seeking max-age is required.") {
     Swal.fire({
       icon: "error",
       title: "尚未填寫完畢喔！",
@@ -199,7 +338,7 @@ $("#match-info").click(async function () {
     });
     userApi = "/api/1.0/user/verify";
     return;
-  } else if (result === "selfIntro is required.") {
+  } else if (checkData === "selfIntro is required.") {
     Swal.fire({
       icon: "error",
       title: "尚未填寫完畢喔！",
@@ -207,7 +346,7 @@ $("#match-info").click(async function () {
     });
     userApi = "/api/1.0/user/verify";
     return;
-  } else if (result === "File must be an image") {
+  } else if (checkData === "File must be an image") {
     Swal.fire({
       icon: "error",
       title: "個人照格式錯誤",
@@ -215,7 +354,7 @@ $("#match-info").click(async function () {
     });
     userApi = "/api/1.0/user/verify";
     return;
-  } else if (result === "Image is required") {
+  } else if (checkData === "Image is required") {
     Swal.fire({
       icon: "error",
       title: "您沒有上傳個人照喔喔喔喔！",
@@ -224,60 +363,107 @@ $("#match-info").click(async function () {
     return;
   }
 
-  // 選擇標籤
-  const tagApi = "/api/1.0/user/tags";
-  fetchOption = {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: "",
-  };
+  // 確認是否送出表單
+  Swal.fire({
+    title: "確定要提交表單嗎？",
+    text: "提交表單後將無法修改資料",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "提交表單",
+    cancelButtonText: "取消",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      fetchOption = {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: "",
+      };
 
-  const tags = {
-    userid: $(".user-name").attr("id"),
-    tags: $("#tags-selected").val(),
-  };
-  fetchOption.body = JSON.stringify(tags);
-  await getApi(tagApi, fetchOption);
+      fetchOption.body = JSON.stringify(checkData);
+      await getApi(userApi, fetchOption);
 
-  // 取得新註冊者的 candidate list
-  const data = { newuserid: $(".user-name").attr("id") };
-  fetchOption = {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: "",
-  };
-  fetchOption.body = JSON.stringify(data);
+      // 選擇標籤
+      const tagApi = "/api/1.0/user/tags";
+      fetchOption = {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: "",
+      };
 
-  const matchApi = "/api/1.0/match/newone";
-  const candidateListOfNewUser = await getApi(matchApi, fetchOption);
+      const tags = {
+        userid: $(".user-name").attr("id"),
+        tags: $("#tags-selected").val(),
+      };
+      fetchOption.body = JSON.stringify(tags);
+      await getApi(tagApi, fetchOption);
 
-  // 配對條件沒有任何人符合，建議更改條件 (刪除使用者詳細資訊)
-  if ("error" in candidateListOfNewUser) {
-    Swal.fire({
-      icon: "error",
-      title: candidateListOfNewUser.error,
-      text: "請確認生日日期是否小於 18 歲，或是放寬篩選條件唷！",
-    });
+      // 取得新註冊者的 candidate list
+      const data = { newuserid: $(".user-name").attr("id") };
+      fetchOption = {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: "",
+      };
+      fetchOption.body = JSON.stringify(data);
 
-    userApi = "/api/1.0/user/verify";
-    return;
-  }
+      const matchApi = "/api/1.0/match/newone";
+      const candidateListOfNewUser = await getApi(matchApi, fetchOption);
 
-  // 新註冊者的資料存到 localstorage
-  const update = {
-    newUserId: candidateListOfNewUser.userId,
-    otherUserIdsList: candidateListOfNewUser.potentialListOfCertainUser,
-  };
-  localStorage.setItem("update", JSON.stringify(update));
+      // 配對條件沒有任何人符合，建議更改條件，並刪除 tags
+      if ("error" in candidateListOfNewUser) {
+        const deleteTagsApi = "/api/1.0/user/tags";
+        fetchOption.method = "DELETE";
+        await getApi(deleteTagsApi, fetchOption);
 
-  Swal.fire("感謝您填寫問卷！", "馬上進行探索吧！", "success").then(() => {
-    window.location.href = "/main.html";
+        Swal.fire({
+          icon: "error",
+          title: candidateListOfNewUser.error,
+          text: "放寬篩選條件可以遇見更多人唷！",
+        }).then(() => {
+          location.reload();
+        });
+
+        return;
+      }
+
+      // 新註冊者的資料存到 localstorage
+      const update = {
+        newUserId: candidateListOfNewUser.userId,
+        otherUserIdsList: candidateListOfNewUser.potentialListOfCertainUser,
+      };
+      localStorage.setItem("update", JSON.stringify(update));
+
+      Swal.fire("感謝您填寫問卷！", "馬上進行探索吧！", "success").then(() => {
+        window.location.href = "/main.html";
+      });
+    } else {
+      const { pictureName } = checkData;
+
+      fetchOption = {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pictureName }),
+      };
+      const deleteImageApi = "/api/1.0/user/image";
+      await getApi(deleteImageApi, fetchOption);
+
+      userApi = "/api/1.0/user/verify";
+      return;
+    }
   });
 });
 

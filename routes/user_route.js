@@ -7,6 +7,7 @@ import signUpValidator from "../middlewares/sign_up_validator.js";
 import {
   imageValidator,
   criteria,
+  matchCriteria,
 } from "../middlewares/profile_survey_validator.js";
 
 import {
@@ -14,9 +15,14 @@ import {
   signUp,
   verify,
   checkSexInfo,
+  certainUserCandidateList,
   certainUserPartnerList,
+  checkDetailInfo,
   saveDetailInfo,
+  deleteImage,
+  updateMatchInfo,
   saveTags,
+  deleteTags,
   getDetailInfo,
   updateUserLocation,
 } from "../controllers/user_controller.js";
@@ -44,13 +50,25 @@ userRouter.post("/user/verify", verify);
 userRouter.post("/user/profile", checkSexInfo);
 
 // FIXME: 使用者上傳問卷資料 (沒有 middleware 去驗證照片格式是正確的)
-userRouter.post("/user/survey", pictureUpload, criteria, saveDetailInfo);
+userRouter
+  .route("/user/survey")
+  .post(pictureUpload, criteria, checkDetailInfo)
+  .put(saveDetailInfo);
+
+// FIXME: 刪除使用者照片 (需要增加權限管理)
+userRouter.delete("/user/image", deleteImage);
+
+// FIXME: 使用者填寫配對資料 (需要增加權限管理)
+userRouter.post("/user/matchinfo", matchCriteria, updateMatchInfo);
 
 // FIXME: 使用者上傳問卷資料 (必須有 middleware 去驗證 input 格式是正確的)
-userRouter.post("/user/tags", saveTags);
+userRouter.route("/user/tags").post(saveTags).delete(deleteTags);
 
 // FIXME: 所有使用者名單(需要增加權限管理)
 userRouter.post("/user/detailinfo", getDetailInfo);
+
+// FIXME: 特定使用者的候選人名單 (post 改成 get)
+userRouter.post("/user/candidate", certainUserCandidateList);
 
 // FIXME: 特定使用者的候選人名單 (需要增加權限管理)
 userRouter.post("/user/pursuer", certainUserPursuerList);

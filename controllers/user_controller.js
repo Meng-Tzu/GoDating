@@ -2,6 +2,14 @@ import dotenv from "dotenv";
 dotenv.config();
 import jwt from "jsonwebtoken";
 import * as argon2 from "argon2";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+let __dirname = path.dirname(__filename);
+const sep = path.sep;
+__dirname = __dirname.replace(`${sep}controllers`, "");
 
 // 快取
 import Cache from "../util/cache.js";
@@ -9,12 +17,15 @@ import Cache from "../util/cache.js";
 import {
   saveUserBasicInfo,
   saveUserDetailInfo,
+  updateUserMatchInfo,
   getUserBasicInfo,
   getUserDetailInfo,
   getUserSexId,
   getUserDesireAgeRange,
   getMatchTagTitles,
   saveMatchTagIds,
+  deleteMatchTagIds,
+  getCandidateIdsFromDB,
   getMultiCandidatesDetailInfo,
   updateUserLocationFromDB,
   getPartnerFromCache,
@@ -23,6 +34,34 @@ import {
 import { getAge } from "../util/util.js";
 
 const sexType = { 1: "男性", 2: "女性" };
+
+// 輸出特定使用者的 candidate IDs API
+const certainUserCandidateList = async (req, res, next) => {
+  // 從來自客戶端請求的 header 取得和擷取 JWT
+  const token = req.header("Authorization").replace("Bearer ", "");
+
+  let candidateIdsList;
+
+  try {
+    // 解開 token
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
+    candidateIdsList = await getCandidateIdsFromDB(decoded.id);
+  } catch (error) {
+    console.error("Cannot get candidateIds list from DB. Error:", error);
+    next(error);
+    return;
+  }
+
+  const response = { data: false };
+
+  if (candidateIdsList.length) {
+    response.data = true;
+  }
+
+  res.status(200).json(response);
+  return;
+};
 
 // FIXME: 輸出特定使用者的 partner API ( cache miss 時改撈 DB)
 const certainUserPartnerList = async (req, res) => {
@@ -244,7 +283,7 @@ const checkSexInfo = async (req, res, next) => {
 };
 
 // 儲存使用者的詳細資料
-const saveDetailInfo = async (req, res) => {
+const checkDetailInfo = async (req, res) => {
   const {
     userId,
     birthday,
@@ -254,6 +293,16 @@ const saveDetailInfo = async (req, res) => {
     seekAgeMax,
     selfIntro,
   } = req.body;
+
+  // 取得圖片檔名
+  const picture = req.files.picture;
+  // 檢查圖片是否有填
+  if (!picture) {
+    res.status(400).json({ data: "error: Image is required." });
+    return;
+  }
+
+  const pictureName = picture[0].filename;
 
   // 處理生日日期
   const month = {
@@ -276,37 +325,107 @@ const saveDetailInfo = async (req, res) => {
   const birthYear = +birthdayAry[2];
   const birthMonth = month[birthdayAry[0]];
   const birthDate = +birthdayAry[1].slice(0, -1);
+  // 取得候選人的年齡
+  const userBirthday = `${birthYear}/${birthMonth}/${birthDate}`;
+  const userAge = getAge(userBirthday);
 
-  // 取得圖片檔名
-  const picture = req.files.picture;
+  if (userAge < 18) {
+    const imagePath = path.resolve(__dirname, `public/images/${pictureName}`);
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error(`Cannot delete image: ${err}`);
+        return;
+      }
+    });
 
-  // 檢查圖片是否有填
-  if (!picture) {
-    res.status(400).json({ data: "error: Image is required." });
+    res.status(400).json({ data: "error: user's age is smaller than 18." });
     return;
-  } else {
-    const pictureName = picture[0].filename;
+  }
 
-    try {
-      // 存入 DB
-      await saveUserDetailInfo(
-        +userId,
-        birthYear,
-        birthMonth,
-        birthDate,
-        +sexId,
-        +orientationId,
-        +seekAgeMin,
-        +seekAgeMax,
-        selfIntro,
-        pictureName
-      );
-      res.json({ data: "成功儲存配對資訊！" });
-      return;
-    } catch (error) {
-      console.error("cannot save user detail info into DB");
+  res.json({
+    data: {
+      userId,
+      sexId,
+      orientationId,
+      birthYear,
+      birthMonth,
+      birthDate,
+      seekAgeMin,
+      seekAgeMax,
+      selfIntro,
+      pictureName,
+    },
+  });
+};
+
+// 儲存使用者的詳細資料
+const saveDetailInfo = async (req, res) => {
+  const {
+    userId,
+    sexId,
+    orientationId,
+    birthYear,
+    birthMonth,
+    birthDate,
+    seekAgeMin,
+    seekAgeMax,
+    selfIntro,
+    pictureName,
+  } = req.body;
+
+  try {
+    // 存入 DB
+    await saveUserDetailInfo(
+      +userId,
+      birthYear,
+      birthMonth,
+      birthDate,
+      +sexId,
+      +orientationId,
+      +seekAgeMin,
+      +seekAgeMax,
+      selfIntro,
+      pictureName
+    );
+    res.json({ data: "成功儲存配對資訊！" });
+    return;
+  } catch (error) {
+    console.error("cannot save user detail info into DB");
+    return;
+  }
+};
+
+// 刪除使用者照片
+const deleteImage = (req, res) => {
+  const { pictureName } = req.body;
+  const imagePath = path.resolve(__dirname, `public/images/${pictureName}`);
+  fs.unlink(imagePath, (err) => {
+    if (err) {
+      console.error(`Cannot delete image: ${err}`);
       return;
     }
+  });
+
+  res.json({ data: "成功刪除使用者照片！" });
+};
+
+// 儲存使用者的配對資料
+const updateMatchInfo = async (req, res) => {
+  const { userId, orientationId, seekAgeMin, seekAgeMax } = req.body;
+
+  try {
+    // 存入 DB
+    await updateUserMatchInfo(
+      +userId,
+      +orientationId,
+      +seekAgeMin,
+      +seekAgeMax
+    );
+    res.json({ data: "成功儲存配對資訊！" });
+    return;
+  } catch (error) {
+    console.error("cannot save user match info into DB. Error:", error);
+    return;
   }
 };
 
@@ -330,6 +449,19 @@ const saveTags = async (req, res) => {
     return;
   } catch (error) {
     console.error("cannot save user's tags info into DB", error);
+    return;
+  }
+};
+
+// 刪除 tags
+const deleteTags = async (req, res) => {
+  const { newuserid } = req.body;
+  try {
+    await deleteMatchTagIds(newuserid);
+    res.json({ data: "成功刪除配對標籤！" });
+    return;
+  } catch (error) {
+    console.error("cannot delete user's tags info into DB", error);
     return;
   }
 };
@@ -392,14 +524,19 @@ const updateUserLocation = async (req, res, next) => {
 };
 
 export {
+  certainUserCandidateList,
   certainUserPartnerList,
   getPartnerInfo,
   signIn,
   signUp,
   verify,
   checkSexInfo,
+  checkDetailInfo,
   saveDetailInfo,
+  deleteImage,
+  updateMatchInfo,
   saveTags,
+  deleteTags,
   getDetailInfo,
   updateUserLocation,
 };
