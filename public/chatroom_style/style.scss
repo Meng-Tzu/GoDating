@@ -12,9 +12,68 @@ main {
   flex-wrap: wrap;
   height: calc(100vh - var(--header-height));
 
+  section#match {
+    // border: 2px solid red;
+    flex: 1 1 100px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right-width: 1.4px;
+    border-color: #aea19b;
+    overflow-y: auto;
+
+    h3 {
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: bolder;
+      letter-spacing: 2px;
+      color: rgb(66 32 6);
+      padding: 0.5rem 0;
+      width: 100%;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      max-height: var(--subtitle-height);
+    }
+
+    div.partner {
+      // border: 1px solid blue;
+      width: 100%;
+      padding: 16px 16px;
+      border-bottom-width: 1.5px;
+      cursor: pointer;
+
+      .partner-img {
+        // border: 1px solid red;
+        height: 60px;
+        width: 60px;
+        object-fit: cover;
+        border-radius: 50%;
+        background-position: center;
+      }
+
+      .name-msg-container {
+        // border: 1px solid green;
+        padding: 0 0.5rem;
+
+        div {
+          font-size: 1.2rem;
+          font-weight: bolder;
+          letter-spacing: 2px;
+          color: rgb(66 32 6);
+        }
+
+        span {
+          font-size: 0.7rem;
+          letter-spacing: 1px;
+        }
+      }
+    }
+  }
+
   section#chatroom {
     position: relative;
-    flex: 3 1 600px;
+    flex: 1 1 600px;
     display: flex;
     justify-content: center;
     align-items: center;

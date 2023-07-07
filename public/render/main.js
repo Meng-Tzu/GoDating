@@ -495,18 +495,6 @@ let fetchOption = {
     socket.on("user-connect", async (msg) => {
       console.log("open connection to server");
 
-      // 產生已配對成功的 partner 有誰
-      const partnersUrl = `/api/1.0/user/partner`;
-      let fetchOption = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: "",
-      };
-      fetchOption.body = JSON.stringify({ userid: msg.id });
-      const userPartnerList = await getApi(partnersUrl, fetchOption);
-      const certainPartnerList = userPartnerList[0];
-      createAllPartnerDiv(certainPartnerList);
-
       const { pursuerList, potentialInfoList } = msg;
 
       // 如果沒有任何推薦的人選
@@ -1088,16 +1076,6 @@ $(".logo").click(function (e) {
 
   // 隱藏取消圖示
   $("#cross").css("display", "none");
-});
-
-// TODO: 點擊聊天室導到聊天室頁面
-$(".chatroom").click(function () {
-  Swal.fire({
-    icon: "info",
-    title: "聊天室頁面功能待開發",
-    text: "感謝您的耐心等待！",
-  });
-  // window.location.href = "/chatroom.html";
 });
 
 // 點擊右上個人照人名跳轉到 profile page

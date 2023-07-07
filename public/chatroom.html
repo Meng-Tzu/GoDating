@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WebSocket Client</title>
+    <title>GoDating</title>
+    <link rel="icon" href="images/favicon.png" type="image/png" />
     <meta name="author" content="Meng-Tzu Tsai" />
 
     <!-- google font setting -->
@@ -15,16 +16,30 @@
       rel="stylesheet"
     />
 
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+    />
+
+    <!-- For chat bubble -->
+    <link
+      href="https://unpkg.com/tailwindcss@0.3.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
     <link rel="stylesheet" href="./default_style/style.css" />
+    <link rel="stylesheet" href="./chatroom_style/style.css" />
   </head>
   <body>
     <!-- header -->
-    <header>
+    <header class="shadow-md">
       <section class="left">
-        <a href="#" class="logo"><img src="/logo.png" alt="Logo" /></a>
+        <a href="/main.html" class="logo"
+          ><img src="images/logo.png" alt="Logo"
+        /></a>
 
         <nav>
-          <ul>
+          <ul class="">
             <li class="chatroom">
               <a href="/chatroom.html">聊天室</a>
             </li>
@@ -35,46 +50,85 @@
       </section>
 
       <section class="right">
-        <a href="/profile.html"><img src="/profile.jpg" alt="profile" /></a>
+        <div id="profile">
+          <img
+            id="profile-img"
+            src="images/user.png"
+            alt="profile"
+            style="border: 2px solid #fff"
+          />
+          <h1 class="user-name"></h1>
+        </div>
+        <div id="logout">登出</div>
       </section>
     </header>
-    <main>
-      <section id="match">
-        <h3>配對成功</h3>
+
+    <main class="">
+      <section id="match" class="">
+        <h3 class="">配對成功！</h3>
       </section>
-      <section id="chatroom">
-        <form action="" method="post">
-          <label for="name">名字:</label>
-          <select name="users" id="users">
-            <option value="" class="user" style="display: none"></option>
-          </select>
-          <button type="submit" id="btnConnect">connect</button>
-        </form>
+      <section id="chatroom" class="w-full px-5">
+        <div id="default">&#x2190; 請點選左側開始聊天！</div>
+        <div id="chat-block">
+          <div id="title" style="display: none">
+            <h2 class="other-side text-yellow-950 text-2xl"></h2>
+            <form action="" id="search-box">
+              <input type="text" id="keyword" value="機車" />
+              <button id="btn-search" type="submit"></button>
+            </form>
+          </div>
+          <div id="dialogue" style="display: none" class="flex-1 overflow-auto">
+            <div class="message-in-dialogue" style="display: none">
+              <div class="single-message"></div>
+              <div class="timestamp"></div>
+            </div>
+          </div>
 
-        <form action="" method="post">
-          <label for="name">想跟誰建立聊天室:</label>
-          <select name="condidates" id="condidates">
-            <option value="" class="condidate" style="display: none"></option>
-          </select>
-          <button type="submit" id="btnBuild">Build</button>
-        </form>
-
-        <div id="dialogue">
-          <ul class="message" style="list-style-type: none"></ul>
+          <div id="pass-msg">
+            <form id="text-msg" action="" method="post" style="display: none">
+              <label for="picture-upload"></label>
+              <input
+                type="file"
+                id="picture-upload"
+                accept="image/*"
+                hidden
+                onchange=""
+              />
+              <input
+                type="text"
+                name="message"
+                id="message"
+                placeholder="訊息"
+              />
+              <button type="submit" id="btn-text"></button>
+            </form>
+          </div>
+        </div>
+      </section>
+      <section id="current" class="">
+        <div id="more-info">
+          <h3 class="">目前聊天者資訊</h3>
+          <div id="cross" style="display: none">
+            <img src="../images/cross.png" alt="cross" />
+          </div>
         </div>
 
-        <form action="" method="post">
-          <input type="text" name="message" id="message" placeholder="訊息" />
-          <button type="submit" id="btnText">Send</button>
-        </form>
+        <div id="partner-info" style="display: none">
+          <div id="partner-cantainer">
+            <img id="partner-img" src="" alt="" />
+          </div>
 
-        <form action="" method="post">
-          <input type="file" id="picture" accept="image/*" />
-          <button type="submit" id="btnFile">上傳檔案</button>
-        </form>
-      </section>
-      <section id="current">
-        <h3>目前聊天者資訊</h3>
+          <div id="partner-name" class="text-center"></div>
+          <div id="partner-sex-age">
+            <img id="partner-sex" src="" alt="" />
+            <p id="partner-age"></p>
+          </div>
+          <div id="tags" class="">
+            <p class="templete-tag" style="display: none"></p>
+          </div>
+
+          <div id="partner-intro"></div>
+        </div>
       </section>
     </main>
   </body>
@@ -84,5 +138,7 @@
     crossorigin="anonymous"
   ></script>
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-  <script src="./chatroom_client.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="./render/chatroom.js"></script>
 </html>
