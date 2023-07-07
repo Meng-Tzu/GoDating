@@ -463,16 +463,6 @@ $("#cross").click(function () {
   $("#candidate-info").hide();
 });
 
-// FIXME: 點擊聊天室導到聊天室頁面
-$(".chatroom").click(function () {
-  Swal.fire({
-    icon: "info",
-    title: "聊天室頁面功能待開發",
-    text: "感謝您的耐心等待！",
-  });
-  // window.location.href = "/chatroom.html";
-});
-
 // 點擊地圖重新載入
 $(".map").click(function () {
   location.reload();
