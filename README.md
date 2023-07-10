@@ -27,7 +27,7 @@ A dating website that provides personalized recommendation system, real-time mes
 
 - [Demo](#demo)
 
-- [Architecture](#architecture)
+- [Backend Architecture](#backend-architecture)
 
 - [Database Schema](#database-schema)
 
@@ -56,11 +56,12 @@ A dating website that provides personalized recommendation system, real-time mes
 
 [(Back to top)](#godating)
 
-## Architecture
+## Backend Architecture
 
 [(Back to top)](#godating)
 
-![Architecture](./doc/architecture.jpg)
+![backend_architecture](https://github.com/Meng-Tzu/GoDating/assets/111262692/c4d64ee1-f00d-411c-83cf-9ff622899228)
+
 
 ## Database Schema
 
