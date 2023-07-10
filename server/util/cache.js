@@ -16,7 +16,6 @@ redisClient.ready = true;
 
 redisClient.on("ready", () => {
   redisClient.ready = true;
-  console.log("Redis is ready");
 });
 
 redisClient.on("error", (err) => {
@@ -31,7 +30,5 @@ redisClient.on("end", () => {
   redisClient.ready = false;
   console.log("Redis is disconnected");
 });
-
-redisClient.set("ioTest", "123");
 
 export default redisClient;

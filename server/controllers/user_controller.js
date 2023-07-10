@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 let __dirname = path.dirname(__filename);
 const sep = path.sep;
-__dirname = __dirname.replace(`${sep}controllers`, "");
+__dirname = __dirname.replace(`server${sep}controllers`, "");
 
 // 快取
 import Cache from "../util/cache.js";
@@ -296,12 +296,6 @@ const checkDetailInfo = async (req, res) => {
 
   // 取得圖片檔名
   const picture = req.files.picture;
-  // 檢查圖片是否有填
-  if (!picture) {
-    res.status(400).json({ data: "error: Image is required." });
-    return;
-  }
-
   const pictureName = picture[0].filename;
 
   // 處理生日日期

@@ -1,5 +1,13 @@
 import { check, validationResult } from "express-validator";
 import { body } from "express-validator";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+let __dirname = path.dirname(__filename);
+const sep = path.sep;
+__dirname = __dirname.replace(`${sep}server${sep}middlewares`, "");
 
 // TODO: 照片驗證 (小卻給的兩個 if 都無效)
 const imageValidator = body("image").custom((value, { req, res, next }) => {
@@ -49,14 +57,45 @@ const criteria = [
     .withMessage("selfIntro is required.")
     .bail(),
   (req, res, next) => {
+    const picture = req.files.picture;
+    // 檢查圖片是否有填
+    if (!picture) {
+      res.status(400).json({ data: "error: Image is required." });
+      return;
+    }
+    const pictureName = picture[0].filename;
+
     const errors = validationResult(req);
-    if (!errors.isEmpty())
-      return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) {
+      const imagePath = path.resolve(__dirname, `public/images/${pictureName}`);
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error(`Cannot delete image: ${err}`);
+        }
+      });
+
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
 
     if (req.body.sexId === "undefined") {
+      const imagePath = path.resolve(__dirname, `public/images/${pictureName}`);
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error(`Cannot delete image: ${err}`);
+        }
+      });
+
       res.status(400).json({ error: "sexId is required." });
       return;
     } else if (req.body.orientationId === "undefined") {
+      const imagePath = path.resolve(__dirname, `public/images/${pictureName}`);
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error(`Cannot delete image: ${err}`);
+        }
+      });
+
       res.status(400).json({ error: "orientationId is required." });
       return;
     }
