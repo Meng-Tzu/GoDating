@@ -1,0 +1,276 @@
+body::-webkit-scrollbar {
+  display: none;
+}
+
+main {
+  display: flex;
+  flex-wrap: wrap;
+  height: calc(100vh - var(--header-height));
+
+  section#map {
+    flex: 1 1 700px;
+    position: fixed;
+    padding-top: 66px;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+
+    -moz-transition: all 300ms;
+    -webkit-transition: all 300ms;
+    transition: all 300ms;
+  }
+
+  section#candidate-info {
+    flex: 1 1 200px;
+    position: fixed;
+    padding-top: 66px;
+    top: 0;
+    width: 100%;
+    max-width: 284px;
+    height: 100%;
+
+    -moz-transition: all 300ms;
+    -webkit-transition: all 300ms;
+    transition: all 300ms;
+
+    div#candidate-detail-info {
+      width: 100%;
+      height: 100%;
+      background-color: #f8f0ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+      box-sizing: border-box;
+      padding-bottom: 100px;
+
+      div#cross {
+        position: fixed;
+        padding: 4.5rem 0.4rem;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+
+        img {
+          height: 20px;
+          width: 20px;
+        }
+      }
+
+      div#candidate-container {
+        padding-top: 1rem;
+
+        img#candidate-picture {
+          height: 120px;
+          width: 120px;
+          object-fit: cover;
+          border-radius: 50%;
+          background-position: center;
+        }
+      }
+
+      div.candidate-name {
+        padding-top: 0.4rem;
+        font-size: 1.5rem;
+        font-weight: bolder;
+        letter-spacing: 2px;
+        color: rgb(66 32 6);
+      }
+
+      div#candidate-sex-age {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 20%;
+        margin: 0 auto;
+
+        img#candidate-sex {
+          height: 20px;
+        }
+      }
+
+      div#tags {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 0 1rem;
+        padding-top: 0.5rem;
+
+        p.tag {
+          text-align: center;
+          padding: 1px 0.3rem;
+          border: 1.5px solid #f372a7;
+          border-radius: 20px;
+          color: rgb(66 32 6);
+        }
+      }
+
+      h3#intro-title {
+        font-size: 1rem;
+        color: rgb(66 32 6);
+        padding-top: 0.5rem;
+      }
+
+      div#candidate-intro {
+        font-size: 1rem;
+        text-align: center;
+        padding: 0.2rem 1.5rem;
+        color: rgb(66 32 6);
+      }
+    }
+
+    div#choose-btn {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding-bottom: 1.5rem;
+      position: absolute;
+      bottom: 0;
+
+      button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 1rem;
+        background-color: white;
+        height: 60px;
+        width: 60px;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        img {
+          max-width: 50%;
+        }
+      }
+
+      button#unlike {
+        img {
+          max-width: 40%;
+        }
+      }
+    }
+  }
+}
+
+main.menu-active section#candidate-info {
+  right: 0px;
+  border-radius: 7px 0 0 7px;
+
+  -moz-box-shadow: -3px 0 6px #4a55628c;
+  -webkit-box-shadow: -3px 0 6px #4a55628c;
+  box-shadow: -3px 0 6px #4a55628c;
+}
+
+main.menu-active section#map {
+  right: 284px;
+}
+
+main.menu-active section#partner-info div#cross {
+  right: 294px;
+}
+
+.user-icon {
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.leaflet-popup-content {
+  display: flex;
+  flex-direction: column;
+  margin: 7px 13px 0 10px;
+
+  h1 {
+    font-size: 1rem;
+    font-weight: bolder;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+  p {
+    margin: 0;
+    padding: 0.2rem 0;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+}
+
+.leaflet-tooltip-own {
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  border-radius: 12px;
+  position: relative;
+
+  div#like-signal {
+    text-align: center;
+    margin: 0.5rem 0;
+    padding: 0.2rem 0.3rem;
+    background-color: rgba(243, 114, 167, 0.3);
+    border-radius: 8px;
+    letter-spacing: 2px;
+    color: rgb(66 32 6);
+
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: moveLikeSignal 2s infinite;
+  }
+
+  @keyframes moveLikeSignal {
+    0% {
+      transform: translate(-50%, -50%) translateX(-10px);
+    }
+    50% {
+      transform: translate(-50%, -50%) translateX(10px);
+    }
+    100% {
+      transform: translate(-50%, -50%) translateX(-10px);
+    }
+  }
+
+  h1 {
+    font-size: 1rem;
+    font-weight: bolder;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+  h1.pursuer {
+    font-size: 1rem;
+    font-weight: bolder;
+    text-align: center;
+    letter-spacing: 2px;
+    margin-top: 1.5rem;
+  }
+
+  img {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    border-radius: 12px;
+    padding: 0.2rem 0;
+  }
+
+  div.candidate-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding-top: 0.2rem;
+
+    p {
+      text-align: center;
+      padding: 1px 0.3rem;
+      border: 1.5px solid #f372a7;
+      border-radius: 20px;
+      color: rgb(66 32 6);
+    }
+  }
+}

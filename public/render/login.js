@@ -31,7 +31,7 @@ let data = {};
 // 從登入表單轉換成註冊表單
 $("#join").click(function (e) {
   e.preventDefault();
-  $("#title div h3").text("註冊");
+  $("#title").text("註冊");
   $("#background-image").css("background-image", "url(./images/signup.jpg)");
 
   $("#nickname").css("display", "");
@@ -57,7 +57,7 @@ $("#join").click(function (e) {
 // 從註冊表單轉換成登入表單
 $("#member").click(function (e) {
   e.preventDefault();
-  $("#title div h3").text("登入");
+  $("#title").text("登入");
   $("#background-image").css("background-image", "url(./images/signin.jpg)");
 
   $("#nickname").css("display", "none");
@@ -118,7 +118,7 @@ $("#login").on("submit", function (e) {
       localStorage.setItem("token", userData.access_token);
 
       // 跳轉到配對首頁
-      window.location.href = "/";
+      window.location.href = "/main.html";
     })();
   } else {
     data.inputName = $("#loginName").val();

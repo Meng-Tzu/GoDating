@@ -28,15 +28,13 @@
     />
 
     <link rel="stylesheet" href="./default_style/style.css" />
-    <link rel="stylesheet" href="./chatroom_style/style.css" />
+    <link rel="stylesheet" href="./main_style/style.css" />
   </head>
   <body>
     <!-- header -->
     <header class="shadow-md">
       <section class="left">
-        <a href="/main.html" class="logo"
-          ><img src="images/logo.png" alt="Logo"
-        /></a>
+        <a href="#" class="logo"><img src="images/logo.png" alt="Logo" /></a>
 
         <nav>
           <ul class="">
@@ -62,13 +60,37 @@
         <div id="logout">登出</div>
       </section>
     </header>
-
     <main class="">
-      <section id="match" class="">
-        <h3 class="">配對成功！</h3>
-      </section>
       <section id="chatroom" class="w-full px-5">
-        <div id="default">&#x2190; 請點選左側開始聊天！</div>
+        <div id="current-recommend" class="" style="display: none">
+          <div id="loading"></div>
+
+          <div id="front-cover">
+            <div id="like-signal">對方喜歡你唷！</div>
+          </div>
+
+          <div class="name-sex-age">
+            <h2 id="" class="candidate-name"></h2>
+            <div id="sex-age">
+              <img id="candidate-sex" src="" alt="" />
+              <p id="candidate-age"></p>
+            </div>
+          </div>
+
+          <div id="current-recommend-detail-info">
+            <div id="candidate-tags" class="">
+              <p class="templete-candidate-tag" style="display: none"></p>
+            </div>
+            <h3 id="intro-title" class="">自我介紹</h3>
+            <p id="candidate-intro"></p>
+          </div>
+
+          <div id="choose-btn">
+            <button id="btn-like"><img src="images/like.png" /></button>
+            <button id="unlike"><img src="images/unlike.png" /></button>
+          </div>
+        </div>
+
         <div id="chat-block">
           <div id="title" style="display: none">
             <h2 class="other-side text-yellow-950 text-2xl"></h2>
@@ -107,12 +129,13 @@
       </section>
       <section id="current" class="">
         <div id="more-info">
-          <h3 class="">目前聊天者資訊</h3>
+          <h3 class="">猜你會喜歡...</h3>
           <div id="cross" style="display: none">
             <img src="../images/cross.png" alt="cross" />
           </div>
         </div>
 
+        <div id="next-recommend-list" style="display: none"></div>
         <div id="partner-info" style="display: none">
           <div id="partner-cantainer">
             <img id="partner-img" src="" alt="" />
@@ -140,5 +163,5 @@
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="./render/chatroom.js"></script>
+  <script src="./render/main.js"></script>
 </html>

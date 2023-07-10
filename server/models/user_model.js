@@ -69,15 +69,18 @@ const saveUserDetailInfo = async (
   ]);
 };
 
-// FIXME: 取得 DB 裡的所有使用者 id + nick_name
-const getAllUsers = async () => {
+// 修改使用者的配對資料到 DB
+const updateUserMatchInfo = async (userId, orientationId, ageMin, ageMax) => {
   const queryStr = `
-    SELECT id, nick_name FROM user
-    `;
+  UPDATE user
+  SET 
+  sexual_orientation_id = ?, 
+  seek_age_min = ?, 
+  seek_age_max = ?
+  WHERE id = ?
+  `;
 
-  let [result] = await pool.query(queryStr);
-
-  return result;
+  await pool.query(queryStr, [orientationId, ageMin, ageMax, userId]);
 };
 
 // FIXME: 取得 DB 裡的所有使用者 id (優化：遍歷 array，效能差)
@@ -125,7 +128,8 @@ const getUserDetailInfo = async (id) => {
   const queryStr = `
   SELECT id, nick_name, 
   birth_year, birth_month, birth_date,
-  sex_id, main_image, self_intro
+  sex_id, sexual_orientation_id AS orientation_id, 
+  main_image, self_intro
   FROM user
   WHERE id = ?
   `;
@@ -146,6 +150,19 @@ const getMultiCandidatesDetailInfo = async (candidateIds) => {
 
   const [result] = await pool.query(queryStr, [candidateIds]);
   return result;
+};
+
+// 取得使用者的性別 (用來確認使用者是否已經填過問卷)
+const getUserSexId = async (id) => {
+  const queryStr = `
+  SELECT id, sex_id 
+  FROM user
+  WHERE id = ?
+  `;
+
+  const [[result]] = await pool.query(queryStr, [id]);
+
+  return result.sex_id;
 };
 
 // 取得使用者想要的年齡區間
@@ -193,6 +210,16 @@ const getMatchTagIds = async (id) => {
   return result;
 };
 
+// 刪除配對標籤 id
+const deleteMatchTagIds = async (userId) => {
+  const queryStr = `
+  DELETE FROM user_tag
+  WHERE user_id = ?
+  `;
+
+  await pool.query(queryStr, [userId]);
+};
+
 // 取得配對標籤 title
 const getMatchTagTitles = async (userId) => {
   const queryStr = `
@@ -211,7 +238,7 @@ const getMatchTagTitles = async (userId) => {
 };
 
 // 存入所有使用者的 candidates 到 DB
-const saveCandidatesToDB = async (match_pair) => {
+const saveCandidatesToDB = async (potentialList) => {
   const queryStr = `
   INSERT INTO user_candidate
   (user_id, candidate_id)
@@ -220,9 +247,9 @@ const saveCandidatesToDB = async (match_pair) => {
 
   const values = [];
 
-  for (const userId in match_pair) {
-    match_pair[userId].forEach((candidateId) => {
-      values.push([+userId, candidateId]);
+  for (const userId in potentialList) {
+    potentialList[userId].forEach((candidate) => {
+      values.push([+userId, candidate.candidateId]);
     });
   }
 
@@ -231,7 +258,7 @@ const saveCandidatesToDB = async (match_pair) => {
   return result;
 };
 
-// FIXME: 將新註冊者與其配對者互相存彼此為 candidates 到 DB
+// 將新註冊者與其配對者互相存彼此為 candidates 到 DB
 const saveCandidatesOfCertainUser = async (userId, potentialList) => {
   const queryStr = `
   INSERT INTO user_candidate
@@ -240,12 +267,25 @@ const saveCandidatesOfCertainUser = async (userId, potentialList) => {
   `;
 
   const values = [];
-  potentialList.forEach((candidateId) => {
-    values.push([+userId, candidateId]);
-    values.push([candidateId, +userId]);
+  potentialList.forEach((candidate) => {
+    values.push([+userId, candidate.candidateId]);
+    values.push([candidate.candidateId, +userId]);
   });
 
   const [result] = await pool.query(queryStr, [values]);
+
+  return result;
+};
+
+// 從 DB 讀取特定使用者的 candidate IDs
+const getCandidateIdsFromDB = async (userId) => {
+  const queryStr = `
+  SELECT candidate_id
+  FROM user_candidate
+  WHERE user_id = ?
+  `;
+
+  const [result] = await pool.query(queryStr, [userId]);
 
   return result;
 };
@@ -323,51 +363,43 @@ const getPursuersFromDB = async (userId) => {
   return pursuerList;
 };
 
-// FIXME: 把所有使用者的 candidate 存進 cache (放在 model ??)
-const saveCandidatesToCache = async (match_pair) => {
-  for (const userId in match_pair) {
-    // 要幫每一個候選人加上 nickname
-    for (const candidateId of match_pair[userId]) {
-      // 取得 candidate 的基本資訊
-      const candidateInfo = await getUserMatchInfo(candidateId);
+// 更新使用者的經緯度
+const updateUserLocationFromDB = async (userId, location) => {
+  const queryStr = `
+  UPDATE user SET location = ? WHERE id = ?
+  `;
 
-      try {
-        if (Cache.ready) {
-          await Cache.hset(
-            `candidates_of_userid#${userId}`,
-            candidateId,
-            candidateInfo.nick_name
-          );
-        }
-      } catch (error) {
-        console.error(`cannot save candidates into cache:`, error);
-      }
-    }
-  }
+  await pool.query(queryStr, [location, userId]);
 };
 
-// FIXME: 將新註冊者與其配對者互相存彼此為 candidates 到 cache (放在 model ??)
-const saveCandidatesOfCertainUserToCache = async (userId, potentialList) => {
-  // 取得 user 的基本資訊
-  const userInfo = await getUserMatchInfo(userId);
+// 取得使用者所有 candidate 的經緯度
+const getMultiUserLocationFromDB = async (candidateIds) => {
+  const queryStr = `
+  SELECT U.id, U.nick_name AS name, U.main_image AS image, U.location,
+  GROUP_CONCAT(UT.tag_id) AS tag_ids
+  FROM user AS U
+  LEFT JOIN user_tag AS UT
+  ON U.id = UT.user_id
+  WHERE U.id IN (?)
+  GROUP BY U.id
+  `;
 
-  // 要幫每一個候選人加上 nickname
-  for (const candidateId of potentialList) {
-    // 取得 candidate 的基本資訊
-    const candidateInfo = await getUserMatchInfo(candidateId);
+  const [result] = await pool.query(queryStr, [candidateIds]);
+  return result;
+};
+
+// FIXME: 把所有使用者的 candidate 存進 cache (放在 model ??)
+const saveCandidatesToCache = async (potentialList) => {
+  for (const userId in potentialList) {
+    const candidateWithJaccardIndex = potentialList[userId].flatMap(
+      ({ jaccardIndex, candidateId }) => [jaccardIndex, candidateId]
+    );
 
     try {
       if (Cache.ready) {
-        await Cache.hset(
+        await Cache.zadd(
           `candidates_of_userid#${userId}`,
-          candidateId,
-          candidateInfo.nick_name
-        );
-
-        await Cache.hset(
-          `candidates_of_userid#${candidateId}`,
-          userId,
-          userInfo.nick_name
+          candidateWithJaccardIndex
         );
       }
     } catch (error) {
@@ -376,18 +408,38 @@ const saveCandidatesOfCertainUserToCache = async (userId, potentialList) => {
   }
 };
 
-// FIXME: 從 cache 取出特定使用者的 "candidate" (改成取 sorted set) (放在 model ?)
+// FIXME: 將新註冊者與其配對者互相存彼此為 candidates 到 cache (放在 model ??)
+const saveCandidatesOfCertainUserToCache = async (userId, potentialList) => {
+  for (const candidate of potentialList) {
+    try {
+      if (Cache.ready) {
+        await Cache.zadd(
+          `candidates_of_userid#${userId}`,
+          candidate.jaccardIndex,
+          candidate.candidateId
+        );
+
+        await Cache.zadd(
+          `candidates_of_userid#${candidate.candidateId}`,
+          candidate.jaccardIndex,
+          userId
+        );
+      }
+    } catch (error) {
+      console.error(`cannot save candidates into cache:`, error);
+    }
+  }
+};
+
+// FIXME: 從 cache 取出特定使用者的 "candidate" (放在 model ?)
 const getAllCandidateFromCache = async (userId) => {
   if (Cache.ready) {
-    const candidateIds = await Cache.hkeys(`candidates_of_userid#${userId}`);
-    const candidateNames = await Cache.hvals(`candidates_of_userid#${userId}`);
-
-    const candidateList = {};
-
-    candidateIds.forEach((id, index) => {
-      candidateList[id] = candidateNames[index];
-    });
-    return candidateList;
+    const sortedCandidateIds = await Cache.zrevrange(
+      `candidates_of_userid#${userId}`,
+      0,
+      -1
+    );
+    return sortedCandidateIds;
   }
 };
 
@@ -396,13 +448,10 @@ const getPursuerFromCache = async (userId) => {
   try {
     if (Cache.ready) {
       const pursuerIds = await Cache.hkeys(`who_like_me_of_userid#${userId}`);
-      const pursuerNames = await Cache.hvals(`who_like_me_of_userid#${userId}`);
 
       const pursuerList = {};
 
-      pursuerIds.forEach((id, index) => {
-        pursuerList[id] = pursuerNames[index];
-      });
+      pursuerIds.forEach((id) => (pursuerList[id] = null));
       return pursuerList;
     }
   } catch (error) {
@@ -462,22 +511,27 @@ const getCandidateInfoFromCache = async (candidateId) => {
 export {
   saveUserBasicInfo,
   saveUserDetailInfo,
-  getAllUsers,
+  updateUserMatchInfo,
   getAllUserIds,
   getUserBasicInfo,
   getUserMatchInfo,
   getUserDetailInfo,
   getMultiCandidatesDetailInfo,
+  getUserSexId,
   getUserDesireAgeRange,
   saveMatchTagIds,
   getMatchTagIds,
+  deleteMatchTagIds,
   getMatchTagTitles,
   saveCandidatesToDB,
   saveCandidatesOfCertainUser,
+  getCandidateIdsFromDB,
   getCandidatesFromDB,
   deleteAllRowInTable,
   savePursuersToDB,
   getPursuersFromDB,
+  updateUserLocationFromDB,
+  getMultiUserLocationFromDB,
   saveCandidatesToCache,
   saveCandidatesOfCertainUserToCache,
   getAllCandidateFromCache,

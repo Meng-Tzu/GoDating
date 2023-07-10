@@ -1,19 +1,39 @@
-main div#login-block {
+body {
+  height: 100vh;
+  background-color: #ececec;
+  position: relative;
+}
+
+main.ftco-section {
+  flex-wrap: wrap;
+  height: calc(100vh - var(--header-height));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+main.ftco-section div#login-block {
   width: 70%;
 }
-main div#login-block div#title {
+main.ftco-section div#login-block div.wrap {
+  height: 80vh;
+}
+main.ftco-section div#login-block div.wrap div.login-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+main.ftco-section div#login-block div.wrap div.login-wrap div#title {
   display: flex;
   justify-content: space-around;
-}
-main div#login-block div#title h3 {
   text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
+  color: #302529;
 }
-main div#login-block form#login div.form-group label {
+main.ftco-section div#login-block div.wrap div.login-wrap form#login div.form-group label {
   font-size: 1rem;
 }
-main div#login-block p.text-center a {
-  color: #e3b04b;
+main.ftco-section div#login-block div.wrap div.login-wrap p.text-center a {
+  color: #f372a7;
   cursor: pointer;
 }/*# sourceMappingURL=style.css.map */

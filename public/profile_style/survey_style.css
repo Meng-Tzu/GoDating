@@ -4,12 +4,10 @@
   --space-between: 20px;
   --font-size: 16px;
 
-  --color-0: #ffffff;
-  --color-1: #f0b6d0;
+  --color-1: #f8f0ff;
   --color-2: #c5c3c6;
-  --color-3: #3f3a3a;
-  --color-4: #659b5e;
-  --color-5: #ce4257;
+  --color-3: #422006;
+  --color-4: #67320a;
 }
 
 * {
@@ -28,6 +26,10 @@ body {
   background-position: center;
 }
 
+header section a:hover {
+  color: #fff;
+}
+
 #survey-container {
   margin: 20px auto;
   padding: 30px 20px;
@@ -37,23 +39,38 @@ body {
 }
 
 #survey-form {
+  position: relative;
   padding: 30px;
   padding-top: 20px;
   background: var(--color-1);
   opacity: 90%;
   border: none;
   border-radius: calc(2 * var(--border-radius));
+  min-height: 70vh;
 }
 
 #survey-form * {
   font-size: var(--font-size);
 }
 
+#survey-form #loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background-image: url(../images/loading.gif);
+  background-size: cover;
+  background-position: center;
+}
+
 #title {
   margin: 30px 0;
   text-align: center;
   font-family: "Kumbh Sans", sans-serif;
-  font-size: 2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
   text-transform: capitalize;
   color: var(--color-3);
   letter-spacing: 2px;
@@ -95,13 +112,14 @@ body {
 
 #self-intro {
   padding: 10px;
-  margin: 0;
+  margin: 0 1.5rem;
   height: 300px;
-  width: 100%;
+  width: 95%;
   background: white;
   border: none;
   border-radius: var(--border-radius);
   resize: none;
+  color: var(--color-3);
 }
 
 #match-info {
@@ -193,7 +211,7 @@ h1 small {
   height: 192px;
   position: relative;
   border-radius: 100%;
-  border: 6px solid #f8f8f8;
+  border: 6px solid #fff;
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
 }
 .avatar-upload .avatar-preview > div {
@@ -205,7 +223,12 @@ h1 small {
   background-position: center;
 } /*# sourceMappingURL=survey1.css.map */
 
-/* TODO: 性別 */
+/* 生日 */
+.calendar {
+  padding: 0 1.3rem;
+}
+
+/* 性別 */
 @import url("https://fonts.googleapis.com/css?family=Lato");
 .sex {
   display: block;
@@ -228,7 +251,7 @@ h2 {
   display: flex;
 }
 
-ul li {
+.container ul li {
   color: #4f4949;
   display: block;
   position: relative;
@@ -237,12 +260,12 @@ ul li {
   height: 100px;
 }
 
-ul li input[type="radio"] {
+.container ul li input[type="radio"] {
   position: absolute;
   visibility: hidden;
 }
 
-ul li label {
+.container ul li label {
   display: block;
   position: relative;
   font-weight: 300;
@@ -255,11 +278,11 @@ ul li label {
   -webkit-transition: all 0.25s linear;
 }
 
-ul li:hover label {
-  color: #ff7bb7;
+.container ul li:hover label {
+  color: #cc9266;
 }
 
-ul li .check {
+.container ul li .check {
   display: block;
   position: absolute;
   border: 5px solid #4f494984;
@@ -273,11 +296,11 @@ ul li .check {
   -webkit-transition: border 0.25s linear;
 }
 
-ul li:hover .check {
-  border: 5px solid #ff7bb7;
+.container ul li:hover .check {
+  border: 5px solid #cc9266;
 }
 
-ul li .check::before {
+.container ul li .check::before {
   display: block;
   position: absolute;
   content: "";
@@ -292,19 +315,26 @@ ul li .check::before {
 }
 
 input[type="radio"]:checked ~ .check {
-  border: 5px solid #ff1f7c;
+  border: 5px solid var(--color-4);
 }
 
 input[type="radio"]:checked ~ .check::before {
-  background: #ff1f7c;
+  background: var(--color-4);
 }
 
 input[type="radio"]:checked ~ label {
-  color: #ff1f7c;
+  color: var(--color-4);
 }
 
-/* TODO: 性傾向 */
-@import url("https://fonts.googleapis.com/css?family=Lato");
+.container ul li:hover input[type="radio"]:checked ~ .check {
+  border-color: var(--color-4);
+}
+
+.container ul li:hover input[type="radio"]:checked ~ label {
+  color: var(--color-4);
+}
+
+/* 性傾向 */
 .sexual-orientation {
   display: block;
   position: relative;
@@ -312,10 +342,6 @@ input[type="radio"]:checked ~ label {
   height: auto;
   width: 500px;
   padding: 20px;
-}
-
-h2 {
-  color: #3f3a3a;
 }
 
 .sexual-orientation ul {
@@ -326,82 +352,7 @@ h2 {
   display: flex;
 }
 
-ul li {
-  color: #4f4949;
-  display: block;
-  position: relative;
-  float: left;
-  width: 100%;
-  height: 100px;
-}
-
-ul li input[type="radio"] {
-  position: absolute;
-  visibility: hidden;
-}
-
-ul li label {
-  display: block;
-  position: relative;
-  font-weight: 300;
-  font-size: 1.35em;
-  padding: 25px 25px 25px 80px;
-  margin: 10px auto;
-  height: 30px;
-  z-index: 9;
-  cursor: pointer;
-  -webkit-transition: all 0.25s linear;
-}
-
-ul li:hover label {
-  color: #ff7bb7;
-}
-
-ul li .check {
-  display: block;
-  position: absolute;
-  border: 5px solid #4f494984;
-  border-radius: 100%;
-  height: 25px;
-  width: 25px;
-  top: 30px;
-  left: 20px;
-  z-index: 5;
-  transition: border 0.25s linear;
-  -webkit-transition: border 0.25s linear;
-}
-
-ul li:hover .check {
-  border: 5px solid #ff7bb7;
-}
-
-ul li .check::before {
-  display: block;
-  position: absolute;
-  content: "";
-  border-radius: 100%;
-  height: 10px;
-  width: 10px;
-  top: 2.4px;
-  left: 2.9px;
-  margin: auto;
-  transition: background 0.25s linear;
-  -webkit-transition: background 0.25s linear;
-}
-
-input[type="radio"]:checked ~ .check {
-  border: 5px solid #ff1f7c;
-}
-
-input[type="radio"]:checked ~ .check::before {
-  background: #ff1f7c;
-}
-
-input[type="radio"]:checked ~ label {
-  color: #ff1f7c;
-}
-
-/* TODO: 尋找年齡範圍 */
+/* 尋找年齡範圍 */
 .age-range-slider {
   width: 100%;
   float: left;
@@ -413,7 +364,7 @@ input[type="radio"]:checked ~ label {
 .age-range-slider .range-value input {
   width: 100%;
   background: none;
-  color: #000;
+  color: var(--color-4);
   font-size: 16px;
   font-weight: initial;
   box-shadow: none;
@@ -423,24 +374,30 @@ input[type="radio"]:checked ~ label {
 }
 .age-range-slider .range-bar {
   border: none;
-  background: #ff7bb7;
+  background: #cc9266;
   height: 3px;
   width: 50%;
   margin: 0 auto;
 }
 .age-range-slider .range-bar .ui-slider-range {
-  background: #ff1f7c;
+  background: var(--color-4);
 }
 .age-range-slider .range-bar .ui-slider-handle {
   border: none;
   border-radius: 25px;
   background: #fff;
-  border: 2px solid #ff1f7c;
+  border: 2px solid var(--color-4);
   height: 17px;
   width: 17px;
   top: -0.52em;
   cursor: pointer;
 }
 .age-range-slider .range-bar .ui-slider-handle + span {
-  background: #ff1f7c;
+  background: var(--color-4);
+}
+
+/* 個性化標籤 */
+#drop-down-menu {
+  display: flex;
+  justify-content: center;
 }

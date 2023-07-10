@@ -1,5 +1,6 @@
 :root {
   --header-height: 66px;
+  --subtitle-height: 44px;
 }
 
 * {
@@ -9,20 +10,12 @@
   font-family: "Noto Sans TC", sans-serif;
 }
 
-html,
-body {
-  height: 100vh;
-}
-
-body {
-  position: relative;
-}
-
 header {
   padding: 8px 0;
   position: sticky;
   top: 0;
   z-index: 1;
+  background-color: #302529;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -38,7 +31,36 @@ header section.left a.logo {
   margin-left: 2rem;
 }
 header section.left a.logo img {
-  width: 15vw;
+  width: 150px;
+}
+header section.left nav {
+  flex: 1 1 100px;
+  display: flex;
+  align-items: center;
+}
+header section.left nav ul {
+  display: flex;
+  list-style-type: none;
+  align-items: center;
+  justify-content: space-around;
+  padding-left: 2rem;
+  color: white;
+  font-size: 1.2rem;
+  line-height: 2rem;
+}
+header section.left nav ul li {
+  display: flex;
+  align-items: center;
+}
+header section.left nav ul li a {
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+header section.left nav ul li.line {
+  font-size: 1.3rem;
+  padding: 0 1.5rem;
 }
 header section.right {
   flex: 1 1 100px;
@@ -53,8 +75,8 @@ header section.right div#profile {
   cursor: pointer;
 }
 header section.right div#profile img#profile-img {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 50%;
@@ -62,517 +84,18 @@ header section.right div#profile img#profile-img {
 }
 header section.right div#profile h1.user-name {
   margin-left: 0.5rem;
-  font-size: 1.3rem;
-  font-weight: bolder;
+  font-size: 1rem;
   letter-spacing: 2px;
+  color: white;
+  line-height: 2rem;
+  text-align: center;
 }
 header section.right div#logout {
   padding: 0 1rem;
   font-size: 1rem;
   letter-spacing: 2px;
-  color: rgb(66, 32, 6);
+  color: white;
   cursor: pointer;
-}
-
-main {
-  display: flex;
-  flex-wrap: wrap;
-  max-height: calc(100vh - var(--header-height)); /* adjust this value based on the height of your header */
-}
-main section#match {
-  flex: 1 1 150px;
-  background-color: rgba(255, 209, 209, 0.5294117647);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-main section#match h3 {
-  text-align: center;
-  font-size: 1.25rem;
-  font-weight: bolder;
-  letter-spacing: 2px;
-  color: rgb(66, 32, 6);
-  padding-bottom: 8px;
-  padding-top: 16px;
-}
-main section#match div.partner {
-  width: 100%;
-  padding: 16px 16px;
-  border-bottom-width: 1.5px;
-  cursor: pointer;
-}
-main section#match div.partner .partner-img {
-  height: 60px;
-  width: 60px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  border-radius: 50%;
-  background-position: center;
-}
-main section#match div.partner .name-msg-container {
-  padding: 0 0.5rem;
-}
-main section#match div.partner .name-msg-container div {
-  font-size: 1.3rem;
-  font-weight: bolder;
-  letter-spacing: 2px;
-  color: rgb(66, 32, 6);
-}
-main section#match div.partner .name-msg-container span {
-  font-size: 0.7rem;
-  letter-spacing: 1px;
-}
-main section#chatroom {
-  background-color: #fff7da;
-  position: relative;
-  flex: 1 1 600px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
-main section#chatroom div#current-recommend {
-  margin: 2rem 0;
-  width: 50%;
-  max-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  border-radius: 0.5rem;
-  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
-}
-main section#chatroom div#current-recommend div#front-cover {
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  margin: 0 auto;
-  height: 250px;
-  background-image: url(../images/pikabu.jpg);
-  background-size: cover;
-  background-position: center;
-  border-top-right-radius: 0.5rem;
-  border-top-left-radius: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-main section#chatroom div#current-recommend div#front-cover div#candidate-cantainer {
-  position: absolute;
-  bottom: 7px;
-}
-main section#chatroom div#current-recommend div#front-cover div#candidate-cantainer img#candidate-picture {
-  height: 170px;
-  width: 170px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  border-radius: 50%;
-  background-position: center;
-}
-main section#chatroom div#current-recommend h2.candidate-name {
-  padding-top: 0.4rem;
-  font-weight: bolder;
-  letter-spacing: 2px;
-  color: rgb(66, 32, 6);
-}
-main section#chatroom div#current-recommend div#sex-age {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-main section#chatroom div#current-recommend div#sex-age img#candidate-sex {
-  height: 20px;
-}
-main section#chatroom div#current-recommend div#sex-age p#candidate-age {
-  padding-left: 0.2rem;
-}
-main section#chatroom div#current-recommend div#current-recommend-detail-info {
-  width: 100%;
-  max-height: 200px;
-  overflow-y: auto;
-}
-main section#chatroom div#current-recommend div#current-recommend-detail-info div#candidate-tags {
-  padding: 0.3rem 0;
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-main section#chatroom div#current-recommend div#current-recommend-detail-info div#candidate-tags p.candidate-tag {
-  padding: 0.2rem 0.6rem;
-  border: 1.5px solid #e3b04b;
-  border-radius: 20px;
-  background-color: transparent;
-  color: rgb(66, 32, 6);
-}
-main section#chatroom div#current-recommend div#current-recommend-detail-info h3#intro-title {
-  font-size: 1rem;
-  padding-top: 0.5rem;
-  color: rgb(66, 32, 6);
-}
-main section#chatroom div#current-recommend div#current-recommend-detail-info p#candidate-intro {
-  padding: 0.7rem 2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  color: rgb(66, 32, 6);
-  max-height: 100px;
-}
-main section#chatroom div#current-recommend div#choose-btn {
-  display: flex;
-  width: 100%;
-}
-main section#chatroom div#current-recommend div#choose-btn button {
-  flex: 1 1 auto;
-  padding: 0.5rem 1rem;
-  margin: 0 0.3rem;
-  background-color: rgb(255, 247, 165);
-  color: #313538;
-  border-radius: 7px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: rgb(66, 32, 6);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-main section#chatroom div#chat-block {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 95%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-top: 8px;
-}
-main section#chatroom div#chat-block div#title {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  flex-wrap: wrap;
-  padding: 0.5rem 1rem;
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
-  background-color: rgb(255, 253, 248);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border-bottom-width: 1px;
-}
-main section#chatroom div#chat-block div#title h2.other-side {
-  flex: 1 1 150px;
-  width: 20%;
-  margin-left: 2rem;
-  font-weight: bolder;
-  letter-spacing: 2px;
-  color: rgb(66, 32, 6);
-}
-main section#chatroom div#chat-block div#title form#search-box {
-  flex: 2 1 250px;
-  width: 50%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid gray;
-  border-radius: 20px;
-  background-color: rgb(255, 253, 248);
-}
-main section#chatroom div#chat-block div#title form#search-box input#keyword {
-  display: block;
-  width: 300px;
-  padding: 5px 0;
-  margin: 0 2rem;
-  border-radius: 0;
-  border: none;
-  background-color: rgb(255, 253, 248);
-}
-main section#chatroom div#chat-block div#title form#search-box input#keyword:focus {
-  outline: none;
-}
-main section#chatroom div#chat-block div#title form#search-box button#btn-search {
-  height: 30px;
-  width: 30px;
-  background-color: rgb(255, 253, 248);
-  background-image: url(../images/search.png);
-  background-size: cover;
-  background-position: center;
-  border: none;
-  margin: 0 10px;
-  cursor: pointer;
-}
-main section#chatroom div#chat-block div#dialogue {
-  background-color: rgb(255, 253, 248);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-height: 70vh;
-  min-height: 70vh;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  border-bottom-width: 1px;
-}
-main section#chatroom div#chat-block div#dialogue span.message-in-dialogue {
-  display: flex;
-  flex-direction: column;
-  background-color: rgb(250, 238, 214);
-  margin: 1rem 0.5rem;
-  margin-right: auto;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-main section#chatroom div#chat-block div#dialogue span.message-in-dialogue span.single-message {
-  display: inline;
-  padding: 0.5rem;
-}
-main section#chatroom div#chat-block div#dialogue span.message-in-dialogue span.timestamp {
-  color: gray;
-  font-size: 0.5rem;
-  padding-left: 0.5rem;
-}
-main section#chatroom div#chat-block div#dialogue div.wrap {
-  padding: 0.5rem;
-}
-main section#chatroom div#chat-block div#dialogue div.wrap div.message-in-dialogue {
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-main section#chatroom div#chat-block div#pass-msg {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  background-color: rgb(255, 253, 248);
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  padding: 0.3rem 0.5rem;
-}
-main section#chatroom div#chat-block div#pass-msg form#text-msg {
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-main section#chatroom div#chat-block div#pass-msg form#text-msg input#message {
-  flex: 3 1 300px;
-  padding: 0 10px;
-  border-radius: 4px;
-}
-main section#chatroom div#chat-block div#pass-msg form#text-msg input#message:focus {
-  outline: none;
-}
-main section#chatroom div#chat-block div#pass-msg form#text-msg button {
-  height: 35px;
-  width: 35px;
-  background-color: transparent;
-  background-image: url(../images/send.png);
-  background-size: cover;
-  background-position: center;
-  border: none;
-  padding: 0 10px;
-  cursor: pointer;
-}
-main section#chatroom div#chat-block div#pass-msg form#text-msg label {
-  border: none;
-  height: 35px;
-  width: 35px;
-  background-color: transparent;
-  background-image: url(../images/upload.png);
-  background-size: cover;
-  background-position: center;
-  border: none;
-  padding: 0 10px;
-  cursor: pointer;
-}
-main section#chatroom div#chat-block div#pass-msg form#text-msg input#picture-upload:focus {
-  outline: none;
-}
-main section#chatroom div#chat-block div#pass-msg form#picture-msg {
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-main section#chatroom div#chat-block div#pass-msg form#picture-msg input#picture {
-  flex: 3 1 300px;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-main section#chatroom div#chat-block div#pass-msg form#picture-msg button {
-  flex: 1 1 200px;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: rgb(255, 253, 248);
-}
-main section#current {
-  flex: 1 1 150px;
-  background-color: #ffd1d1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-main section#current h3 {
-  padding: 1rem 0;
-}
-main section#current div#more-info {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-main section#current div#more-info h3 {
-  flex: 2 1 150px;
-  text-align: center;
-  font-size: 1.25rem;
-  font-weight: bolder;
-  letter-spacing: 2px;
-  color: rgb(66, 32, 6);
-  padding-bottom: 8px;
-  padding-top: 16px;
-}
-main section#current div#more-info div#cross {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 5px;
-}
-main section#current div#more-info div#cross {
-  flex: 1 1 10px;
-  cursor: pointer;
-}
-main section#current div#more-info div#cross img {
-  height: 10px;
-  width: 10px;
-}
-main section#current div#partner-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  max-height: 80vh;
-  overflow-y: auto;
-  gap: 2rem;
-}
-main section#current div#partner-info img#partner-img {
-  height: 120px;
-  width: 120px;
-  margin: 0 auto;
-  -o-object-fit: cover;
-     object-fit: cover;
-  border-radius: 50%;
-  background-position: center;
-}
-main section#current div#partner-info div#partner-name {
-  font-size: 1.5rem;
-  font-weight: bolder;
-  letter-spacing: 2px;
-  color: rgb(66, 32, 6);
-}
-main section#current div#partner-info div#partner-sex-age {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 20%;
-  margin: 0 auto;
-}
-main section#current div#partner-info div#partner-sex-age img#partner-sex {
-  height: 20px;
-}
-main section#current div#partner-info div#tags {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin: 0.3rem 0;
-}
-main section#current div#partner-info div#tags p.tag {
-  text-align: center;
-  font-size: 1rem;
-  padding: 0.2rem 0.6rem;
-  margin: 0.3rem 0.3rem;
-  border: 1.5px solid #fff7ed;
-  border-radius: 20px;
-  background-color: #fff7ed;
-  color: rgb(66, 32, 6);
-}
-main section#current div#partner-info div#partner-intro {
-  font-size: 1rem;
-  padding: 1.5rem 1.5rem;
-  color: rgb(66, 32, 6);
-}
-main section#current div#next-recommend-list {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  max-height: 80vh;
-  overflow-y: auto;
-  padding-left: 20px;
-  padding-top: 10px;
-}
-main section#current div#next-recommend-list div.next-recommend {
-  padding-bottom: 2rem;
-  width: 200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-main section#current div#next-recommend-list div.next-recommend img.next-picture {
-  height: 120px;
-  width: 120px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  border-radius: 50%;
-  background-position: center;
-  margin-bottom: 1rem;
-}
-main section#current div#next-recommend-list div.next-recommend h2.next-name {
-  padding-bottom: 1rem;
-  font-size: 1.3rem;
-  font-weight: bolder;
-  letter-spacing: 2px;
-  color: rgb(66, 32, 6);
-}
-main section#current div#next-recommend-list div.next-recommend div#next-tags {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-main section#current div#next-recommend-list div.next-recommend div#next-tags p.candidate-tag {
-  text-align: center;
-  font-size: 1rem;
-  padding: 0.2rem 0.6rem;
-  margin: 0.3rem 0.3rem;
-  border: 1.5px solid #fff7ed;
-  border-radius: 20px;
-  background-color: #fff7ed;
-  color: rgb(66, 32, 6);
-}
-main section#current div.search-message {
-  background-color: #ffeaea;
-  margin: 0.5rem;
-  border-radius: 10px;
-}
-main section#current div.search-message p {
-  text-align: center;
-  font-size: 1rem;
-  padding: 0.5rem;
-}
-main section#current div.search-message div.single-message {
-  border: none;
-  font-size: 1rem;
-  text-align: start;
-  padding-left: 0.5rem;
-}
-main section#current div.search-message div.timestamp {
-  border: none;
-  color: gray;
-  font-size: 0.5rem;
-  text-align: start;
-  padding-left: 0.5rem;
 }
 
 .my-swal-title-class {

@@ -1,28 +1,49 @@
-main {
+body {
+  height: 100vh;
+  background-color: #ececec;
+  position: relative;
+}
+
+main.ftco-section {
+  flex-wrap: wrap;
+  height: calc(100vh - var(--header-height));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   div#login-block {
     width: 70%;
 
-    div#title {
-      display: flex;
-      justify-content: space-around;
-      h3 {
-        text-align: center;
-        font-size: 1.5rem;
-        font-weight: bold;
-      }
-    }
+    div.wrap {
+      height: 80vh;
 
-    form#login {
-      div.form-group {
-        label {
-          font-size: 1rem;
+      div.login-wrap {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        div#title {
+          display: flex;
+          justify-content: space-around;
+          text-align: center;
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #302529;
         }
-      }
-    }
-    p.text-center {
-      a {
-        color: #e3b04b;
-        cursor: pointer;
+
+        form#login {
+          div.form-group {
+            label {
+              font-size: 1rem;
+            }
+          }
+        }
+        p.text-center {
+          a {
+            color: #f372a7;
+            cursor: pointer;
+          }
+        }
       }
     }
   }
