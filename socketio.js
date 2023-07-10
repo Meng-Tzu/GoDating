@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { writeFile, createReadStream } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getAge } from "./util/util.js";
+import { getAge } from "./server/util/util.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,9 +17,9 @@ import {
   getAllCandidateFromCache,
   getCandidateInfoFromCache,
   getPursuerFromCache,
-} from "./models/user_model.js";
+} from "./server/models/user_model.js";
 
-import { getPartnerInfo } from "./controllers/user_controller.js";
+import { getPartnerInfo } from "./server/controllers/user_controller.js";
 
 import {
   getWhoLikeMeOfSelf,
@@ -29,14 +29,14 @@ import {
   saveNeverMatchOfUser,
   savePartnerOfUser,
   getPartnerOfUser,
-} from "./controllers/choice_controller.js";
+} from "./server/controllers/choice_controller.js";
 
 // 導入 ElasticSearch function
 import {
   initChatIndexOfES,
   saveChatRecordToES,
   searchKeywordFromES,
-} from "./models/chat_record_model.js";
+} from "./server/models/chat_record_model.js";
 
 // ------------------- Function 區塊 ------------------------
 // FIXME: Function1: potentialInfoList = pursuer + candidate list (early return null)

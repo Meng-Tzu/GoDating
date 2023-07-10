@@ -30,7 +30,7 @@ const markCenter = (
   // 更換地圖中心點為使用者位置
   const map = L.map("map").setView(userCoordinate, zoom);
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19, // 最大可放大的 scale
+    maxZoom: 14, // 最大可放大的 scale
     attribution:
       '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
@@ -118,7 +118,7 @@ const markCenter = (
       socket.emit("map-candidate", candidateId);
 
       // 點擊喜歡後，關閉候選人資訊與把候選人從地圖刪除
-      $("#like")
+      $("#btn-like")
         .unbind("click")
         .click(function () {
           $("main").removeClass("menu-active");
@@ -341,7 +341,7 @@ let fetchOption = {
       const { pursuerList, potentialLocationList } = msg;
 
       // 詢問使用者是否能取得當前位置
-      const zoom = 14;
+      const zoom = 12;
       await showMyLocation(
         socket,
         zoom,
