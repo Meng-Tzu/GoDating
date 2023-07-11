@@ -69,8 +69,7 @@ A dating website that offers a personalized recommendation system. It integrates
 
 [(Back to top)](#godating)
 
-![backend_architecture](https://github.com/Meng-Tzu/GoDating/assets/111262692/c4d64ee1-f00d-411c-83cf-9ff622899228)
-
+![backend_architecture](https://github.com/Meng-Tzu/GoDating/assets/111262692/236a1b9d-da4a-449d-8f9d-2058da536127)
 
 ## Database Schema
 
