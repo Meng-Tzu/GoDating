@@ -15,7 +15,7 @@ Looking to meet your ideal match? Curious to know who's interested in you? Want 
 
 ## Description
 
-A dating website that provides personalized recommendation system, real-time messaging / notifications, and convenient search of chat history.
+A dating website that offers a personalized recommendation system. It integrates maps to provide approximate locations of candidates, allowing users to have a general idea of their whereabouts. Additionally, this website provides real-time messaging and notifications, as well as a convenient chat record search feature.
 
 ## Table of Contents
 
@@ -45,12 +45,21 @@ A dating website that provides personalized recommendation system, real-time mes
 
 [(Back to top)](#godating)
 
-- Leveraged a filter mechanism based on gender, sexual orientation and age to suggest
-  suitable candidates to users.
+- **Algorithm**
 
-- enabling real-time messaging and notifications.
+  Suitable candidates are filtered based on gender, sexual orientation and age, and then sorted according to their interest tags using the `Jaccard Similarity` algorithm.
 
-- Facilitated convenient searching of chat history with fuzzy search functionality.
+- **Communication**
+
+  Implementing real-time delivery of system notifications and instant messaging between users by `Socket.IO` technology.
+
+- **Search**
+
+  Searching chat records efficiently with `Elasticsearch`, and supporting fuzzy search functionality.
+
+- **Location**
+
+  Visualizing the geographic locations of users and their candidates on an interactive map using `Leaflet API`.
 
 ## Demo
 
@@ -69,13 +78,13 @@ A dating website that provides personalized recommendation system, real-time mes
 
 ### MySQL
 
-- user information
+- **User information**
 
   ![MySQL Schema](./doc/mysql_schema.jpg)
 
 ### Elasticsearch
 
-- chat record
+- **Chat record**
   ```json
   {
     "userId": {
@@ -101,11 +110,9 @@ A dating website that provides personalized recommendation system, real-time mes
 
 [(Back to top)](#godating)
 
-- **Interest-based Recommendations** : Refine recommendation system, prioritizing matches based on users' shared interests. Provide users with even more accurate and tailored suggestions.
+- **Geolocation-based Matchmaking** : Display candidates within a specific range based on the user's provided location.
 
-- **Customizable Filtering Criteria** : Allow users to change their preferences to discover more potential candidates.
-
-- **Proximity-based Match Discovery** : Enables users to explore potential individuals who share a geographical proximity and may have mutual interest.
+- **Customizable Filtering Criteria** : Allow users to modify their preferences to discover different potential candidates.
 
 - **Diversified Sexual Orientation Options** : Expand the range of sexual orientation options in the questionnaire survey to supports users in finding compatible partners.
 
