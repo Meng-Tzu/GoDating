@@ -807,15 +807,6 @@ let fetchOption = {
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
-        didOpen: () => {
-          const b = Swal.getHtmlContainer().querySelector("b");
-          timerInterval = setInterval(() => {
-            b.textContent = Swal.getTimerLeft();
-          }, 100);
-        },
-        willClose: () => {
-          clearInterval(timerInterval);
-        },
         customClass: {
           title: "my-swal-title-class",
           cancelButton: "my-swal-cancel-button-class",
