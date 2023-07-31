@@ -1,5 +1,7 @@
 // 導入模組
 import { Server } from "socket.io";
+import { createAdapter } from "@socket.io/redis-adapter";
+import redisClient from "./server/util/cache.js";
 import { v4 as uuidv4 } from "uuid";
 import { writeFile, createReadStream } from "fs";
 import path from "path";
@@ -119,6 +121,9 @@ const saveMsgReturnTime = async (userId, userName, partnerId, message) => {
 // ------------------- 建立 SocketIO function ----------------------
 const connectToSocketIO = (webSrv) => {
   const io = new Server(webSrv);
+  const pubClient = redisClient;
+  const subClient = pubClient.duplicate();
+  io.adapter(createAdapter(pubClient, subClient));
 
   // 目前有幾條連線
   let count = 0;
@@ -150,6 +155,13 @@ const connectToSocketIO = (webSrv) => {
       if (isMap) {
         // 儲存連線者
         connections[`map-${id}`] = { name, socket };
+
+        pubClient.pubsub("channels", (err, channels) => {
+          if (!channels.includes(`map-${id}`)) {
+            subClient.subscribe(`map-${id}`);
+          }
+        });
+
         console.log(`user id #${id} successfully connect on map page.`);
 
         if (!myPotentialInfoList.integratedIdList.length) {
@@ -174,6 +186,11 @@ const connectToSocketIO = (webSrv) => {
 
       // FIXME: 使用者進入配對頁面或聊天室頁面進行 socketIO 連線 (聊天室頁面不需 candidate 資訊??)
       connections[id] = { name, socket };
+      pubClient.pubsub("channels", (err, channels) => {
+        if (!channels.includes(id)) {
+          subClient.subscribe(id);
+        }
+      });
       console.log(`user id #${id} successfully connect.`);
 
       // 新註冊者資訊，渲染到符合條件的其他使用者的配對頁面
@@ -268,41 +285,26 @@ const connectToSocketIO = (webSrv) => {
           const responseForSelf = { userId, candidateId, candidateName };
           socket.emit("success-send-like-signal", responseForSelf);
 
-          // [地圖] 當對方在線上，再傳送到對方前端
-          if (`map-${candidateId}` in connections) {
-            const responseForOtherSide = {
-              userId: candidateId,
-              pursuerId: userId,
-              pursuerName: userName,
-            };
+          // 更新對方的 pursuer + candidate list
+          const yourPotentialInfoList = await getPotentialInfoList(candidateId);
+          const responseForOtherSide = {
+            userId: candidateId,
+            pursuerId: userId,
+            pursuerName: userName,
+            pursuerList: yourPotentialInfoList.pursuerList,
+            candidateIdList: yourPotentialInfoList.candidateIdList,
+            potentialInfoList: yourPotentialInfoList.potentialInfoList,
+          };
 
-            connections[`map-${candidateId}`].socket.emit(
-              "who-like-me",
-              responseForOtherSide
-            );
-          }
+          const message = JSON.stringify({
+            event: "whoLikeMe",
+            data: responseForOtherSide,
+          });
+          // [地圖] 當對方在線上，傳送到對方前端
+          pubClient.publish(`map-${candidateId}`, message);
 
-          // [首頁] 當對方在線上，再傳送到對方前端
-          if (candidateId in connections) {
-            // 更新對方的 pursuer + candidate list
-            const yourPotentialInfoList = await getPotentialInfoList(
-              candidateId
-            );
-
-            // 把重新整理的名單送到對方的前端
-            const responseForOtherSide = {
-              userId: candidateId,
-              pursuerId: userId,
-              pursuerName: userName,
-              pursuerList: yourPotentialInfoList.pursuerList,
-              candidateIdList: yourPotentialInfoList.candidateIdList,
-              potentialInfoList: yourPotentialInfoList.potentialInfoList,
-            };
-            connections[candidateId].socket.emit(
-              "who-like-me",
-              responseForOtherSide
-            );
-          }
+          // [首頁] 當對方在線上，傳送到對方前端
+          pubClient.publish(candidateId, message);
 
           console.log(
             `userId#${userId}(${userName}) like userId#${candidateId}(${candidateName})`
@@ -835,7 +837,26 @@ const connectToSocketIO = (webSrv) => {
       count--;
       console.log(`One client has disconnected. 目前連線數: ${count}`);
     });
+
+    // TODO: 是哪一個 channel 要接收來自其他伺服器的訊息 (還有 roomId)
+    subClient.on("message", async (channel, message) => {
+      if (channel in connections) {
+        console.log("adaptor send msg from map");
+        const dataObject = JSON.parse(message);
+        subClientObject[dataObject.event](
+          connections[channel].socket,
+          dataObject
+        );
+      }
+    });
   });
+
+  // TODO: 定義是要傳 socket 的哪一條連線
+  const subClientObject = {
+    whoLikeMe: (socket, data) => {
+      socket.emit("who-like-me", data.data);
+    },
+  };
 };
 
 export default connectToSocketIO;

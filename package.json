@@ -24,6 +24,7 @@
   "homepage": "https://github.com/Meng-Tzu/WebSocket-Test#readme",
   "dependencies": {
     "@elastic/elasticsearch": "^8.6.0",
+    "@socket.io/redis-adapter": "^8.2.1",
     "argon2": "^0.30.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
