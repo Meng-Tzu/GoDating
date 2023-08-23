@@ -1,6 +1,7 @@
 # GoDating
 
-> Go easy, go dating !
+
+![Static Badge](https://img.shields.io/badge/license-MIT-blue) ![Static Badge](https://img.shields.io/badge/status-active-green) ![Static Badge](https://img.shields.io/badge/release-v1.0.0-red)
 
 Looking to meet your ideal match? Curious to know who's interested in you? Want to experience real-time chatting? Look no further than GoDating!
 
@@ -12,6 +13,9 @@ Looking to meet your ideal match? Curious to know who's interested in you? Want 
 - Email: chiao@test.com / Password: 1234567 (小潔)
 - Email: purple@test.com / Password: 1234567 (莎莉)
 - Email: dragon@test.com / Password: 1234567 (小偉)
+
+![godating](https://github.com/Meng-Tzu/GoDating/assets/111262692/fb5150dd-2949-41b8-b57a-2aa5a140a92a)
+
 
 ## Description
 
@@ -65,6 +69,19 @@ A dating website that offers a personalized recommendation system. It integrates
 
 [(Back to top)](#godating)
 
+  - ### Show Candidate Location
+
+    ![map](https://github.com/Meng-Tzu/GoDating/assets/111262692/07077699-6f88-445a-a5ea-1916101867d5)
+
+  - ### Chatroom
+
+    ![chat](https://github.com/Meng-Tzu/GoDating/assets/111262692/3be79b31-5ebe-45af-91ea-7b072f74dd79)
+
+  - ### Search for Relevant Chat Record
+
+    ![search](https://github.com/Meng-Tzu/GoDating/assets/111262692/edaf31ff-e25e-419a-9a08-a57238afd136)
+
+
 ## Backend Architecture
 
 [(Back to top)](#godating)
@@ -79,7 +96,8 @@ A dating website that offers a personalized recommendation system. It integrates
 
 - **User information**
 
-  ![MySQL Schema](./doc/mysql_schema.jpg)
+  ![mysql_schema_v2](https://github.com/Meng-Tzu/GoDating/assets/111262692/07ca90cc-5947-4ae4-bd66-f349c0dda99a)
+
 
 ### Elasticsearch
 
