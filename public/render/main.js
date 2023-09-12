@@ -724,7 +724,6 @@ let fetchOption = {
       $(".next-recommend").remove();
       createNextRecommendDiv(nextRecommend);
 
-      // alert(`與 ${partnerInfo.nick_name} 成功配對！`);
       Swal.fire({
         position: "top",
         icon: "success",
@@ -848,11 +847,10 @@ let fetchOption = {
       );
       $("#loading").hide();
       $("#front-cover").show();
+      $(".name-sex-age").show();
       $(".candidate-name")
-        .show()
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
-      $("#sex-age").show();
       $("#current-recommend-detail-info").show();
       $("#candidate-tags").show();
       $("#intro-title").show();
@@ -926,11 +924,10 @@ let fetchOption = {
       );
       $("#loading").hide();
       $("#front-cover").show();
+      $(".name-sex-age").show();
       $(".candidate-name")
-        .show()
         .text(currentRecommend.nick_name)
         .attr("id", currentRecommend.id);
-      $("#sex-age").show();
       $("#candidate-tags").show();
       $("#intro-title").show();
       $("#candidate-intro").show();
@@ -1073,7 +1070,6 @@ $("#btn-like").click(function () {
   $("#loading").show();
   $("#front-cover").hide();
   $(".name-sex-age").hide();
-  $("#sex-age").hide();
   $("#current-recommend-detail-info").hide();
   $("#choose-btn").hide();
 
@@ -1097,7 +1093,6 @@ $("#unlike").click(function () {
   $("#loading").show();
   $("#front-cover").hide();
   $(".name-sex-age").hide();
-  $("#sex-age").hide();
   $("#current-recommend-detail-info").hide();
   $("#choose-btn").hide();
 
@@ -1134,7 +1129,6 @@ $("#btn-text").click(function (e) {
     return;
   }
 
-  // const userName = $("#users option:selected").text();
   const partnerId = +$(".other-side").attr("id");
   const message = $("#message").val();
   const messages = { partnerId, roomId, message };
