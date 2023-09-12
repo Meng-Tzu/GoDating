@@ -42,6 +42,13 @@ const markCenter = (
     iconSize: [50, 50],
   });
 
+  // candidate Maker 圖示
+  const candidateIcon = L.divIcon({
+    className: "user-icon",
+    html: `<img src="images/marker.png" style="width: 40px; height: 40px; border-radius: 50%" />`,
+    iconSize: [50, 50],
+  });
+
   // add marker of user position
   const userMarker = L.marker(userCoordinate, {
     icon: userIcon,
@@ -58,9 +65,10 @@ const markCenter = (
     const location = JSON.parse(potential.location);
     if (!location) continue;
 
-    const candidateMarker = L.marker(location, { userId: potential.id }).addTo(
-      map
-    );
+    const candidateMarker = L.marker(location, {
+      icon: candidateIcon,
+      userId: potential.id,
+    }).addTo(map);
 
     const tagIds = potential.tag_ids.split(",");
     let tags = "";
