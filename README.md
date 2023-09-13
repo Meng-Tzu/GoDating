@@ -149,6 +149,10 @@ If you have any suggestion or brilliant ideas to GoDating website, feel free to 
 
 [(Back to top)](#godating)
 
-- Thanks [flaticon](https://www.flaticon.com) for providing free icons.
+- Special thanks to [Flaticon](https://www.flaticon.com) for providing free icons.
 
-- Thanks [Unsplash](https://unsplash.com) and [Pexels](https://www.pexels.com/zh-tw) for providing free photographs.
+- Special thanks to [Unsplash](https://unsplash.com) and [Pexels](https://www.pexels.com/zh-tw) for providing free photographs.
+
+- Special thanks to [CGFace](https://cgfaces.com/en) for providing free AI-generated portrait images.
+
+- Special thanks to [Storyset](https://storyset.com/) for providing free animate illustrations.
